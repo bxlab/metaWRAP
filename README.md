@@ -1,4 +1,4 @@
-# Metagenome-analysis-pipeline
+## Metagenome Analysis Pipeline
 
 
   This script is meant to be a comprehensive solution for producing the best metagenomic assembly, taxonomic profiling, and binning from paired end reads from one or more samples. Of course this is not the best pipeline out there. But this is the pipeline taht worked for me so far.
