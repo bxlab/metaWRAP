@@ -1,0 +1,22 @@
+mode large_genome
+
+
+pe {
+
+debug_output false
+
+params {
+    scaffolding_mode old_pe_2015
+}
+}
+
+
+bwa_aligner
+{
+    bwa_enable true
+    debug false
+    path_to_bwa ./bin/bwa-spades
+    min_contig_len 0
+}
+
+
