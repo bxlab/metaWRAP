@@ -25,4 +25,9 @@
   
   System requirements: The resourse requirements for this pipeline wil vary greatly based on the number of your reads, but I would advise against attempting to run it on anything less than 10 cores and 100GB RAM.
 
-  Author of pipeline: German Uritskiy. I do not clain to have any authorship of the many programs this pipeline uses. For questions, bugs, and suggestions, contact me at guritsk1@jhu.edu.
+  Author of pipeline: German Uritskiy.
+  
+Principal Investigators: [James Taylor](http://bio.jhu.edu/directory/james-taylor/) and [Jocelyne DiRuggiero](http://bio.jhu.edu/directory/jocelyne-diruggiero/)
+Institution: Johns Hopkins, [Department of Cell, Molecular, Developmental Biology, and Biophysics](http://cmdb.jhu.edu/) 
+
+I do not clain to have any authorship of the many programs this pipeline uses. For questions, bugs, and suggestions, contact me at guritsk1@jhu.edu.
