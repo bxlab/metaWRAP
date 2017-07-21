@@ -1,0 +1,22 @@
+# path to kraken standard database
+KRAKEN_DB="/home-2/guritsk1@jhu.edu/scratch/Programs/kraken/kraken_standard_database"
+
+# path to indexed human genome (see bmtagger website for guide). This insludes files hg38.bitmask and hg38.srprism.*
+BMTAGGER_DB="/home-2/guritsk1@jhu.edu/scratch/Programs/bmtagger_db"
+
+# paths to RefSeq databases
+## Location of local installation of nt blast database
+## (not needed if using blast remotely, which is slower).
+## The NCBI nt databases can be downloaded from
+## ftp://ftp.ncbi.nlm.nih.gov/blast/db/ using the following command:
+# wget "ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.*.tar.gz"
+# for a in nt.*.tar.gz; do tar xzf $a; done
+BLASTDB=/home-2/guritsk1@jhu.edu/scratch/RefSeq/NCBI_nt
+
+## Location of NCBI tar gunzipped directory downloaded from
+## ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
+## Default: current directory
+TAXDUMP=/home-2/guritsk1@jhu.edu/scratch/RefSeq/NCBI_tax
+
+# path to the custon scripts of metaWRAP
+SOFT=/home-2/guritsk1@jhu.edu/scratch/metaWRAP_v0.1/meta-scripts

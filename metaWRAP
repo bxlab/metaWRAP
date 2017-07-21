@@ -1,0 +1,169 @@
+#!/bin/bash -l
+#SBATCH
+#SBATCH --job-name=metaWRAP
+#SBATCH --partition=lrgmem
+#SBATCH --time=72:0:0
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=48
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=900G
+
+
+##############################################################################################################################################################
+#
+# Master metaWRAP script that calls the read_qc, assembly, blobology, binning, and kraken modules automatically. Currently only works on one pair of raw reads
+# 
+##############################################################################################################################################################
+
+
+help_message () {
+	echo "Usage: ./metaWRAP [options] -o output_folder -1 raw_readsA_1.fastq -2 raw_readsA_2.fastq"
+	echo "Options:"
+	echo ""
+	echo "	-o STR          output directory"
+	echo "	-t INT          number of threads (default=1)"
+	echo "	-m INT          memory in GB (default=4)"
+	echo "	-1 STR		forward read file"
+	echo "	-2 STR		reverse read file"
+	echo "";}
+# function to print out error messages
+error () {
+	echo "************************************************************************************************************************"
+	echo "*****************************************            ERROR!           **************************************************"
+	echo " "; echo $1; echo " "
+	echo "************************************************************************************************************************"; exit 1; }
+# function to print out warning messages
+warning () {
+	echo "************************************************************************************************************************"
+	echo "*****************************************           WARNING!          **************************************************"
+	echo " "; echo $1; echo " "
+	echo "************************************************************************************************************************";}
+# funciton to print out comments throught the pipeline
+comm () {
+	echo ""; echo "----------------------------------------------------------------------------------------------"
+	echo $1
+	echo "----------------------------------------------------------------------------------------------"; echo ""; }
+
+
+
+########################################################################################################
+########################               LOADING IN THE PARAMETERS                ########################
+########################################################################################################
+
+
+# setting scripts and databases from config file (should be in same folder as main script)
+source ${0%/*}/config.sh
+
+
+threads=1; mem=4; out="false"; f_reads="false"; r_reads="false"; 
+# Load in options
+while getopts ht:o:m:1:2: option; do
+	case "${option}" in
+		h) help_message; exit 1;;
+		t) threads=${OPTARG};;
+		m) mem=${OPTARG};;
+		o) out=${OPTARG};;
+		1) f_reads=${OPTARG};;
+		2) r_reads=${OPTARG};;
+	esac
+done
+
+
+########################################################################################################
+########################           MAKING SURE EVERYTHING IS SET UP             ########################
+########################################################################################################
+
+# check if all parameters are entered
+if [ "$out" = "false" ] || [ "$f_reads" = "false" ] || [ "$r_reads" = "false" ] ; then 
+	help_message; exit 1
+fi
+
+# Checks for correctly configures meta-scripts folder
+if [ ! -s $SOFT/sort_contigs.py ]; then
+	error "The folder $SOFT doesnt exist. Please make sure the meta-scriptss folder is in the same folder as the other reads_qc"
+fi
+
+
+########################################################################################################
+########################                    BEGIN PIPELINE!                     ########################
+########################################################################################################
+
+mkdir $out
+
+
+################################### READ_QC MODULE #######################################
+comm "STARTING READ_QC MODULE"
+${0%/*}/read_qc.sh -t $threads -1 $f_reads -2 $r_reads -o ${out}/read_qc_out
+if [ ! -s ${out}/read_qc_out/final_pure_reads_1.fastq ]; then 
+	error "read_qc module did not complete successfully. Aborting pipeline."; 
+else 
+	comm "read_qc module finished successfully!"
+fi
+
+
+
+################################### ASSEMBLY MODULE #######################################
+comm "STARTING ASSEMBLY MODULE"
+${0%/*}/assembly.sh -t $threads -m $mem\
+ -1 ${out}/read_qc_out/final_pure_reads_1.fastq\
+ -2 ${out}/read_qc_out/final_pure_reads_2.fastq\
+ -o $out/assembly_out 
+
+if [ ! -s ${out}/assembly_out/final_assembly.fasta ]; then
+	error "assembly module did not complete successfully. Aborting pipeline."; 
+else
+	comm "assembly module completed successfully!"
+fi
+
+
+
+
+##################################### KRAKEN MODULE #######################################
+comm "STARTING KRAKEN MODULE"
+${0%/*}/kraken.sh -t $threads -o ${out}/kraken_out\
+ ${out}/assembly_out/final_assembly.fasta\
+ ${out}/read_qc_out/final_pure_reads_1.fastq\
+ ${out}/read_qc_out/final_pure_reads_2.fastq
+
+if [ ! -s ${out}/kraken_out/final_assembly.krona ]; then
+	error "kraken module did not complete successfully. Aborting pipeline."; 
+else
+	comm "kraken module completed sucessfully!"
+fi
+
+
+
+################################### BLOBOLOGY MODULE ######################################
+comm "STARTING BLOBOLOGY MODULE"
+${0%/*}/blobology.sh -t $threads -a $out/assembly_out/final_assembly.fasta\
+ -1 $out/read_qc_out/final_pure_reads_1.fastq\
+ -2 $out/read_qc_out/final_pure_reads_2.fastq\
+ -o ${out}/blobology_out
+
+if [ ! -s ${out}/blobology_out/final_assembly.blobplot ]; then
+	error "blobology module did not complete successfully. Aborting pipeline."
+else
+	comm "blobology module completed successfully!"
+fi
+
+
+
+################################### BINNING MODULE #######################################
+comm "STARTING BINNING MODULE"
+${0%/*}/binning.sh -t $threads -m $mem -a $out/assembly_out/final_assembly.fasta -o ${out}/binning_out\
+ $out/read_qc_out/final_pure_reads_1.fastq $out/read_qc_out/final_pure_reads_2.fastq
+
+if [ ! -s ${out}/binning_out/metabat2_bins/bin.unbinned.fa ]; then
+	error "binning module did not complete successfully. Aborting pipeline."
+else
+	comm "binning module completed successfully!"
+fi
+
+
+
+################################### END OF PIPELINE  #######################################
+comm "metaWRAP PIPELINE COMPLETED SUCCESSFULLY! THANK YOU FOR YOUR PATIENCE :)"
+
+
+
+
