@@ -1,4 +1,4 @@
-## Introducing metaWRAP v=0.1 - a Comprehensive Metagenome Analysis Pipeline for Beginners
+## Introducing metaWRAP v0.1 - Comprehensive Metagenome Analysis for Beginners
 
 
  metaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach.
@@ -16,7 +16,7 @@
     5) Visualization with Blobplots
     
     
-  ![Detailed pipeline walkthrough](http://i.imgur.com/VZmKuoZ.png)
+  ![Detailed pipeline walkthrough](http://i.imgur.com/D1bOqLp.png)
 
   
 ## INSTALATION
@@ -65,77 +65,28 @@ Finally, you will need to download several databases and configure their paths i
 Once all the dependencies are in place, running metaWRAP is relatively simple. You can chose to run metaWRAP itself, which will run all of the modules, or run individual modules as you wish. 
 
 metaWRAP:
-Usage: ./metaWRAP [options] -o output_folder raw_readsA_1.fastq raw_readsA_2.fastq
-Options:
-
-	-o STR          output directory
-	-t INT          number of threads (default=1)
-	-m INT          memory in GB (default=4)
-	-1 STR		forward read file
-	-2 STR		reverse read file
-
-
-read_qc.sh:
-Usage: ./read_qc.sh [options] -1 reads_1.fastq -2 reads_2.fastq -o output_dir
-Options:
-
-	-1 STR          forward fastq reads
-	-2 STR          reverse fastq reads
-	-o STR          output directory
-	-t INT          number of threads
-
-
-assembly.sh:
-Usage: ./assembly.sh [options] -1 reads_1.fastq -2 reads_2.fastq -o output_dir -t THREADS -m MEMORY
-Options:
-
-	-1 STR          forward fastq reads
-	-2 STR          reverse fastq reads
-	-o STR          output directory
-	-m INT          memory in GB
-	-t INT          number of threads
-
-
-blobology.sh:
-Usage: ./blobology.sh [options] -a assembly.fasta-1 reads_1.fastq -2 reads_2.fastq -o output_dir
-Options:
-
-	-a STR		assembly fasta file
-	-1 STR          forward fastq reads
-	-2 STR          reverse fastq reads
-	-o STR          output directory
-	-t INT          number of threads
-	-n INT		number of contigs to plot (default=ALL)
-
-
-binning.sh:
-Usage: ./binning.sh [options] -a assembly.fa -o output_dir readsA_1.fastq readsA_2.fastq ... [readsX_1.fastq readsX_2.fastq]
-Options:
-
-	-a STR          metagenomic assembly
-	-o STR          output directory
-	-t INT          number of threads (default=1)
-	-m INT          memory in GB (default=4)
-
-
-kraken.sh:
-./kraken.sh [options] -o output_dir assembly.fasta reads_1.fastq reads_2.fastq ...
-Options:
-
-	-o STR          output directory
-	-t INT          number of threads
-	-d INT		read sampling depth (default=all)
-
+	Usage: ./metaWRAP [options] -o output_folder raw_readsA_1.fastq raw_readsA_2.fastq
+	Options:
+		-o STR          output directory
+		-t INT          number of threads (default=1)
+		-m INT          memory in GB (default=4)
+		-1 STR		forward read file
+		-2 STR		reverse read file
 
 
 
 Here are examples of running metaWRAP and its sub-modules:
 
 ./metaWRAP –t 24 –m 120 -o metawrap_out -1 sample_1.fastq -2 sample_2.fastq 
+
 ./read_qc.sh –t 100 -1 reads_1.fastq -2 reads_2.fastq -o output_dir
+
 ./assembly.sh [options] -1 reads_1.fastq -2 reads_2.fastq -o assembly_dir -t 120 -m 800
+
 ./blobology.sh –t 10-m 20 -a final_assembly.fasta-1 reads_1.fastq -2 reads_2.fastq –o blobology_out
+
 ./binning.sh –t 48 –m 100 -a assembly.fa –o binning_out sampleA_1.fastq sampleA_2.fastq sampleX_1.fastq sampleX_2.fastq
+
 ./kraken.sh –t 24 –o kraken_out assembly.fasta reads_1.fastq reads_2.fastq
 
 
