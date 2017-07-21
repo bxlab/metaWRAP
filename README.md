@@ -28,23 +28,25 @@
 
   Since this is a wrapper program, the biggest challenge in installing metaWRAP will likely be configuring all the dependencies correctly. Firstly, the path to the folder "meta-scripts", containing numerous scripts required for running this pipeline, needs to be configured in config.sh. Next, the following programs need to be installed in your PATH. NOTE: the versions of the programs may or may not be important.
 
-1)	BLAST (tested on v=2.6.0)
-2)	bmtagger (tested on v=3.101)
-3)	Bowtie2 (tested on v=2.3.2)
-4)	bwa (tested on v=0.7.15-r1140)
-5)	Checkm (tested on v=v1.0.7)
-6)	FastQC (tested on v=v0.11.5)
-7)	kraken (tested on v=0.10.6)
-8)	kronatools (tested on v=2.7)
-9)	megahit (tested on v=1.1.1-2)
-10)	metabat2 (tested on v=2.9.1)
-11)	perl (tested on v=5.22.0)
-12)	python (tested on v=2.7.1)
-13)	quast (tested on v=4.5)
-14)	R (tested on v=3.3.2)
-15)	samtools (tested on v=1.3.1)
-16)	SPAdes (tested on v=3.10.1)
-17)	trim_galore (tested on v=0.4.3)
+|    Software     | Tested version  |
+|:---------------:|:---------------:| 
+|    BLAST        |    v=2.6.0      |
+|    bmtagger     |    v=3.101      |
+|    Bowtie2      |    v=2.3.2      |
+|    bwa          |    v=0.7.15     |
+|    Checkm       |    v=1.0.7      |
+|    FastQC       |    v=v0.11.5    |
+|    kraken       |    v=0.10.6     |
+|    kronatools   |    v=2.7        |
+|    megahit      |    v=1.1.1-2    |
+|    metabat2     |    v=2.9.1      |
+|    perl         |    v=5.22.0     |
+|    python       |    v=2.7.1      |
+|    quast        |    v=4.5        |
+|    R            |    v=3.3.2      |
+|    samtools     |    v=1.3.1      |
+|    SPAdes       |    v=3.10.1     |
+|    trim_galore  |    v=0.4.3      |
 
  The installation of most of these dependencies should not be difficult even in non-sudo environments with the use of conda. Future versions of metaWRAP are expected to have more detailed installation instructions, but for now you are on your own.
 
@@ -53,42 +55,40 @@
 
 Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Here is a full list of the databases:
 
-1)	Checkm_DB (1.4GB) – CheckM should prompt you to download this when you run it for the first time
-2)	KRAKEN standard database (161GB) – look at the official KRAKEN support website for download instructions 
-3)	RefSeq NCBI_nt (71GB) – look at the config.sh for download instructions
-4)	RefSeq NCBI_tax (283MB) – look at the config.sh for download instructions
-5)	Indexed hg38 (20GB) – look at the bmtagger manual for instructions
+|    Database     | Size  | Source |
+|:---------------:|:---------------:|:-----:| 
+|Checkm_DB		 |1.4GB| 	CheckM should prompt you to download this during first use	|
+|KRAKEN standard database|161GB | 	look at the official KRAKEN support website for download instructions 		|
+|RefSeq NCBI_nt 	|71GB | 	look at the config.sh for download instructions					|
+|RefSeq NCBI_tax 	|283MB | 	look at the config.sh for download instructions					|
+|Indexed hg38  		|  20GB | 	look at the bmtagger manual for instructions					|
 
 
 ## USAGE
 
 Once all the dependencies are in place, running metaWRAP is relatively simple. You can chose to run metaWRAP itself, which will run all of the modules, or run individual modules as you wish. 
 
+```
 metaWRAP:
-	Usage: ./metaWRAP [options] -o output_folder raw_readsA_1.fastq raw_readsA_2.fastq
-	Options:
-		-o STR          output directory
-		-t INT          number of threads (default=1)
-		-m INT          memory in GB (default=4)
-		-1 STR		forward read file
-		-2 STR		reverse read file
-
+Usage: ./metaWRAP [options] -o output_folder raw_readsA_1.fastq raw_readsA_2.fastq
+Options:
+	-o STR          output directory
+	-t INT          number of threads (default=1)
+	-m INT          memory in GB (default=4)
+	-1 STR		forward read file
+	-2 STR		reverse read file
+```
 
 
 Here are examples of running metaWRAP and its sub-modules:
-
+```bash
 ./metaWRAP –t 24 –m 120 -o metawrap_out -1 sample_1.fastq -2 sample_2.fastq 
-
 ./read_qc.sh –t 100 -1 reads_1.fastq -2 reads_2.fastq -o output_dir
-
 ./assembly.sh [options] -1 reads_1.fastq -2 reads_2.fastq -o assembly_dir -t 120 -m 800
-
 ./blobology.sh –t 10-m 20 -a final_assembly.fasta-1 reads_1.fastq -2 reads_2.fastq –o blobology_out
-
 ./binning.sh –t 48 –m 100 -a assembly.fa –o binning_out sampleA_1.fastq sampleA_2.fastq sampleX_1.fastq sampleX_2.fastq
-
 ./kraken.sh –t 24 –o kraken_out assembly.fasta reads_1.fastq reads_2.fastq
-
+```
 
 
 ###  System requirements
