@@ -17,32 +17,43 @@
 
 
 help_message () {
-	echo "Usage: ./binning.sh [options] -a assembly.fa -o output_dir readsA_1.fastq readsA_2.fastq ... [readsX_1.fastq readsX_2.fastq]"
+	echo ""
+	echo "Usage: metaWRAP binning [options] -a assembly.fa -o output_dir readsA_1.fastq readsA_2.fastq ... [readsX_1.fastq readsX_2.fastq]"
 	echo "Options:"
 	echo ""
-	echo "	-a STR          metagenomic assembly"
+	echo "	-a STR          metagenomic assembly file"
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
 	echo "	-m INT          memory in GB (default=4)"
+	echo ""
+	echo "	--skip-reassembly	dont reassemble (saves a lot of time)"
+	echo "	--skip-checkm		dont run CheckM to assess bins"
+	echo "	--checkm-good-bins	re-run CheckM on only good bins (completion>20% and contamination<10%) [Note: pre-reassembly]"
+        echo "	--checkm-best-bins      re-run CheckM on the best ressembled version of each bin (good bins only) [Note: post-reassembly]"
 	echo "";}
-# function to print out error messages
-error () {
-	echo ""; echo "************************************************************************************************************************"
-	echo "*****************************************            ERROR!           **************************************************"
-	echo $1
-	echo "************************************************************************************************************************"; echo ""; exit 1; }
-# function to print out warning messages
-warning () {
-	echo ""; echo  "************************************************************************************************************************"
-	echo "*****************************************           WARNING!          **************************************************"
-	echo $1
-	echo "************************************************************************************************************************"; echo ""; }
-# funciton to print out comments throught the pipeline
-comm () {
-	echo ""; echo "----------------------------------------------------------------------------------------------"
-	echo $1
-	echo "----------------------------------------------------------------------------------------------"; echo ""; }
 
+comm () { ${SOFT}/print_comment.py "$1" "-"; }
+error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
+warning () { ${SOFT}/print_comment.py "$1" "*"; }
+announcement () { ${SOFT}/print_comment.py "$1" "#"; }
+
+
+# runs CheckM mini-pipeline on a single folder of bins
+run_checkm () {
+	if [[ -d ${1}.checkm ]]; then rm -r ${1}.checkm; fi
+        comm "Running CheckM on $1 bins"
+        checkm lineage_wf -x fa $1 ${1}.checkm -t $threads
+        if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+        comm "Making CheckM plot of $1 bins"
+        checkm bin_qa_plot -x fa ${1}.checkm $1 ${1}.plot
+        if [[ ! -s ${1}.plot/bin_qa_plot.png ]]; then error "Something went wrong with making the CheckM plot. Exiting."; fi
+
+        comm "Finalizing CheckM stats and plots..."
+        ${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv > ${1}.stats
+        mv ${1}.plot/bin_qa_plot.png ${1}.png
+        rm -r ${1}.plot
+        mv ${1}.checkm ${1%/*}/work_files
+}
 
 
 ########################################################################################################
@@ -51,21 +62,34 @@ comm () {
 
 
 # setting scripts and databases from config file (should be in same folder as main script)
-source ${0%/*}/config.sh
+source config-metawrap
 
-threads=1; mem=4; out="false"; ASSEMBLY="false"; 
-# Load in options
-while getopts ht:m:o:a: option; do
-	case "${option}" in
-		h) help_message; exit 1;;
-		t) threads=${OPTARG};;
-		m) mem=${OPTARG};;
-		o) out=${OPTARG};;
-		a) ASSEMBLY=$OPTARG;;
-	esac
+# default params
+threads=1; mem=4; out="false"; ASSEMBLY="false";
+# long options defaults
+reassemble=true; run_checkm=true; rerun_checkm_on_good_bins=false
+
+# load in params
+OPTS=`getopt -o ht:m:o:a: --long help,skip-reassembly,skip-checkm,checkm-good-bins,checkm-best-bins -- "$@"`
+# make sure the params are entered correctly
+if [ $? -ne 0 ]; then help_message; exit 1; fi
+
+# loop through input params
+while true; do
+        case "$1" in
+                -t) threads=$2; shift 2;;
+                -m) mem=$2; shift 2;;
+                -o) out=$2; shift 2;;
+                -a) ASSEMBLY=$2; shift 2;;
+                -h | --help) help_message; exit 1; shift 1;;
+		--skip-reassembly) reassemble=false; shift 1;;
+		--skip-checkm) run_checkm=false; shift 1;;
+		--checkm-good-bins) rerun_checkm_on_good_bins=true; shift 1;;
+                --checkm-best-bins) rerun_checkm_on_best_bins=true; shift 1;;
+                --) help_message; exit 1; shift; break ;;
+                *) break;;
+        esac
 done
-
-
 
 
 ########################################################################################################
@@ -73,7 +97,8 @@ done
 ########################################################################################################
 
 # check if all parameters are entered
-if [ "$out" = "false" ] || [ "$#" -lt 2 ] || [ "$ASSEMBLY" = "false" ] ; then 
+if [ "$out" = "false" ] || [ "$ASSEMBLY" = "false" ] ; then 
+	comm "Non-optional parameters -a and/or -o were not entered"
 	help_message; exit 1
 fi
 
@@ -112,13 +137,10 @@ fi
 ########################################################################################################
 
 
-
-
-echo " "
-echo "########################################################################################################"
-echo "########################         ALIGNING READS TO MAKE COVERAGE FILES          ########################"
-echo "########################################################################################################"
-echo " "
+########################################################################################################
+########################         ALIGNING READS TO MAKE COVERAGE FILES          ########################
+########################################################################################################
+announcement "ALIGNING READS TO MAKE COVERAGE FILES"
 
 # setting up the output folder
 mkdir $out ${out}/work_files ${out}/work_files/alignments
@@ -135,7 +157,7 @@ bwa index ${out}/work_files/alignments/assembly.fa
 if [[ ! -s ${out}/work_files/alignments/assembly.fa.amb ]] ; then error "Something went wrong with indexing the assembly.\
  ${out}/alignments/assembly.fa.amb does not exits! Exiting."; fi
 
-
+echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
 # If there are several pairs of reads passed, they are processed sepperately
 for num in "$@"; do
 	if [[ $num == *"_1.fastq"* ]]; then 
@@ -147,18 +169,23 @@ for num in "$@"; do
 		sample=${tmp%_*}
 
 		comm "Aligning $reads_1 and $reads_2 back to assembly"
-		bwa mem -t $threads ${out}/work_files/alignments/assembly.fa $reads_1 $reads_2 | samtools view -bS\
-		 | samtools sort -O BAM --threads $threads -o ${out}/work_files/alignments/${sample}.bam -
+		bwa mem -t $threads ${out}/work_files/alignments/assembly.fa $reads_1 $reads_2 | samtools view -bS - \
+		 | samtools sort -T tmp-samtools -@ $threads -O bam -o ${out}/work_files/alignments/${sample}.bam -
 		if [[ ! -s ${out}/work_files/alignments/${sample}.bam ]]; then error "Something went wrong with aligning reads to contigs. Exiting."; fi
+		
+		comm "Saving paired read insert length average and stdev for sample $sample in ${out}/insert_sizes.txt"
+		echo -n -e "${sample}\t" >> ${out}/insert_sizes.txt
+		samtools view ${out}/work_files/alignments/${sample}.bam | head -n 10000 |\
+		 awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
+		 >> ${out}/insert_sizes.txt
 	fi
 done
 
 
-echo " "
-echo "########################################################################################################"
-echo "########################                   RUNNING METABAT2                     ########################"
-echo "########################################################################################################"
-echo " "
+########################################################################################################
+########################                   RUNNING METABAT2                     ########################
+########################################################################################################
+announcement "RUNNING METABAT2"
 
 jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/depth.txt ${out}/work_files/alignments/*.bam
 metabat2 -i ${out}/work_files/alignments/assembly.fa -a ${out}/work_files/depth.txt\
@@ -167,83 +194,55 @@ metabat2 -i ${out}/work_files/alignments/assembly.fa -a ${out}/work_files/depth.
 if [[ ! -s ${out}/metabat2_bins/bin.unbinned.fa ]]; then error "Something went wrong with running MetaBAT. Exiting"; fi
 
 
+if [ "$run_checkm" = true ]; then
+	########################################################################################################
+	########################              RUN CHECKM ON ORIGINAL BINS               ########################
+	########################################################################################################
+	announcement "RUN CHECKM ON ORIGINAL BINS"
 
-echo " "
-echo "########################################################################################################"
-echo "########################             RUNNING KRAKEN ON ORIGINAL BINS            ########################"
-echo "########################################################################################################"
-echo " "
+	comm "Running CheckM on original metaBAT2 bins"
+	run_checkm ${out}/metabat2_bins
+	num=$(cat ${out}/metabat2_bins.stats | awk '{if ($2>=20 && $2<=100 && $3>=0 && $3<=10) print $1 }' | wc -l)
 
-if False; then
-
-mkdir ${out}/kraken
-for bin in ${out}/metabat2_bins/*.fa; do
-        base_name=${bin##*/}
-	comm "Running kraken on $base_name"
-        kraken --db ${KRAKEN_DB} --fasta-input --threads $threads\
-         --output ${out}/kraken/${base_name%.*}.krak $bin
-        if [[ ! -s ${out}/kraken/${base_name%.*}.krak ]] ; then error "Something went wrong with running kraken on $bin ..."; fi
-
-        kraken-translate --db ${KRAKEN_DB} ${out}/kraken/${base_name%.*}.krak > ${out}/kraken/${base_name%.*}.kraken
-        if [[ ! -s ${out}/kraken/${base_name%.*}.kraken ]] ; then error "Something went wrong with running kraken-translate on $bin"; fi
-        rm ${out}/kraken/${base_name%.*}.krak
-done
-
+	if [ $num -lt 1 ]; then
+		comm "There were no 'good' bins detected (>20% completion, <10% contamination)"
+ 	else
+		comm "There are $num 'good' bins found! (>20% completion and <10% contamination) Saving into ${out}/good_bins"
+		#find good bins and save them into a seperate folder (completion>20% and contamination<10%)
+		mkdir ${out}/good_bins
+		for i in $(cat ${out}/metabat2_bins.stats | awk '{if ($2>=20 && $2<=100 && $3>=0 && $3<=10) print $1 }'); do
+			cp ${out}/metabat2_bins/${i}.fa ${out}/good_bins
+		done
+	fi
 
 
-
-
-
-echo " "
-echo "########################################################################################################"
-echo "########################            MAKING KRONAGRAM OF ALL FILES               ########################"
-echo "########################################################################################################"
-echo " "
-
-for file in ${out}/kraken/*.kraken; do
-        ${SOFT}/scripts/kraken_to_krona.py $file > ${file%.*}.krona
-	if [[ ! -s ${file%.*}.krona ]]; then error "Something went wrong with making krona file from kraken file $file ..."; fi
-done
-
-ktImportText -o ${out}/kraken/${out%.*}_kraken.html ${out}/kraken/*krona
-
-
+	# re-run CheckM on only the good bins (makes a more appealing figure...)
+	if [ "$rerun_checkm_on_good_bins" = true ]; then
+		#check number of good bins
+		if [ $num -lt 1 ]; then
+			comm "Cant run CheckM on good bins - there were no 'good' bins detected (>20% completion, <10% contamination)"
+		else
+			comm "Re-running CheckM on only good bins for that nice figure..."
+			run_checkm ${out}/good_bins	
+		fi
+	fi
 fi
 
 
-if false; then
-
-echo " "
-echo "########################################################################################################"
-echo "########################             RUN CHECKM ON RESULTING BINS               ########################"
-echo "########################################################################################################"
-echo " "
-
-if [[ -d ${out}/metabat2_bins.checkm ]]; then rm -r ${out}/metabat2_bins.checkm; fi
-
-comm "Running CheckM on original metaBAT2 bins"
-checkm lineage_wf -x fa ${out}/metabat2_bins ${out}/metabat2_bins.checkm -t $threads
-if [[ ! -s ${out}/metabat2_bins.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
-comm "Making CheckM plot of original metaBAT bins"
-checkm bin_qa_plot -x fa ${out}/metabat2_bins.checkm ${out}/metabat2_bins ${out}/metabat2_bins.plot
-if [[ ! -s ${out}/metabat2_bins.plot/bin_qa_plot.png ]]; then error "Something went wrong with making the CheckM plot. Exiting."; fi
-
-
-comm "Finalizing..."
-${SOFT}/summarize_checkm.py ${out}/metabat2_bins.checkm/storage/bin_stats_ext.tsv > ${out}/metabat2_bins.stats
-mv ${out}/metabat2_bins.plot/bin_qa_plot.png ${out}/metabat2_bins.png
-rm -r ${out}/metabat2_bins.plot
-mv ${out}/metabat2_bins.checkm ${out}/work_files
-
-
+if [ "$reassemble" = false ]; then
+	########################################################################################################
+	########################      BINNING PIPELINE FINISHED (NO REASSEMBLY)         ########################
+	########################################################################################################
+	announcement "BINNING PIPELINE FINISHED (NO REASSEMBLY)"
+	exit 1
 fi
 
 
-echo " "
-echo "########################################################################################################"
-echo "########################        RECRUITING READS TO BINS FOR REASSEMBLY         ########################"
-echo "########################################################################################################"
-echo " "
+
+########################################################################################################
+########################        RECRUITING READS TO BINS FOR REASSEMBLY         ########################
+########################################################################################################
+announcement "RECRUITING READS TO BINS FOR REASSEMBLY"
 
 mkdir ${out}/work_files/reassembly
 
@@ -326,11 +325,10 @@ done
 
 
 
-echo " "
-echo "########################################################################################################"
-echo "########################             REASSEMBLING BINS WITH SPADES              ########################"
-echo "########################################################################################################"
-echo " "
+########################################################################################################
+########################             REASSEMBLING BINS WITH SPADES              ########################
+########################################################################################################
+announcement "REASSEMBLING BINS WITH SPADES"
 
 mkdir ${out}/work_files/reassembly/reassemblies
 mkdir ${out}/reassembled_bins
@@ -366,7 +364,6 @@ for bin in ${out}/work_files/reassembly/reads/*_1.strict.fastq; do
 	
 done
 
-
 # removing short contigs and placing reassemblies in the final folder
 comm "Finalizing reassemblies"
 for spades_folder in ${out}/work_files/reassembly/reassemblies/*; do
@@ -377,48 +374,63 @@ for spades_folder in ${out}/work_files/reassembly/reassemblies/*; do
 	 ${out}/work_files/reassembly/reassemblies/${bin_name}/scaffolds.fasta\
 	 > ${out}/work_files/reassembly/reassemblies/${bin_name}/long_scaffolds.fasta
 	
-	cp ${out}/work_files/reassembly/reassemblies/${bin_name}/long_scaffolds.fasta\
-	 ${out}/reassembled_bins/${bin_name}.fa
+	if [ -s ${out}/work_files/reassembly/reassemblies/${bin_name}/long_scaffolds.fasta ]; then	
+		cp ${out}/work_files/reassembly/reassemblies/${bin_name}/long_scaffolds.fasta\
+		 ${out}/reassembled_bins/${bin_name}.fa
+	fi
 done
 
 if [[ ! -s ${out}/reassembled_bins/bin.unbinned.permissive.fa ]]; then
 	error "Something went wrong with processing the reassembled bins and placing them into the reassembled_bins folder. Exiting." 
 fi
 
+#REMOVING INTERMEDIATE FILES
+comm "Removing intermediate files...."
+mv ${out}/work_files/reassembly/reassemblies ${out}/work_files/
+rm -r ${out}/work_files/reassembly
 
 
+if [ "$run_checkm" = true ]; then
+	########################################################################################################
+	########################             RUN CHECKM ON REASSEMBLED BINS             ########################
+	########################################################################################################
+	announcement "RUN CHECKM ON REASSEMBLED BINS"
+
+	# copy over original bins
+	for i in ${out}/metabat2_bins/*.fa; do base=${i##*/}; cp $i ${out}/reassembled_bins/${base%.*}.orig.fa; done
+
+	comm "Running CheckM on reassembled metaBAT bins"
+	run_checkm ${out}/reassembled_bins
 
 
+	########################################################################################################
+        ########################          FINDING THE BEST VERSION OF EACH BIN          ########################
+	########################################################################################################
+	announcement "FINDING THE BEST VERSION OF EACH BIN"
 
-echo " "
-echo "########################################################################################################"
-echo "########################             RUN CHECKM ON REASSEMBLED BINS             ########################"
-echo "########################################################################################################"
-echo " "
+	cat ${out}/reassembled_bins.stats
+	echo ""
 
-rm -r ${out}/metabat2_bins.checkm ${out}/reassembled_bins.checkm
-
-comm "Running CheckM on reassembled metaBAT bins"
-checkm lineage_wf -x fa ${out}/reassembled_bins ${out}/reassembled_bins.checkm -t $threads
-if [[ ! -s ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
-comm "Making CheckM plot of reassembled metaBAT bins"
-checkm bin_qa_plot -x fa ${out}/reassembled_bins.checkm ${out}/reassembled_bins ${out}/reassembled_bins.plot
-if [[ ! -s ${out}/reassembled_bins.plot/bin_qa_plot.png ]]; then error "Something went wrong with making the CheckM plot. Exiting."; fi
-
-
-
-comm "Finalizing CheckM stats and plots..."
-${SOFT}/scripts/summarize_checkm.py ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv > ${out}/reassembled_bins.stats
-mv ${out}/reassembled_bins.plot/bin_qa_plot.png ${out}/reassembled_bins.png
-rm -r ${out}/reassembled_bins.plot ${out}/metabat2_bins.plot
-mv ${out}/reassembled_bins.checkm ${out}/work_files
-
-echo " "
-echo "########################################################################################################"
-echo "########################      BINNING PIPELINE SUCCESSFULLY FINISHED!!!         ########################"
-echo "########################################################################################################"
-echo " "
+	mkdir ${out}/reassembled_best_bins
+	for i in $(${SOFT}/choose_best_bin.py ${out}/reassembled_bins.stats); do 
+		echo "Copying best bin: $i"
+		cp ${out}/reassembled_bins/${i}.fa ${out}/reassembled_best_bins; done
+	
+	if [ "$rerun_checkm_on_best_bins" = true ]; then
+		num=$(ls -l ${out}/reassembled_best_bins | grep .fa | wc -l)
+		if [ $num -lt 1 ]; then
+			rm -r ${out}/reassembled_best_bins
+			warning "There are no 'good' bins priduces. Nothing to run CheckM on..."
+		else
+			comm "$num good bins found! Re-running CheckM on the best reasembled bins."
+			run_checkm ${out}/reassembled_best_bins
+		fi
+	fi
+fi
 
 
-
+########################################################################################################
+########################      BINNING PIPELINE SUCCESSFULLY FINISHED!!!         ########################
+########################################################################################################
+announcement "BINNING PIPELINE SUCCESSFULLY FINISHED!!!"
 

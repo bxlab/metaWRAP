@@ -1,0 +1,38 @@
+metaWRAP v=0.2
+General:
+	Added compatibility with long input parameters (eg. --options asdf) with getopt instead of getopts
+	Chenged instalation style of metaWRAP so that the contents of bin needs to be added to PATH to run. The user still needs to edit the config file first
+	Changed name of contig.sh to config-metawrap so be more distinguishable in PATH
+	All modules are now called through the master "metaWRAP" script (including the ALL module)
+	Changed heirarchy of pipeline scripts. Now they are hidden away in a "pipelines" folder, and only metaWRAP is visible
+	Changed the commenting system to be done through a python script that writes out pretty comments
+	New module: Phylosift. Currently all it does is randomly subsamples reads and runs Phylosift on them
+
+ReadQC module:
+	Added --skip-bmtagger option (reduces runtime signifficantly)
+	Added --skip-trimming option
+	Added --skip-pre-qc-report option
+	Added --skip-post-qc-report option
+
+Assembly module:
+	Added --only-metaspades option (for those who dont like the idea of double assembly)
+	Added --only-megahit option (signifficantly reduces resourse requirements and time)
+
+Binning module:
+	Added --skip-checkm option (reduces runtime)
+	New feature where bins that are >20% completion and <10% contamination are placed into a new folder - "good bins"
+	Added --checkm-good-bins option, to allow making a checkm figure for only good bins (makes a prettier figure)
+	Added --skip-reassembly option (reduces runtime signifficantly)
+	New feature where after reassembly the best variant of each bin (original, strict, or permissive reassemblies) is placed into a new folder - "best bins"
+	Added --checkm-best-bins option, to allow re-making the checkm figure on only the best versions of each bin
+	Removed KRAKEN from the binning module. KRAKEN now has to be run seperately on the output bins
+	Not also returns the average and stdev of insert lengths for each sample - useful for library assessment
+
+Blobology module:
+	Added --bins option, which allows to annotate the blobplot with bins from a binning folder
+
+ALL module:
+	Major bug fixes and improvements
+	Added a Phylosift and Kraken on bins steps to pipeline
+	All output figures and reports are now saved to "metaWRAP_figures" folder at the end of the pipeline
+	Added --fast option, which skips some non-essential and computationally expensive parts of the pipeline

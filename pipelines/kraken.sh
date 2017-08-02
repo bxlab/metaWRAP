@@ -15,33 +15,20 @@
 
 
 help_message () {
-	echo "Usage: run on any number of fasta assembly files and/or or paired-end reads."
-	echo "./kraken.sh [options] -o output_dir assembly.fasta reads_1.fastq reads_2.fastq ..."
+	echo ""
+	echo "Run on any number of fasta assembly files and/or or paired-end reads."
+	echo "Usage: metaWRAP kraken [options] -o output_dir assembly.fasta reads_1.fastq reads_2.fastq ..."
 	echo "Options:"
 	echo "" 
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads"
-	echo "	-d INT		read sampling depth (default=all)"
+	echo "	-s INT		read subsampling number (default=all)"
 	echo "";}
 
-# function to print out error messages
-error () {
-	echo "************************************************************************************************************************"
-	echo "*****************************************            ERROR!           **************************************************"
-	echo " "; echo $1; echo " "
-	echo "************************************************************************************************************************"; exit 1; }
-# function to print out warning messages
-warning () {
-	echo "************************************************************************************************************************"
-	echo "*****************************************           WARNING!          **************************************************"
-	echo " "; echo $1; echo " "
-	echo "************************************************************************************************************************";}
-# funciton to print out comments throught the pipeline
-comm () {
-	echo ""; echo "----------------------------------------------------------------------------------------------"
-	echo $1
-	echo "----------------------------------------------------------------------------------------------"; echo ""; }
-
+comm () { ${SOFT}/print_comment.py "$1" "-"; }
+error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
+warning () { ${SOFT}/print_comment.py "$1" "*"; }
+announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 
 
 ########################################################################################################
@@ -50,18 +37,17 @@ comm () {
 
 
 # setting scripts and databases from config file (should be in same folder as main script)
-source ${0%/*}/config.sh
-
+source config-metawrap
 
 # Set defaults
 threads=1; out="false"; depth="all"
 # Load in options
-while getopts ht:o:d: option; do
+while getopts ht:o:s: option; do
 	case "${option}" in
 		h) help_message; exit 1;;
 		t) threads=${OPTARG};;
 		o) out=${OPTARG};;
-		d) depth=${OPTARG};;
+		s) depth=${OPTARG};;
 	esac
 done
 
@@ -91,12 +77,10 @@ fi
 
 
 
-
-echo " "
-echo "########################################################################################################"
-echo "########################              RUNNING KRAKEN ON ALL FILES               ########################"
-echo "########################################################################################################"
-echo " "
+########################################################################################################
+########################              RUNNING KRAKEN ON ALL FILES               ########################
+########################################################################################################
+announcement "RUNNING KRAKEN ON ALL FILES"
 
 # setting up the output folder
 mkdir $out
@@ -115,13 +99,14 @@ for num in "$@"; do
 
 		# if sampling depth is specified, randomly subsample the fastq reads
 		if [ ! "$depth" = "all" ]; then
-			comm "subsampling $depth reads" 
+			comm "subsampling down to $depth reads..." 
 			paste $reads_1 $reads_2 | \
 			 awk '{ printf("%s",$0); n++; if(n%4==0) { printf("\n");} else { printf("\t\t");} }' | `#combine paired end reads onto one line` \
 			 shuf | head -n $depth | sed 's/\t\t/\n/g' | `#shuffle reads, select top N reads, and then restore tabulation` \
 			 awk '{print $1 > "'"${out}/tmp_1.fastq"'"; print $2 > "'"${out}/tmp_2.fastq"'"}' `#separate reads into F and R files`
 			reads_1=${out}/tmp_1.fastq
 			reads_2=${out}/tmp_2.fastq
+			comm "Subsampling done. Starting KRAKEN..."
 		fi
 
 		#run kraken	
@@ -148,11 +133,10 @@ if [[ ! -s ${out}/${sample}.krak ]] ; then error "Something went wrong with runn
 
 
 
-echo " "
-echo "########################################################################################################"
-echo "########################          RUNNING KRAKEN-TRANSLATE ON OUTPUT            ########################"
-echo "########################################################################################################"
-echo " "
+########################################################################################################
+########################          RUNNING KRAKEN-TRANSLATE ON OUTPUT            ########################
+########################################################################################################
+announcement "RUNNING KRAKEN-TRANSLATE ON OUTPUT"
 
 for file in ${out}/*.krak; do
 	kraken-translate --db ${KRAKEN_DB} $file > ${file}en
@@ -162,11 +146,11 @@ done
 
 
 
-echo " "
-echo "########################################################################################################"
-echo "########################            MAKING KRONAGRAM OF ALL FILES               ########################"
-echo "########################################################################################################"
-echo " "
+
+########################################################################################################
+########################            MAKING KRONAGRAM OF ALL FILES               ########################
+########################################################################################################
+announcement "MAKING KRONAGRAM OF ALL FILES"
 
 #use custom script to summarize kraken file to krona format
 for file in ${out}/*.kraken; do
@@ -179,15 +163,8 @@ ktImportText -o ${out}/kronagram.html ${out}/*krona
 if [[ ! -s ${out}/kronagram.html ]]; then error "Something went wrong with running KronaTools to make kronagram. Exiting..."; fi
 
 
-
-echo " "
-echo "########################################################################################################"
-echo "########################         FINISHED RUNNING KRAKEN PIPELINE!!!            ########################"
-echo "########################################################################################################"
-echo " "
-
-
-
-
-
+########################################################################################################
+########################         FINISHED RUNNING KRAKEN PIPELINE!!!            ########################
+########################################################################################################
+announcement "FINISHED RUNNING KRAKEN PIPELINE!!!"
 

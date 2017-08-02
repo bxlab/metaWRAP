@@ -19,4 +19,8 @@ BLASTDB=/home-2/guritsk1@jhu.edu/scratch/RefSeq/NCBI_nt
 TAXDUMP=/home-2/guritsk1@jhu.edu/scratch/RefSeq/NCBI_tax
 
 # path to the custon scripts of metaWRAP
-SOFT=/home-2/guritsk1@jhu.edu/scratch/metaWRAP_v0.1/meta-scripts
+SOFT=/home-2/guritsk1@jhu.edu/scratch/metaWRAP_v0.2/scripts
+
+# path to metaWRAP pipelines
+PIPES=/home-2/guritsk1@jhu.edu/scratch/metaWRAP_v0.2/pipelines
+
