@@ -20,7 +20,9 @@
     4) Taxonomic profiling
     
     5) Visualization with Blobplots
-    
+  
+  
+## OVERVIEW OF METAWRAP MODULES: 
     
   ![General walkthrough of metaWRAP modules](https://i.imgur.com/s9yAuQa.png)
    
