@@ -1,4 +1,4 @@
-# Introducing metaWRAP v0.3 - Comprehensive Metagenome Analysis and Binning
+# metaWRAP v0.3 - Comprehensive Metagenome Analysis and Binning
 
 
  metaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each idividual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
