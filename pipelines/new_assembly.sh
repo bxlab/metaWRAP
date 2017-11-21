@@ -3,9 +3,9 @@
 ##############################################################################################################################################################
 #
 # This script is meant to be a comprehensive solution for producing the best metagenomic assembly given paired end reads from one or more samples.
-# Ideally it should take in fully QC'd reads. First, the reads are assembled with metaSPAdes3.10, then all the reads that did not map back to the
-# contigs are re-assembled with MEGAHIT (which works better on lower coverage contigs. The resulting assemblies are combined, sorted, and short 
-# contigs are removed. The finall assembly is then QCed by QUAST.
+# Ideally it should take in fully QC'd reads. Due to its speed and efficiency, the default assembly will be done with Megahit, but if you have 
+# sufficient resources (especially RAM) you may use metaSPAdes, which usually performs better. Short (<500bp) contigs are removed. The finall 
+# assembly is then QCed by QUAST.
 #
 # Author of pipeline: German Uritskiy. I do not have any authorship of the many programs this pipeline uses.
 # For questions, bugs, and suggestions, contact me at guritsk1@jhu.edu.
@@ -25,8 +25,7 @@ help_message () {
 	echo "	-m INT          memory in GB (default=10)"
 	echo "	-t INT          number of threads (defualt=1)"
 	echo ""
-	echo "	--use-megahit		assemble with megahit (default)"
-	echo "	--use-metaspades	assemble with metaspades instead of megahit (better results, but slower and required a lot of RAM)"
+	echo "	--metaspades	assemble with metaspades instead of megahit"
 	echo "";}
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
 error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
@@ -46,11 +45,11 @@ source config-metawrap
 # default params
 mem=10; threads=1; out="false"; reads_1="false"; reads_2="false"
 # long options defaults
-metaspades_assemble=false; megahit_assemble=true
+metaspades_assemble=false
 
 
 # load in params
-OPTS=`getopt -o ht:m:o:1:2: --long help,use-metaspades,use-megahit -- "$@"`
+OPTS=`getopt -o ht:m:o:1:2: --long help,metaspades -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -63,8 +62,7 @@ while true; do
 		-1) reads_1=$2; shift 2;;
 		-2) reads_2=$2; shift 2;;
 		-h | --help) help_message; exit 1; shift 1;;
-		--use-megahit) megahit_assemble=true; metaspades_assemble=false; shift 1;;
-		--use-metaspades) megahit_assemble=false; metaspades_assemble=true; shift 1;;
+		--metaspades) metaspades_assemble=true; shift 1;;
 		--) help_message; exit 1; shift; break ;;
 		*) break;;
 	esac
@@ -105,46 +103,17 @@ if [ "$metaspades_assemble" = true ]; then
 	metaspades.py --tmp-dir ${out}/metaspades.tmp -t $threads -m $mem -o ${out}/metaspades -1 $reads_1 -2 $reads_2 
 	rm -r ${out}/metaspades.tmp
 	if [ ! -f "${out}/metaspades/scaffolds.fasta" ]; then error "Something went wrong with metaSPAdes assembly. Exiting."; fi
-fi
 
+else
 
-if [ "$megahit_assemble" = true ] && [ "$metaspades_assemble" = true ]; then
 	########################################################################################################
-	########################              SORTING OUT UNASSEMBLED READS             ########################
-	########################################################################################################
-        announcement "SORTING OUT UNASSEMBLED READS"
-
-	#take only the scaffolds over 1.5kb (the minimum needed for binning with metaBAT):
-	${SOFT}/rm_short_contigs.py 1500 ${out}/metaspades/scaffolds.fasta > ${out}/metaspades/long_scaffolds.fasta
-	if [ ! -s ${out}/metaspades/long_scaffolds.fasta ]; then
-		error "metaSPAdes produced no contigs over 1.5kb, so the rest of the pipeline wont work. Exiting."; fi
-
-
-	bwa index ${out}/metaspades/long_scaffolds.fasta
-	
-	#sort out and store reads that dont map back to the assembly:
-	bwa mem -t $threads ${out}/metaspades/long_scaffolds.fasta $reads_1 $reads_2 | grep -v NM:i: > ${out}/unused_by_metaspades.sam
-	${SOFT}/sam_to_fastq.py ${out}/unused_by_metaspades.sam > ${out}/unused_by_metaspades.fastq
-	rm ${out}/unused_by_metaspades.sam
-	
-	if [[ ! -s ${out}/unused_by_metaspades.fastq ]]; then error "Something went wrong with pulling out unassembled reads. Exiting."; fi
-fi
-
-if [ "$megahit_assemble" = true ]; then
-	########################################################################################################
-	########################        ASSEMBLING REMAINDER READS WITH MEGAHIT         ########################
+	########################                ASSEMBLING WITH MEGAHIT                 ########################
 	########################################################################################################
         announcement "ASSEMBLING READS WITH MEGAHIT"
 	
 	rm -r ${out}/megahit
-	if [ "$metaspades_assemble" = true ]; then
-		comm "assembling ${out}/unused_by_metaspades.fastq with megahit"
-		megahit -r ${out}/unused_by_metaspades.fastq -o ${out}/megahit -t $threads -m ${mem}000000000
-		mv ${out}/unused_by_metaspades.fastq ${out}/metaspades/
-	else
-		comm "assembling $reads_1 and $reads_2 with megahit"
-		megahit -1 $reads_1 -2 $reads_2 -o ${out}/megahit -t $threads -m ${mem}000000000
-	fi
+	comm "assembling $reads_1 and $reads_2 with megahit"
+	megahit -1 $reads_1 -2 $reads_2 -o ${out}/megahit -t $threads -m ${mem}000000000
 
 	if [ ! -f "${out}/megahit/final.contigs.fa" ]; then error "Something went wrong with reassembling with Megahit. Exiting."; fi
 
@@ -153,25 +122,16 @@ fi
 ########################################################################################################
 ########################         COMBINE AND FORMAT THE TWO ASSEMBLIES          ########################
 ########################################################################################################
-announcement "FORMAT THE ASSEMBLY"
+announcement "COMBINE AND FORMAT THE TWO ASSEMBLIES"
 
-if [ "$megahit_assemble" = true ] && [ "$metaspades_assemble" = true ]; then
-	comm "Reads were assembled with metaspades AND megahit"
-	${SOFT}/fix_megahit_contig_naming.py ${out}/megahit/final.contigs.fa > ${out}/megahit/fixed.contigs.fa
-	${SOFT}/rm_short_contigs.py 1000 ${out}/megahit/fixed.contigs.fa > ${out}/megahit/long.contigs.fa
-	
-	cp ${out}/metaspades/long_scaffolds.fasta ${out}/combined_assembly.fasta
-	cat ${out}/megahit/long.contigs.fa >> ${out}/combined_assembly.fasta
-	${SOFT}/sort_contigs.py ${out}/combined_assembly.fasta > ${out}/final_assembly.fasta
-	rm ${out}/combined_assembly.fasta
-elif [ "$metaspades_assemble" = true ]; then
+if [ "$metaspades_assemble" = true ]; then
 	comm "Reads were assembled with metaspades only"
-	${SOFT}/rm_short_contigs.py 1000 ${out}/metaspades/scaffolds.fasta > ${out}/final_assembly.fasta
+	${SOFT}/rm_short_contigs.py 500 ${out}/metaspades/scaffolds.fasta > ${out}/final_assembly.fasta
 	if [ ! -s ${out}/final_assembly.fasta ]; then error "metaspades failed to produce long contigs (>500bp). Exiting."; fi
-elif [ "$megahit_assemble" = true ]; then 
+elif [ "$metaspades_assemble" = false ]; then 
 	comm "Reads were assembled with megahit only"
 	${SOFT}/fix_megahit_contig_naming.py ${out}/megahit/final.contigs.fa > ${out}/megahit/fixed.contigs.fa
-	${SOFT}/rm_short_contigs.py 1000 ${out}/megahit/fixed.contigs.fa > ${out}/megahit/long.contigs.fa
+	${SOFT}/rm_short_contigs.py 500 ${out}/megahit/fixed.contigs.fa > ${out}/megahit/long.contigs.fa
 	if [ ! -s ${out}/megahit/long.contigs.fa ]; then error "megahit failed to produce long (>500bp) contigs. Exiting."; fi
 	${SOFT}/sort_contigs.py ${out}/megahit/long.contigs.fa > ${out}/final_assembly.fasta
 else

@@ -4,7 +4,9 @@ import sys
 # the checkm_folder/storage/bin_stats_ext.tsv file of the CheckM output
 
 
-print "bin\tcompleteness\tcontamination\tGC\tlineage\tN50\tsize"
+print "bin\tcompleteness\tcontamination\tGC\tlineage\tN50\tsize\tbinner"
+if len(sys.argv)>2: binner=sys.argv[2]
+else: binner="NA"
 for line in open(sys.argv[1]):
 	dic=eval(line.strip().split("\t")[1])
 
@@ -17,4 +19,4 @@ for line in open(sys.argv[1]):
 	print "\t".join([name, str(dic["Completeness"])[:5],\
 	 str(dic["Contamination"])[:5], str(dic["GC"])[:5],\
 	 dic["marker lineage"], str(dic["N50 (contigs)"]),\
-	 str(dic["Genome size"])])
+	 str(dic["Genome size"]), binner])

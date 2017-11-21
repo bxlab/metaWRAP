@@ -102,12 +102,12 @@ if [ "$fast" = true ]; then
 	cmd="${PIPES}/assembly.sh -t $threads -m $mem\
  	-1 ${out}/read_qc_out/final_pure_reads_1.fastq\
  	-2 ${out}/read_qc_out/final_pure_reads_2.fastq\
- 	-o $out/assembly_out --megahit-only"
+ 	-o $out/assembly_out"
 else
 	cmd="${PIPES}/assembly.sh -t $threads -m $mem\
-	 -1 ${out}/read_qc_out/final_pure_reads_1.fastq\
-	 -2 ${out}/read_qc_out/final_pure_reads_2.fastq\
-	-o $out/assembly_out"
+	-1 ${out}/read_qc_out/final_pure_reads_1.fastq\
+	-2 ${out}/read_qc_out/final_pure_reads_2.fastq\
+	-o $out/assembly_out --metaspades"
 fi
 echo $cmd
 $cmd
@@ -224,6 +224,6 @@ if [ ! "$fast" = true ]; then
 fi
 
 ################################### END OF PIPELINE  #######################################
-announcement "METAWRPA FINISHED SUCCESSFULLY! END OF PIPELINE."
+announcement "METAWRAP FINISHED SUCCESSFULLY! END OF PIPELINE."
 
 

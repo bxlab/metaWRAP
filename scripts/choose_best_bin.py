@@ -14,8 +14,8 @@ for line in open(sys.argv[1]):
 	if "contamination" in line: continue
 	cut=line.strip().split("\t")
 
-	# dont consider bins with <20% completiona dn >10% contamination
-	if float(cut[1])<20 or float(cut[2])>10: continue
+	# dont consider bins with < min completion and > max contamination
+	if float(cut[1])<float(sys.argv[2]) or float(cut[2])>float(sys.argv[3]): continue
 
 	bin_name=".".join(cut[0].split(".")[:-1])	
 	style=cut[0].split(".")[-1]

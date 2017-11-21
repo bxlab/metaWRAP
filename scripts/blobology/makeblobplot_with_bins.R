@@ -8,9 +8,9 @@
 #Function to ignore low frequency annotations:
 
 clean.blobs<-function(d,threshold,taxlevel) {
-    annotated<-d[d[,taxlevel]!="Not annotated",]
+    annotated<-d[d[,taxlevel]!="Unbinned",]
     total<-dim(annotated)[1]
-    levels(d[,taxlevel])[which(table(d[,taxlevel])<threshold*total)]<-"Not annotated"
+    levels(d[,taxlevel])[which(table(d[,taxlevel])<threshold*total)]<-"Unbinned"
     return(d)
 }
 
@@ -52,7 +52,7 @@ if (length(levels(m[,taxlevel])) > 14) {
 
 mfilt<-clean.blobs(m,arg_ignore_below_prop,taxlevel)
 taxnames=names(sort(table(mfilt[,taxlevel]),decreasing=TRUE))
-taxnames=c("Not annotated", taxnames[taxnames != "Not annotated"])
+taxnames=c("Unbinned", taxnames[taxnames != "Unbinned"])
 mfilt[,taxlevel] <- factor(mfilt[,taxlevel], levels = taxnames)
 
 png(paste(arg_input_file,taxlevel,"png",sep="."), (numcols * subplotwidth), (1 * subplotheight) + 300, units="px",res=100)

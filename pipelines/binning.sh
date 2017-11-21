@@ -6,9 +6,9 @@
 # Ideally it should take in the assembly file of all of your samples, followed by the reads of all the samples that went into the assembly.
 # The more samples, the better the binning. 
 #
-# The script uses metaBAT to bin the contigs, then uses bwa to recruit reads back to the bins and ressembles them with SPAdes. It then uses KRAKEN 
-# to assign taxonomy to each bin and producing a joint kronagram of all the bins. Finally, it uses CheckM to test the contamination and completion
-# of the bins, and sepperates bins with \>20% completion and \<10% contamintation. 
+# The script uses metaBAT2 and/or CONCOCT and/or MaxBin2 to bin the contigs. MetaBAT2 is the defualt due to its speed and great performance,
+# but all these binners have their advantages and disadvantages, so it recomended to run the bin_refinement module to QC the bins, get the 
+# best bins of all of each method, and to reassembly and refine the final bins. 
 #
 # Author of pipeline: German Uritskiy. I do not clain any authorship of the many programs this pipeline uses.
 # For questions, bugs, and suggestions, contact me at guritsk1@jhu.edu.
@@ -19,17 +19,16 @@
 help_message () {
 	echo ""
 	echo "Usage: metaWRAP binning [options] -a assembly.fa -o output_dir readsA_1.fastq readsA_2.fastq ... [readsX_1.fastq readsX_2.fastq]"
+	echo "Note: you must chose at least one binning method. Or all at once!"
 	echo "Options:"
 	echo ""
 	echo "	-a STR          metagenomic assembly file"
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
-	echo "	-m INT          memory in GB (default=4)"
 	echo ""
-	echo "	--skip-reassembly	dont reassemble (saves a lot of time)"
-	echo "	--skip-checkm		dont run CheckM to assess bins"
-	echo "	--checkm-good-bins	re-run CheckM on only good bins (completion>20% and contamination<10%) [Note: pre-reassembly]"
-        echo "	--checkm-best-bins      re-run CheckM on the best ressembled version of each bin (good bins only) [Note: post-reassembly]"
+        echo "	--metabat2      bin contigs with metaBAT2"
+	echo "	--maxbin2	bin contigs with MaxBin2"
+	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
@@ -37,23 +36,6 @@ error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
 warning () { ${SOFT}/print_comment.py "$1" "*"; }
 announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 
-
-# runs CheckM mini-pipeline on a single folder of bins
-run_checkm () {
-	if [[ -d ${1}.checkm ]]; then rm -r ${1}.checkm; fi
-        comm "Running CheckM on $1 bins"
-        checkm lineage_wf -x fa $1 ${1}.checkm -t $threads
-        if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
-        comm "Making CheckM plot of $1 bins"
-        checkm bin_qa_plot -x fa ${1}.checkm $1 ${1}.plot
-        if [[ ! -s ${1}.plot/bin_qa_plot.png ]]; then error "Something went wrong with making the CheckM plot. Exiting."; fi
-
-        comm "Finalizing CheckM stats and plots..."
-        ${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv > ${1}.stats
-        mv ${1}.plot/bin_qa_plot.png ${1}.png
-        rm -r ${1}.plot
-        mv ${1}.checkm ${1%/*}/work_files
-}
 
 
 ########################################################################################################
@@ -65,12 +47,12 @@ run_checkm () {
 source config-metawrap
 
 # default params
-threads=1; mem=4; out="false"; ASSEMBLY="false";
+threads=1; out=false; ASSEMBLY=false
 # long options defaults
-reassemble=true; run_checkm=true; rerun_checkm_on_good_bins=false
+metabat2=false; maxbin2=false; concoct=false
 
 # load in params
-OPTS=`getopt -o ht:m:o:a: --long help,skip-reassembly,skip-checkm,checkm-good-bins,checkm-best-bins -- "$@"`
+OPTS=`getopt -o ht:o:a: --long help,metabat2,maxbin2,concoct -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -78,14 +60,12 @@ if [ $? -ne 0 ]; then help_message; exit 1; fi
 while true; do
         case "$1" in
                 -t) threads=$2; shift 2;;
-                -m) mem=$2; shift 2;;
                 -o) out=$2; shift 2;;
                 -a) ASSEMBLY=$2; shift 2;;
                 -h | --help) help_message; exit 1; shift 1;;
-		--skip-reassembly) reassemble=false; shift 1;;
-		--skip-checkm) run_checkm=false; shift 1;;
-		--checkm-good-bins) rerun_checkm_on_good_bins=true; shift 1;;
-                --checkm-best-bins) rerun_checkm_on_best_bins=true; shift 1;;
+		--metabat2) metabat2=true; shift 1;;
+		--maxbin2) maxbin2=true; shift 1;;
+		--concoct) concoct=true; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -97,7 +77,7 @@ done
 ########################################################################################################
 
 # check if all parameters are entered
-if [ "$out" = "false" ] || [ "$ASSEMBLY" = "false" ] ; then 
+if [ $out = false ] || [ $ASSEMBLY = false ] ; then 
 	comm "Non-optional parameters -a and/or -o were not entered"
 	help_message; exit 1
 fi
@@ -121,15 +101,14 @@ comm "$num_of_F_read_files forward and $num_of_R_read_files reverse read files d
 if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F and R reads must be the same!"; fi
 
 
+# Make sure at least one binning method was chosen
+if [ $metabat2 = false ] && [ $maxbin2 = false ] && [ $concoct = false ]; then
+	error "You must select at least one binning method: --metabat2, --maxbin2, --concoct"
+fi
+
 # Checks for correctly configures meta-scripts folder
 if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure config.sh is in the same filder as the mains scripts and all the paths in the config.sh file are correct"
-fi
-
-# Checks for KRAKEN database 
-if [ ! -d "$KRAKEN_DB" ]; then
-	error "The folder $KRAKEN_DB doesnt exist. Please look and the the script and manually set the correct path to the KRAKEN standard database. \
-	If you do not have it yet, you can download it like this: ${KRAKEN}/kraken-build --standard --threads $threads --db ${KRAKEN}/kraken/KRAKEN_DB"
 fi
 
 ########################################################################################################
@@ -143,9 +122,9 @@ fi
 announcement "ALIGNING READS TO MAKE COVERAGE FILES"
 
 # setting up the output folder
-mkdir $out ${out}/work_files ${out}/work_files/alignments
+mkdir $out ${out}/work_files
 comm "making copy of assembly file $ASSEMBLY"
-cp $ASSEMBLY ${out}/work_files/alignments/assembly.fa
+cp $ASSEMBLY ${out}/work_files/assembly.fa
 tmp=${ASSEMBLY##*/}
 sample=${tmp%.*}
 
@@ -153,9 +132,8 @@ sample=${tmp%.*}
 
 # Index the assembly
 comm "Indexing assembly file"
-bwa index ${out}/work_files/alignments/assembly.fa
-if [[ ! -s ${out}/work_files/alignments/assembly.fa.amb ]] ; then error "Something went wrong with indexing the assembly.\
- ${out}/alignments/assembly.fa.amb does not exits! Exiting."; fi
+bwa index ${out}/work_files/assembly.fa
+if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
 
 echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
 # If there are several pairs of reads passed, they are processed sepperately
@@ -167,265 +145,113 @@ for num in "$@"; do
 
 		tmp=${reads_1##*/}
 		sample=${tmp%_*}
-
-		comm "Aligning $reads_1 and $reads_2 back to assembly"
-		bwa mem -t $threads ${out}/work_files/alignments/assembly.fa $reads_1 $reads_2 | samtools view -bS - \
-		 | samtools sort -T tmp-samtools -@ $threads -O bam -o ${out}/work_files/alignments/${sample}.bam -
-		if [[ ! -s ${out}/work_files/alignments/${sample}.bam ]]; then error "Something went wrong with aligning reads to contigs. Exiting."; fi
 		
-		comm "Saving paired read insert length average and stdev for sample $sample in ${out}/insert_sizes.txt"
-		echo -n -e "${sample}\t" >> ${out}/insert_sizes.txt
-		samtools view ${out}/work_files/alignments/${sample}.bam | head -n 10000 |\
-		 awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
-		 >> ${out}/insert_sizes.txt
+		if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
+			comm "Aligning $reads_1 and $reads_2 back to assembly, sorting the alignment, and gathering statistics on insert lengths"
+			echo -n -e "${sample}\t" >> ${out}/insert_sizes.txt
+			bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2\
+			| tee >( awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
+			>> ${out}/insert_sizes.txt ) \
+			| samtools view -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+			-o ${out}/work_files/${sample}.bam -
+			
+			if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
+		else
+			comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
+		fi
 	fi
 done
 
 
-########################################################################################################
-########################                   RUNNING METABAT2                     ########################
-########################################################################################################
-announcement "RUNNING METABAT2"
-
-jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/depth.txt ${out}/work_files/alignments/*.bam
-metabat2 -i ${out}/work_files/alignments/assembly.fa -a ${out}/work_files/depth.txt\
- -o ${out}/metabat2_bins/bin -m 1500 --unbinned
-
-if [[ ! -s ${out}/metabat2_bins/bin.unbinned.fa ]]; then error "Something went wrong with running MetaBAT. Exiting"; fi
 
 
-if [ "$run_checkm" = true ]; then
+if [ $metabat2 = true ]; then
 	########################################################################################################
-	########################              RUN CHECKM ON ORIGINAL BINS               ########################
+	########################                   RUNNING METABAT2                     ########################
 	########################################################################################################
-	announcement "RUN CHECKM ON ORIGINAL BINS"
+	announcement "RUNNING METABAT2"
 
-	comm "Running CheckM on original metaBAT2 bins"
-	run_checkm ${out}/metabat2_bins
-	num=$(cat ${out}/metabat2_bins.stats | awk '{if ($2>=20 && $2<=100 && $3>=0 && $3<=10) print $1 }' | wc -l)
+	comm "making contig depth file..."	
+	jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/metabat2_depth.txt ${out}/work_files/*.bam
+	if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
 
-	if [ $num -lt 1 ]; then
-		comm "There were no 'good' bins detected (>20% completion, <10% contamination)"
- 	else
-		comm "There are $num 'good' bins found! (>20% completion and <10% contamination) Saving into ${out}/good_bins"
-		#find good bins and save them into a seperate folder (completion>20% and contamination<10%)
-		mkdir ${out}/good_bins
-		for i in $(cat ${out}/metabat2_bins.stats | awk '{if ($2>=20 && $2<=100 && $3>=0 && $3<=10) print $1 }'); do
-			cp ${out}/metabat2_bins/${i}.fa ${out}/good_bins
-		done
-	fi
-
-
-	# re-run CheckM on only the good bins (makes a more appealing figure...)
-	if [ "$rerun_checkm_on_good_bins" = true ]; then
-		#check number of good bins
-		if [ $num -lt 1 ]; then
-			comm "Cant run CheckM on good bins - there were no 'good' bins detected (>20% completion, <10% contamination)"
-		else
-			comm "Re-running CheckM on only good bins for that nice figure..."
-			run_checkm ${out}/good_bins	
-		fi
-	fi
-fi
-
-
-if [ "$reassemble" = false ]; then
-	########################################################################################################
-	########################      BINNING PIPELINE FINISHED (NO REASSEMBLY)         ########################
-	########################################################################################################
-	announcement "BINNING PIPELINE FINISHED (NO REASSEMBLY)"
-	exit 1
+	comm "Starting binning with metaBAT2..."
+	metabat2 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat2_depth.txt\
+	 -o ${out}/metabat2_bins/bin -m 1500 -t $threads --unbinned
+	if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT. Exiting"; fi
+	comm "metaBAT2 finished successfully, and found $(ls -l ${out}/metabat2_bins | grep .fa | wc -l) bins!"
 fi
 
 
 
-########################################################################################################
-########################        RECRUITING READS TO BINS FOR REASSEMBLY         ########################
-########################################################################################################
-announcement "RECRUITING READS TO BINS FOR REASSEMBLY"
+if [ $maxbin2 = true ]; then
+        ########################################################################################################
+        ########################                   RUNNING MAXBIN2                     ########################
+        ########################################################################################################
+        announcement "RUNNING MAXBIN2"
 
-mkdir ${out}/work_files/reassembly
+	comm "making contig depth file..."
+        jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/mb2_master_depth.txt --noIntraDepthVariance ${out}/work_files/*.bam
+        if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
 
-if [ $num_of_F_read_files gt 1 ]; then
-	comm "Combining reads..."
-	for num in "$@"; do
-		if [[ $num == *"_1.fastq"* ]]; then
-			reads_1=$num
-			reads_2=${reads_1%_*}_2.fastq
-			cat $reads_1 >> ${out}/work_files/reassembly/joined_reads_1.fastq
-			cat $reads_2 >> ${out}/work_files/reassembly/joined_reads_2.fastq
-		fi
+	#calculate total numper of columns
+	A=($(head -n 1 ${out}/work_files/mb2_master_depth.txt)) 
+	N=${#A[*]}
+	
+	# split the contig depth file into multiple files
+	comm "split master contig depth file into individual files for maxbin2 input"
+	if [ -f ${out}/work_files/mb2_abund_list.txt ]; then rm ${out}/work_files/mb2_abund_list.txt; fi
+	for i in $(seq 4 $N); do 
+		sample=$(head -n 1 ${out}/work_files/mb2_master_depth.txt | cut -f $i)
+		echo "processing $sample depth file..."
+		grep -v totalAvgDepth ${out}/work_files/mb2_master_depth.txt | cut -f 1,$i > ${out}/work_files/mb2_${sample%.*}.txt
+		echo $(pwd)/${out}/work_files/mb2_${sample%.*}.txt >> ${out}/work_files/mb2_abund_list.txt
 	done
 	
-	F_reads=${out}/work_files/reassembly/joined_reads_1.fastq
-        R_reads=${out}/work_files/reassembly/joined_reads_2.fastq
-	
-	if [[ ! -s $F_reads ]] ; then
-		error "Something went wrong with combining reads for reassembly. Exiting." 
-	fi
+	comm "Starting binning with MaxBin2..."
+	mkdir ${out}/work_files/maxbin2_out
+	run_MaxBin.pl -contig ${out}/work_files/assembly.fa -markerset 40 -thread $threads\
+	-out ${out}/work_files/maxbin2_out/bin \
+	-abund_list ${out}/work_files/mb2_abund_list.txt
 
-else
-	for file in "$@"; do
-                if [[ $file == *"_1.fastq" ]]; then F_reads=$file; fi
-		if [[ $file == *"_2.fastq" ]]; then R_reads=$file; fi
+	if [[ $? -ne 0 ]]; then error "Something went wrong with running MaxBin2. Exiting."; fi
+	
+	mkdir ${out}/maxbin2_bins
+	N=0
+	for i in ${out}/work_files/maxbin2_out/bin*.fasta; do
+		cp $i ${out}/maxbin2_bins/bin.${N}.fa
+		N=$((N + 1))
 	done
+	comm "MaxBin2 finished successfully, and found $(ls -l ${out}/maxbin2_bins | grep .fa | wc -l) bins!"
 fi
 
 
+if [ $concoct = true ]; then
+        ########################################################################################################
+        ########################                   RUNNING CONCOCT                      ########################
+        ########################################################################################################
+        announcement "RUNNING CONCOCT"
 
-comm "Moving over bin files, fixing their naming, and indexing them in preperation for alignment"
-rm -r ${out}/work_files/reassembly/bins
-mkdir ${out}/work_files/reassembly/bins
-cp ${out}/metabat2_bins/* ${out}/work_files/reassembly/bins/
-comm "Making sure that the extension is .fa"
-for i in ${out}/work_files/reassembly/bins/*; do mv $i ${i%.*}.fa; done
-for i in ${out}/work_files/reassembly/bins/*.fa; do bwa index $i; done
+        comm "making contig depth file..."
+        jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/tmp --noIntraDepthVariance ${out}/work_files/*.bam
+        if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
+        grep -v totalAvgDepth ${out}/work_files/tmp | cut -f 1,4- > ${out}/work_files/concoct_depth.txt
+        rm ${out}/work_files/tmp
 
+        comm "Starting binning with CONCOCT. This may take a while..."
+        # I have to do some directory changing because CONCOCT dumps all files into current directory...
+        home=$(pwd)
+        mkdir ${out}/work_files/concoct_out
+        cd ${out}/work_files/concoct_out
 
-comm "Align reads back to bins, and save aligned reads"
-rm -r ${out}/work_files/reassembly/reads
-mkdir ${out}/work_files/reassembly/reads
-for i in ${out}/work_files/reassembly/bins/*.fa; do 
-	base=${i##*/};
-	
-	comm "ALIGNING READS ONTO ${i##*/} FILE"
-	#find perfectly aligning reads
-	echo "Finding perfect alignments"
-	bwa mem -t $threads $i $F_reads $R_reads\
-	| grep NM:i:0 | cut -f1 | uniq > ${out}/work_files/reassembly/reads/${base%.*}.strict.list;
+        concoct --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly.fa
+        if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting."; fi
+        cd $home
 
-	#find all aligning reads
-	echo "Finding all alignment"
-	bwa mem -t $threads $i $F_reads $R_reads\
-        | grep NM:i: | cut -f1 | uniq > ${out}/work_files/reassembly/reads/${base%.*}.permissive.list;
-
-
-	comm "EXTRACTING PAIRED-END READS INTO NEW FILE TO REASSEMBLE ${i##*/}"
-	# save the perfectly aligned sequences in new files
-	echo "Extracting perfectly aligned reads for STRICT reassembly"
-	${SOFT}/filter_out_fastq_reads.py ${out}/work_files/reassembly/reads/${base%.*}.strict.list $F_reads\
-	 > ${out}/work_files/reassembly/reads/${base%.*}_1.strict.fastq
-	${SOFT}/filter_out_fastq_reads.py ${out}/work_files/reassembly/reads/${base%.*}.strict.list $R_reads\
-	 > ${out}/work_files/reassembly/reads/${base%.*}_2.strict.fastq
-
-
-	# save all aligned sequences in new files
-	echo "Extracting all aligned reads for PERMISSIVE reassembly"
-        ${SOFT}/filter_out_fastq_reads.py ${out}/work_files/reassembly/reads/${base%.*}.permissive.list $F_reads\
-         > ${out}/work_files/reassembly/reads/${base%.*}_1.permissive.fastq
-        ${SOFT}/filter_out_fastq_reads.py ${out}/work_files/reassembly/reads/${base%.*}.permissive.list $R_reads\
-         > ${out}/work_files/reassembly/reads/${base%.*}_2.permissive.fastq
-
-
-	if [[ ! -s ${out}/work_files/reassembly/reads/${base%.*}_2.strict.fastq ]]; then
-		error "Something went wrong with extracting reads for reassembling the bins. Exiting."
-	fi
-done
-
-
-
-
-########################################################################################################
-########################             REASSEMBLING BINS WITH SPADES              ########################
-########################################################################################################
-announcement "REASSEMBLING BINS WITH SPADES"
-
-mkdir ${out}/work_files/reassembly/reassemblies
-mkdir ${out}/reassembled_bins
-for bin in ${out}/work_files/reassembly/reads/*_1.strict.fastq; do
-	bin_name=${bin##*/}
-	comm "NOW REASSEMBLING STRICT ${bin_name%_*}"
-	spades.py -t $threads -m $mem --tmp /tmp --careful \
-	--untrusted-contigs ${out}/work_files/reassembly/bins/${bin_name%_*}.fa \
-	-1 ${out}/work_files/reassembly/reads/${bin_name%_*}_1.strict.fastq \
-	-2 ${out}/work_files/reassembly/reads/${bin_name%_*}_2.strict.fastq \
-	-o ${out}/work_files/reassembly/reassemblies/${bin_name%_*}.strict
-	
-	if [[ ! -s ${out}/work_files/reassembly/reassemblies/${bin_name%_*}.strict/scaffolds.fasta ]]; then
-                warning "Something went wrong with reassembling ${bin_name%_*}.strict"
-	else 
-		comm "${bin_name%_*}.strict was reassembled successfully!"
-	fi
-
-
-	comm "NOW REASSEMBLING PERMISSIVE ${bin_name%_*}"
-        spades.py -t $threads -m $mem --tmp /tmp --careful \
-        --untrusted-contigs ${out}/work_files/reassembly/bins/${bin_name%_*}.fa \
-        -1 ${out}/work_files/reassembly/reads/${bin_name%_*}_1.permissive.fastq \
-        -2 ${out}/work_files/reassembly/reads/${bin_name%_*}_2.permissive.fastq \
-        -o ${out}/work_files/reassembly/reassemblies/${bin_name%_*}.permissive
-	
-	
-	if [[ ! -s ${out}/work_files/reassembly/reassemblies/${bin_name%_*}.permissive/scaffolds.fasta ]]; then 
-		warning "Something went wrong with reassembling ${bin_name%_*}.permissive"
-	else
-		comm "${bin_name%_*}.permissive was reassembled successfully!"
-	fi
-	
-done
-
-# removing short contigs and placing reassemblies in the final folder
-comm "Finalizing reassemblies"
-for spades_folder in ${out}/work_files/reassembly/reassemblies/*; do
-	bin_name=${spades_folder##*/}
-	
-	#remove shortest contigs (probably artifacts...)
-	${SOFT}/rm_short_contigs.py 500\
-	 ${out}/work_files/reassembly/reassemblies/${bin_name}/scaffolds.fasta\
-	 > ${out}/work_files/reassembly/reassemblies/${bin_name}/long_scaffolds.fasta
-	
-	if [ -s ${out}/work_files/reassembly/reassemblies/${bin_name}/long_scaffolds.fasta ]; then	
-		cp ${out}/work_files/reassembly/reassemblies/${bin_name}/long_scaffolds.fasta\
-		 ${out}/reassembled_bins/${bin_name}.fa
-	fi
-done
-
-if [[ ! -s ${out}/reassembled_bins/bin.unbinned.permissive.fa ]]; then
-	error "Something went wrong with processing the reassembled bins and placing them into the reassembled_bins folder. Exiting." 
-fi
-
-#REMOVING INTERMEDIATE FILES
-comm "Removing intermediate files...."
-mv ${out}/work_files/reassembly/reassemblies ${out}/work_files/
-rm -r ${out}/work_files/reassembly
-
-
-if [ "$run_checkm" = true ]; then
-	########################################################################################################
-	########################             RUN CHECKM ON REASSEMBLED BINS             ########################
-	########################################################################################################
-	announcement "RUN CHECKM ON REASSEMBLED BINS"
-
-	# copy over original bins
-	for i in ${out}/metabat2_bins/*.fa; do base=${i##*/}; cp $i ${out}/reassembled_bins/${base%.*}.orig.fa; done
-
-	comm "Running CheckM on reassembled metaBAT bins"
-	run_checkm ${out}/reassembled_bins
-
-
-	########################################################################################################
-        ########################          FINDING THE BEST VERSION OF EACH BIN          ########################
-	########################################################################################################
-	announcement "FINDING THE BEST VERSION OF EACH BIN"
-
-	cat ${out}/reassembled_bins.stats
-	echo ""
-
-	mkdir ${out}/reassembled_best_bins
-	for i in $(${SOFT}/choose_best_bin.py ${out}/reassembled_bins.stats); do 
-		echo "Copying best bin: $i"
-		cp ${out}/reassembled_bins/${i}.fa ${out}/reassembled_best_bins; done
-	
-	if [ "$rerun_checkm_on_best_bins" = true ]; then
-		num=$(ls -l ${out}/reassembled_best_bins | grep .fa | wc -l)
-		if [ $num -lt 1 ]; then
-			rm -r ${out}/reassembled_best_bins
-			warning "There are no 'good' bins priduces. Nothing to run CheckM on..."
-		else
-			comm "$num good bins found! Re-running CheckM on the best reasembled bins."
-			run_checkm ${out}/reassembled_best_bins
-		fi
-	fi
+        comm "splitting contigs into bins"
+        mkdir ${out}/concoct_bins
+        ${SOFT}/split_concoct_bins.py ${out}/work_files/concoct_out/clustering_gt1000.csv ${out}/work_files/assembly.fa ${out}/concoct_bins
+        comm "CONCOCT finished successfully, and found $(ls -l ${out}/concoct_bins | grep .fa | wc -l) bins!"
 fi
 
 

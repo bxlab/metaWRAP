@@ -104,9 +104,9 @@ if [ "$pre_qc_report" = true ]; then
 	
 	mkdir ${out}/pre-QC_report
 	fastqc -q -t $threads -o ${out}/pre-QC_report -f fastq $reads_1 $reads_2
-	rm ${out}/pre-QC_report/*zip
 	
-	if [[ ! -s ${out}/pre-QC_report/${reads_1%.*}_fastqc.html ]]; then error "Something went wrong with making pre-QC fastqc report. Exiting."; fi
+	if [ $? -ne 0 ]; then error "Something went wrong with making pre-QC fastqc report. Exiting."; fi
+	rm ${out}/pre-QC_report/*zip
 	comm "pre-qc report saved to: ${out}/pre-QC_report"
 fi
 
@@ -140,6 +140,7 @@ if [ "$bmtagger" = true ]; then
 	bmtagger.sh -b ${BMTAGGER_DB}/hg38.bitmask -x ${BMTAGGER_DB}/hg38.srprism -T ${out}/bmtagger_tmp -q1\
 	 -1 $reads_1 -2 $reads_2\
 	 -o ${out}/${sample}.bmtagger.list
+	if [[ $? -ne 0 ]]; then error "Something went wrong with running Bmtagger!. Exiting"; fi
 	if [[ ! -s ${out}/${sample}.bmtagger.list ]]; then warning "No human reads found, which is very unlikely. Just sayin'"; fi
 
 
@@ -171,10 +172,10 @@ if [ "$post_qc_report" = true ]; then
 	
 	mkdir ${out}/post-QC_report
 	fastqc -t $threads -o ${out}/post-QC_report -f fastq ${out}/final_pure_reads_1.fastq and ${out}/final_pure_reads_2.fastq
-	rm ${out}/post-QC_report/*zip
 	
-	if [[ ! -s ${out}/post-QC_report/final_pure_reads_1_fastqc.html ]]; then error "Something went wrong with making post-QC fastqc report. Exiting."; fi
-	comm "pre-qc report saved to: ${out}/post-QC_report"
+	if [ $? -ne 0 ]; then error "Something went wrong with making post-QC fastqc report. Exiting."; fi
+	rm ${out}/post-QC_report/*zip
+	comm "post-qc report saved to: ${out}/post-QC_report"
 fi
 
 ########################################################################################################
