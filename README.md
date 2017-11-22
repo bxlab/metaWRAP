@@ -29,7 +29,7 @@
     
 
   
-## INSTALATION
+## INSTALLATION
 
  Clone or download the metaWRAP directory into a semi-permanent location, then go into the metaWRAP/bin folder and edit the metaWRAP/bin/contig-metawrap file. Make sure that all the paths are correct, especially the paths pointing to the "scripts" and "pipelines" folders in the main metaWRAP directory. Once that is configured, simply copy the contents of metaWRAP/bin into your local bin folder, or simply add metaWRAP/bin/ to your path. If you are unsure how to do this, here are the commands to do this:
  
