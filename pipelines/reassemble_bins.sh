@@ -126,7 +126,7 @@ assemble () {
 	bin_name=${bin##*/}
 	tmp=${bin_name%_*}
 	comm "NOW REASSEMBLING ${bin_name%_*}"
-	spades.py -t 1 -m $mem --tmp /tmp --careful \
+	spades.py -t $threads -m $mem --tmp /tmp --careful \
 	--untrusted-contigs ${out}/original_bins/${tmp%.*}.fa \
 	-1 ${bin%_*}_1.fastq \
 	-2 ${bin%_*}_2.fastq \
@@ -138,8 +138,8 @@ assemble () {
 		comm "${bin_name%_*} was reassembled successfully!"
 	fi
 }
-for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do assemble $i & done
-wait
+for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do assemble $i; done
+#wait
 sleep 1
 comm "all assemblies complete"
 
@@ -192,10 +192,12 @@ if [ "$run_checkm" = true ]; then
 	done
 
 	comm "Running CheckM on best bins (reassembled and original"
-	checkm lineage_wf -x fa ${out}/reassembled_bins ${out}/reassembled_bins.checkm -t $threads
+	mkdir ${out}/tmp
+	checkm lineage_wf -x fa ${out}/reassembled_bins ${out}/reassembled_bins.checkm -t $threads --tmpdir ${out}/tmp
 	if [[ ! -s ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	${SOFT}/summarize_checkm.py ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv | (read -r; printf "%s\n" "$REPLY"; sort) > ${out}/reassembled_bins.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
+	rm -r ${out}/tmp
 
 
 	########################################################################################################
@@ -232,8 +234,10 @@ if [ "$run_checkm" = true ]; then
 
 
 	comm "Re-running CheckM on the best reasembled bins."
-        checkm lineage_wf -x fa ${out}/reassembled_bins ${out}/reassembled_bins.checkm -t $threads
+	mkdir ${out}/tmp
+        checkm lineage_wf -x fa ${out}/reassembled_bins ${out}/reassembled_bins.checkm -t $threads --tmpdir ${out}/tmp
         if [[ ! -s ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+	rm -r ${out}/tmp
         comm "Finalizing CheckM stats..."
         ${SOFT}/summarize_checkm.py ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv > ${out}/reassembled_bins.stats
         if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi

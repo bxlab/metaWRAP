@@ -20,19 +20,17 @@
 
 help_message () {
 	echo ""
-	echo "Usage: metaWRAP bin_refinement [options] -o output_dir -A bin_folderA [-B bin_folderB -C bin_folderC] [readsA_1.fastq readsA_2.fastq]"
+	echo "Usage: metaWRAP bin_refinement [options] -o output_dir -A bin_folderA [-B bin_folderB -C bin_folderC]"
 	echo "Note: the contig names in different bin folders must be consistant (must come from the same assembly)."
-	echo "Note 2: you may use any number of F and R read files as long as they end in *_1.fastq and *_2.fastq"
 	echo ""
 	echo "Options:"
 	echo ""
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
-	echo "	-m INT          memory in GB (default=4)"
 	echo "	-A STR		folder with metagenomic bins"
 	echo "	-B STR		another folder with metagenomic bins"
 	echo "	-C STR		another folder with metagenomic bins" 
-	echo "	-c INT		minimum % completion of bins that is acceptable (default=70)"
+	echo "	-c INT		minimum % completion of bins [should be >50%] (default=70)"
 	echo "	-x INT		maximum % contamination of bins that is acceptable (default=10)"
 	echo ""
 	echo "	--skip-refinement	dont use binning_refiner to come up with refined bins based on combinations of binner outputs"
@@ -76,13 +74,13 @@ plot_checkm () {
 source config-metawrap
 
 # default params
-threads=1; mem=4; out="false"; comp=70; cont=10; x=10; c=70; 
+threads=1; out="false"; comp=70; cont=10; x=10; c=70; 
 bins1=None; bins2=None; bins3=None
 # long options defaults
 run_checkm=true; refine=true; cherry_pick=true
 
 # load in params
-OPTS=`getopt -o ht:m:o:x:c:A:B:C: --long help,skip-checkm,skip-refinement,skip-consolidation -- "$@"`
+OPTS=`getopt -o ht:o:x:c:A:B:C: --long help,skip-checkm,skip-refinement,skip-consolidation -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -90,7 +88,6 @@ if [ $? -ne 0 ]; then help_message; exit 1; fi
 while true; do
         case "$1" in
                 -t) threads=$2; shift 2;;
-                -m) mem=$2; shift 2;;
                 -o) out=$2; shift 2;;
 		-x) cont=$2; shift 2;;
 		-c) comp=$2; shift 2;;
@@ -112,30 +109,9 @@ done
 ########################################################################################################
 
 # check if all parameters are entered
-if [ $out = false ] || [  bins1 = false ] ; then 
-	comm "Non-optional parameters -o and/or -1 were not entered"
+if [[ $out == false ]] || [[  $bins1 == false ]] ; then 
+	comm "Non-optional parameters -o and/or -A were not entered"
 	help_message; exit 1
-fi
-
-# check for at F and R reads unless --skip-reassembly was specified:
-if [ $reassemble = true ]; then
-	F="no"; R="no"
-	for num in "$@"; do
-		if [[ $num == *"_1.fastq" ]]; then F="yes"; fi
-		if [[ $num == *"_2.fastq" ]]; then R="yes"; fi
-	done
-	if [ $F = "no" ] || [ $R = "no" ]; then
-		comm "Unable to find proper fastq read pair in the format *_1.fastq and *_2.fastq"
-		help_message; exit 1
-	fi
-
-	#determine number of fastq read files provided:
-	num_of_F_read_files=$(for I in "$@"; do echo $I | grep _1.fastq; done | wc -l)
-	num_of_R_read_files=$(for I in "$@"; do echo $I | grep _2.fastq; done | wc -l)
-	
-	comm "$num_of_F_read_files forward and $num_of_R_read_files reverse read files detected, which will be used to bin reassembly at the end of the pipeline."
-	if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F and R reads must be the same!"; fi
-	if [[ $num_of_F_read_files -lt 1 ]]; then error "You must provide at least one set of reads if you want to reassmeble the reads. Otherwise, use the --skip-reassembly option."; fi
 fi
 
 # Checks for correctly configures meta-scripts folder
@@ -144,11 +120,10 @@ if [ ! -s $SOFT/sort_contigs.py ]; then
 fi
 
 
-
 ########################################################################################################
 ########################               BEGIN REFINEMENT PIPELINE!               ########################
 ########################################################################################################
-announcement "PEGIN PIPELINE!"
+announcement "BEGIN PIPELINE!"
 comm "setting up output folder and copything over bins..."
 mkdir $out
 n_binnings=0
@@ -209,11 +184,11 @@ for i in $(ls); do for j in $(ls $i | grep .fasta); do mv ${i}/${j} ${i}/${j%.*}
 ########################              RUN CHECKM ON ALL BIN SETS                ########################
 ########################################################################################################
 if [ "$run_checkm" = true ]; then
+	mkdir tmp
 	announcement "RUNNING CHECKM ON ALL SETS OF BINS"
-
-	for bin_set in $(ls); do 
+	for bin_set in $(ls | grep -v tmp); do 
 		comm "Running CheckM on $bin_set bins"
-		checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads
+		checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir tmp
 		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 		${SOFT}/summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
 		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
@@ -222,6 +197,7 @@ if [ "$run_checkm" = true ]; then
 		num=$(cat ${bin_set}.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
 		comm "There are $num 'good' bins found in $bin_set! (>${comp}% completion and <${cont}% contamination)"
 	done
+	rm -r tmp
 else
 	comm "Skipping CheckM. Warning: bin cnosolidation will not be possible."
 fi
@@ -288,5 +264,5 @@ comm "You will find the best non-reassembled versions of the bins in ${out}/best
 ########################################################################################################
 ########################     BIN_REFINEMENT PIPELINE SUCCESSFULLY FINISHED!!!   ########################
 ########################################################################################################
-announcement "BIN_REFINEMENT PIPELINE FINISHED SUCCESSFULLY! (NO REASSEMBLY)"
+announcement "BIN_REFINEMENT PIPELINE FINISHED SUCCESSFULLY!"
 

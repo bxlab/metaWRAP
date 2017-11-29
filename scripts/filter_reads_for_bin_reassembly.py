@@ -40,7 +40,7 @@ opened_files={}
 for line in open(sys.argv[2]):
 	ct+=1
 	if ct==4:
-		read=line[1:].split("/")[0]
+		read=line[1:].split("/")[0].split()[0]
 		ct=0
 
 	if ct==0: line0=line
@@ -80,7 +80,7 @@ opened_files={}
 for line in open(sys.argv[3]):
         ct+=1
         if ct==4:
-                read=line[1:].split("/")[0]
+                read=line[1:].split("/")[0].split()[0]
                 ct=0
 
         if ct==0: line0=line
