@@ -1,21 +1,20 @@
 Future plans:
 	-paralelize human/microbe read splitting after bmtagger
-	-allow bin_refinement module to take in 4 bin sets
-	-add --run_checkm option to binning module
-	-wrap MetaWatt into binning module (aparently really good for complex data)
-	-wrap MyCC (completely different concept for binning, good for few samples)
-	-incorporate bracken
+	-filter out the bottom 1% of KRAKEN clasifications
 	-figure out a better replacement for phylosift
 	-allow ALL module to take in multiple samples at once
-	-allow ALL module to take in parameters for its submodules
-
+	-rename binning modules to something more consistant
+	-make unified binning module wrapping the four binning modules
 
 
 metaWRAP v=0.3.5
+	Binning module:
+		Added option to immediately run CheckM on resulting bins
 	ReadQC module:
 		Major bug fix that prevented bmtagger from filtering out human reads when the read names in the fastq had spaces
 		Module now exits if the provided fastq files do not exist
 	Bin_refinement: this module consolidats all possible binning version of the bins from the Binning module
+		added contig dereplication to avoid situations where a contig ends up in more than one bin
 		removed depricated requirement for prviding reads as input
 		major bug fit to prevent HMMER to run out of space in /tmp/ by providing a new tmp folder
 		bug fix: bin consolidation script now supports contigs in any naming format

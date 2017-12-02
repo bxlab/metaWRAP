@@ -29,13 +29,25 @@ help_message () {
         echo "	--metabat2      bin contigs with metaBAT2"
 	echo "	--maxbin2	bin contigs with MaxBin2"
 	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
+	echo "	--run-checkm	immediately run CheckM on the bin results"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
 error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
 warning () { ${SOFT}/print_comment.py "$1" "*"; }
 announcement () { ${SOFT}/print_comment.py "$1" "#"; }
-
+run_checkm () {
+	comm "Running CheckM on ${1} bins"
+	mkdir ${i}.tmp
+	checkm lineage_wf -x fa ${1} ${1}.checkm -t $threads --tmpdir ${i}.tmp
+	if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+	rm -r ${i}.tmp
+	${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv ${1}\
+	| (read -r; printf "%s\n" "$REPLY"; sort) > ${1}.stats
+	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
+	num=$(cat ${1}.stats | awk '{if ($2>=70 && $2<=100 && $3>=0 && $3<=10) print $1 }' | wc -l)
+	comm "There are $num 'good' bins found in ${1}! (>70% completion and <10% contamination)"
+}
 
 
 ########################################################################################################
@@ -49,10 +61,10 @@ source config-metawrap
 # default params
 threads=1; out=false; ASSEMBLY=false
 # long options defaults
-metabat2=false; maxbin2=false; concoct=false
+metabat2=false; maxbin2=false; concoct=false; checkm=false
 
 # load in params
-OPTS=`getopt -o ht:o:a: --long help,metabat2,maxbin2,concoct -- "$@"`
+OPTS=`getopt -o ht:o:a: --long help,metabat2,maxbin2,concoct,run-checkm -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -66,6 +78,7 @@ while true; do
 		--metabat2) metabat2=true; shift 1;;
 		--maxbin2) maxbin2=true; shift 1;;
 		--concoct) concoct=true; shift 1;;
+		--run-checkm) checkm=true; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -180,6 +193,10 @@ if [ $metabat2 = true ]; then
 	 -o ${out}/metabat2_bins/bin -m 1500 -t $threads --unbinned
 	if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT. Exiting"; fi
 	comm "metaBAT2 finished successfully, and found $(ls -l ${out}/metabat2_bins | grep .fa | wc -l) bins!"
+
+	if [ $checkm = true ]; then
+		run_checkm ${out}/metabat2_bins
+	fi
 fi
 
 
@@ -223,6 +240,10 @@ if [ $maxbin2 = true ]; then
 		N=$((N + 1))
 	done
 	comm "MaxBin2 finished successfully, and found $(ls -l ${out}/maxbin2_bins | grep .fa | wc -l) bins!"
+
+	if [ $checkm = true ]; then
+		run_checkm ${out}/maxbin2_bins
+	fi
 fi
 
 
@@ -252,6 +273,10 @@ if [ $concoct = true ]; then
         mkdir ${out}/concoct_bins
         ${SOFT}/split_concoct_bins.py ${out}/work_files/concoct_out/clustering_gt1000.csv ${out}/work_files/assembly.fa ${out}/concoct_bins
         comm "CONCOCT finished successfully, and found $(ls -l ${out}/concoct_bins | grep .fa | wc -l) bins!"
+
+	if [ $checkm = true ]; then
+		run_checkm ${out}/concoct_bins
+	fi
 fi
 
 

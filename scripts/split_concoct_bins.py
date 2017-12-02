@@ -5,10 +5,13 @@
 
 import sys, os
 
+print "Loading in the bins that the contigs belong to..."
 bins={}
 for line in open(sys.argv[1]):
 	bins[line.strip().split(",")[0]] = line.strip().split(",")[1]
 
+
+print "Going through the entire assembly and splitting contigs into their respective bin file..."
 current_bin=""
 for line in open(sys.argv[2]):
 	if line.startswith(">"):
@@ -17,7 +20,7 @@ for line in open(sys.argv[2]):
 		else: current_bin="unbinned.fa"
 		f = open(sys.argv[3]+"/"+current_bin,'a')
 	f.write(line)
-
+print "Done!"
 	
 	
 

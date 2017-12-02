@@ -36,6 +36,8 @@ help_message () {
 	echo "	--skip-refinement	dont use binning_refiner to come up with refined bins based on combinations of binner outputs"
 	echo "	--skip-checkm		dont run CheckM to assess bins"
 	echo "	--skip-consolidation	choose the best version of each bin from all bin refinement iteration"
+	echo "	--keep-ambiguous	for contigs that end up in more than one bin, keep them in all bins (default: keeps them only in the best bin)"
+	echo "	--remove-ambiguous	for contigs that end up in more than one bin, remove them in all bins (default: keeps them only in the best bin)"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
@@ -77,10 +79,10 @@ source config-metawrap
 threads=1; out="false"; comp=70; cont=10; x=10; c=70; 
 bins1=None; bins2=None; bins3=None
 # long options defaults
-run_checkm=true; refine=true; cherry_pick=true
+run_checkm=true; refine=true; cherry_pick=true; dereplicate=partial
 
 # load in params
-OPTS=`getopt -o ht:o:x:c:A:B:C: --long help,skip-checkm,skip-refinement,skip-consolidation -- "$@"`
+OPTS=`getopt -o ht:o:x:c:A:B:C: --long help,skip-checkm,skip-refinement,skip-consolidation,keep-ambiguous,remove-ambiguous -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -98,6 +100,8 @@ while true; do
 		--skip-checkm) run_checkm=false; shift 1;;
 		--skip-refinement) refine=false; shift 1;;
 		--skip-consolidation) cherry_pick=false; shift 1;;
+		--keep-ambiguous) dereplicate=false; shift 1;;
+		--remove-ambiguous) dereplicate=complete; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -141,7 +145,7 @@ if [[ -d $bins3 ]]; then cp -r $bins3 ${out}/binsC; n_binnings=$((n_binnings +1)
 # I have to switch directories here - binning_refiner is pretty glitchy..."
 home=$(pwd)
 cd $out
-if [ $refine = true ]; then
+if [ "$refine" == "true" ]; then
 	announcement "BEGIN BIN REFINEMENT"	
 	if [[ n_binnings -eq 1 ]]; then
 		comm "There is only one bin folder, so no refinement of bins possible. Moving on..."
@@ -183,7 +187,7 @@ for i in $(ls); do for j in $(ls $i | grep .fasta); do mv ${i}/${j} ${i}/${j%.*}
 ########################################################################################################
 ########################              RUN CHECKM ON ALL BIN SETS                ########################
 ########################################################################################################
-if [ "$run_checkm" = true ]; then
+if [ "$run_checkm" == "true" ]; then
 	mkdir tmp
 	announcement "RUNNING CHECKM ON ALL SETS OF BINS"
 	for bin_set in $(ls | grep -v tmp); do 
@@ -205,12 +209,12 @@ fi
 ########################################################################################################
 ########################               CONSOLIDATE ALL BIN SETS                 ########################
 ########################################################################################################
-if [ $cherry_pick = true ]; then
+if [ "$cherry_pick" == "true" ]; then
 	announcement "CONSOLIDATING ALL BIN SETS BY CHOOSING THE BEST VERSION OF EACH BIN"
-	if [[ n_binnings -eq 1 ]]; then
+	if [[ $n_binnings -eq 1 ]]; then
 	        comm "There is only one original bin folder, so no refinement of bins possible. Moving on..."
 		best_bin_set=binsA
-	elif [[ n_binnings -eq 2 ]] || [[ n_binnings -eq 3 ]]; then
+	elif [[ $n_binnings -eq 2 ]] || [[ $n_binnings -eq 3 ]]; then
 		comm "There are $n_binnings original bin folders, plus the refined bins."
 		rm -r binsM binsM.stats
 		cp -r binsA binsM; cp binsA.stats binsM.stats
@@ -221,13 +225,28 @@ if [ $cherry_pick = true ]; then
 			rm -r binsM binsM.stats
 			mv binsM1 binsM; mv binsM1.stats binsM.stats
 		done
-		best_bin_set=binsM
+
+		if [[ $dereplicate = false ]]; then
+			comm "Skipping dereplication of contigs between bins..."
+			mv binsM binsO
+			mv binsM.stats binsO.stats
+		elif [[ $dereplicate = partial ]]; then
+			comm "Scanning to find duplicate contigs between bins and only keep them in the best bin..."
+			${SOFT}/dereplicate_contigs_in_bins.py binsM.stats binsM binsO
+		elif [[ $dereplicate = complete ]]; then
+			comm "Scanning to find duplicate contigs between bins and deleting them in all bins..."
+			${SOFT}/dereplicate_contigs_in_bins.py binsM.stats binsM binsO remove
+		else:
+			error "there was an error in deciding how to dereplicate contigs"
+		fi
+
+		best_bin_set=binsO
 		comm "All the best bins are stored in $best_bin_set"
 	else
 		error "Something went wrong with determining the number of bin folders... The number was ${n_binnings}. Exiting."
 	fi
 	
-elif [ $cherry_pick = false ]; then
+elif [ "$cherry_pick" == "false" ]; then
 	comm "Skipping bin consolidation. Will try to pick the best binning folder without mixing bins from different sources."
 	if [ $run_checkm = false ]; then 
 		comm "cannot decide on best bin set because CheckM was not run. Will assume its binsA (first bin set)"
@@ -252,14 +271,17 @@ else
 	error "something is wrong with the cherry_pick option (${cherry_pick})"
 fi
 
+comm "You will find the best non-reassembled versions of the bins in ${out}/binsO"
 
-comm "moving over temp files into work sub-directory (feel free to delete this)"
-mkdir refinement_intermediates
-for d in $(ls | grep -v refinement_intermediates); do mv $d refinement_intermediates/; done
-cp -r refinement_intermediates/${best_bin_set} best_non_reassembled_bins
-cp refinement_intermediates/${best_bin_set}.stats best_non_reassembled_bins.stats
-
-comm "You will find the best non-reassembled versions of the bins in ${out}/best_non_reassembled_bins"
+if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
+	comm "Re-running CheckM on ${out}/binsO bins"
+	checkm lineage_wf -x fa ${out}/binsO ${out}/binsO.checkm -t $threads --tmpdir tmp
+	if [[ ! -s ${out}/binsO.checkm.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+	${SOFT}/summarize_checkm.py ${out}/binsO.checkm/storage/bin_stats_ext.tsv ${out}/binsO.checkm | (read -r; printf "%s\n" "$REPLY"; sort) > ${out}/binsO.stats
+	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
+	num=$(cat ${out}/binsO.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
+	comm "There are $num 'good' bins found in ${out}/binsO.checkm! (>${comp}% completion and <${cont}% contamination)"
+fi
 
 ########################################################################################################
 ########################     BIN_REFINEMENT PIPELINE SUCCESSFULLY FINISHED!!!   ########################
