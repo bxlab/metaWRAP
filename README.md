@@ -1,10 +1,15 @@
-# metaWRAP v0.3 - Comprehensive Metagenome Analysis
+# metaWRAP - Comprehensive Metagenome Analysis in One Place
 
 
  metaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
  
- As its most innovative feature, metaWRAP offers a comprehensive pipeline for extracting high-quality draft genomes (bins) from metagenomic data. By using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses, this pipeline will always produce stronger results than individual approaches. Additionally, due to its diverse binning approach, this pipeline shows promise to produce robust binning results in a variety of microbial communities. 
+ Additionally, metaWRAP offers a innovative hybrid pipeline for extracting high-quality draft genomes (bins) from metagenomic data. By using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses, this pipeline will always produce stronger results than individual approaches. Additionally, due to its diverse binning approach, this pipeline shows promise to produce robust binning results in a variety of microbial communities. 
+
+ If you already have your metagenomic data assembled and binned with two or more software, try using the BIN_REFINEMENT module to see how you can further improve your bin predictions! This modules uses Bin_refiner to make hybridized bin predictions based on two or three binning softwares, and then uses CheckM to consolidate all resulting bin sets to chose the best possible bins.
   
+
+## OVERVIEW OF METAWRAP MODULES:
+
   There are 5 major parts to the pipeline:
   
     1) Read QC
@@ -22,7 +27,6 @@
     5) Visualization with Blobplots
   
   
-## OVERVIEW OF METAWRAP MODULES: 
     
   ![General walkthrough of metaWRAP modules](https://i.imgur.com/s9yAuQa.png)
    
