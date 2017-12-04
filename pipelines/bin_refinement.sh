@@ -341,24 +341,24 @@ if [[ $n_binnings -eq 2 ]]; then
 	cp -r work_files/binsA ${bins1##*/}
 	cp -r work_files/binsB ${bins2##*/}
 	cp -r work_files/binsAB Bin_refiner
-	cp -r work_files/binsO metaWRAP-bins
+	cp -r work_files/binsO metaWRAP_bins
 
 	cp work_files/binsA.stats ${bins1##*/}.stats	
 	cp work_files/binsB.stats ${bins2##*/}.stats
 	cp work_files/binsAB.stats Bin_refiner.stats
-	cp work_files/binsO.stats metaWRAP-bins.stats
+	cp work_files/binsO.stats metaWRAP_bins.stats
 elif [[ $n_binnings -eq 3 ]]; then
 	cp -r work_files/binsA ${bins1##*/}
 	cp -r work_files/binsB ${bins2##*/}
 	cp -r work_files/binsC ${bins3##*/}
 	cp -r work_files/binsABC Bin_refiner
-	cp -r work_files/binsO metaWRAP-bins
+	cp -r work_files/binsO metaWRAP_bins
 
 	cp work_files/binsA.stats ${bins1##*/}.stats
 	cp work_files/binsB.stats ${bins2##*/}.stats
 	cp work_files/binsC.stats ${bins3##*/}.stats
 	cp work_files/binsABC.stats Bin_refiner.stats
-	cp work_files/binsO.stats metaWRAP-bins.stats
+	cp work_files/binsO.stats metaWRAP_bins.stats
 else
 	error "something went wrong with determining the number of input bin sets when finalizing output names..."
 fi

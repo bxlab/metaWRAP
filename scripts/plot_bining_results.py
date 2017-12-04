@@ -105,8 +105,8 @@ for rank, bin_set in enumerate(labels):
 	plt.plot(data[bin_set], lw=2.5, color=c)
 	
 	# add bin set label to plot
-	y_pos = data[bin_set][len(data[bin_set])*2/3]
-	x_pos=len(data[bin_set])*2/3
+	y_pos = data[bin_set][len(data[bin_set])*3/4]
+	x_pos=len(data[bin_set])*3/4
 	plt.text(x_pos, y_pos, bin_set, fontsize=14, color=c)
 
 # add plot and axis titles and adjust edges
