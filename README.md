@@ -9,23 +9,16 @@
   
 
 ## OVERVIEW OF METAWRAP MODULES:
-
-  There are 5 major parts to the pipeline:
   
     1) Read QC
-    
     2) Assembly
-    
-    3) Binning super-module:
+    3) Binning:
     	a. Binning with 3 softwares
 		b. Bin refinement and consolidation
 		c. Bin reassembly
 		d. Bin quantitation
-    
-    4) Taxonomic profiling
-    
+    4) Taxonomic profiling with KRAKEN
     5) Visualization with Blobplots
-  
   
     
   ![General walkthrough of metaWRAP modules](https://i.imgur.com/s9yAuQa.png)
@@ -48,53 +41,46 @@
 
 ## DEPENDENCIES
 
-  Since this is a wrapper program, the biggest challenge in installing metaWRAP will likely be configuring all the dependencies correctly. Firstly, the path to the folder "meta-scripts", containing numerous scripts required for running this pipeline, needs to be configured in config.sh. Next, the following programs need to be installed in your PATH. NOTE: the versions of the programs may or may not be important. It is HIGHLY recommended that you to use miniconda to install everything. Look out for future releases or metaWRAP which will be directly wrapped into Conda. 
+  Since this is a wrapper program, the biggest challenge in installing metaWRAP will likely be configuring all the dependencies correctly. A complete list of dependancies can be viewed in "dependancies.txt". Feel free to install them one by one. However, to make this as painless as possible, I HIGHLY recommend you use Conda, which automatically installs programs and handles dependancies. To start, download [miniconda2](https://conda.io/miniconda.html) and install it. Then create a new environemtn and install all the required packages in conda_dependancies.list. To do so, run:
   
-  NOTE: It is not necessary to install all of these, depending on which module you are interested in using. For example, if you do not want to sort out human reads, you dont have to install bmtagger and its database. Just make sure to use the --skip-bmtagger flag when running the read_qc module.
+  ``` bash
+  conda env create -f metawrap-environment.yml
+  ```
+  
+  To enter and exit the newly created envornment, run:
+  
+  ``` bash
+  source activate metawrap
+  metaWRAP -h
+  source deactivate
+  ```
+
+  I want to emphasize that because metaWRAP is written in BASH scripts, it is realitively easy to understand why some part of the program is failing, or if there is a dependancy issue. Just to to that line in the code and see how metaWRAP is calling that software. There is not magic here - metaWRAP is simply calling programs from your current environment in a specific sequence just like you would if you were following a pipeline. If it cannot find them, an error pops up. Feel free to dive in the code to see where things went wrong. If you find a bug, please post in the "issues" section!
+
+
+  After this, there are still a few software that you will need to install and place in yout PATH, becuase they are not currently in Conda. Note that these software are required only for specific modules. 
 
 |    Software     | Tested version  |  Used in module 			|
 |:---------------:|:---------------:|:---------------------------------:| 
-|    BLAST        |    v=2.6.0      |  blobology			|
-|    bmtagger     |    v=3.101      |  read_qc				|
-|    Bowtie2      |    v=2.3.2      |  blobology			|
-|    bwa          |    v=0.7.15     |  binning, reassemble_bins		|
-|    Checkm       |    v=1.0.7      |  bin_refinement, reassemble_bins	|
-|    FastQC       |    v=v0.11.5    |  read_qc				|
-|    kraken       |    v=0.10.6     |  kraken				|
 |    kronatools   |    v=2.7        |  kraken				|
-|    megahit      |    v=1.1.1-2    |  assembly				|
-|    SPAdes	  |    v=3.11.1	    |  assembly				|
 |    metabat2     |    v=2.9.1      |  binning				|
-|    concoct	  |    v=0.4.0	    |  binning				|
 |    maxbin2      |    v=2.2.4      |  binning				|
-|    perl         |    v=5.22.0     |  blobology			|
-|    python       |    v=2.7.1      |  all modules			|
-|    quast        |    v=4.5        |  assembly				|
-|    R            |    v=3.3.2      |  blobology			|
-|    samtools     |    v=1.3.1      |  assembly, blobology		|
-|    SPAdes       |    v=3.10.1     |  assembly				|
-|    trim_galore  |    v=0.4.3      |  read_qc     			|
-|    salmon 	  |    v=0.8.1	    |  quant_bins			|
-
-
- To reiterate, the installation of most of these dependencies should not be difficult even in non-sudo environments with the use of conda. 
 
 
 ## DATABASES
 
-Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Here is a full list of the databases:
+Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Again, you may not need all of these if you intend to use specific parts of the pipeline. Here is a full list of the databases:
 
 |    Database     | Size  | Source |
 |:---------------:|:---------------:|:-----:| 
 |Checkm_DB		 |1.4GB| 	CheckM should prompt you to download this during first use	|
-|KRAKEN standard database|161GB | 	look at the official KRAKEN support website for download instructions 		|
-|RefSeq NCBI_nt 	|71GB | 	look at the config.sh for download instructions					|
-|RefSeq NCBI_tax 	|283MB | 	look at the config.sh for download instructions					|
-|Indexed hg38  		|  20GB | 	look at the bmtagger manual for instructions					|
+|KRAKEN standard database|161GB | 	Look at the official KRAKEN support website for download instructions 		|
+|RefSeq NCBI_nt 	|71GB | 	Look at the metaWRAP/config.sh for download instructions					|
+|RefSeq NCBI_tax 	|283MB | 	Look at the metaWRAP/config.sh for download instructions					|
+|Indexed hg38  		|  20GB | 	You will need to download the human genome and index it with bmtagger. Look at the bmtagger manual for instructions. 	|
 
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/iNa6oUF.png)
-
 
 
 
