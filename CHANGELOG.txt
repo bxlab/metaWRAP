@@ -7,7 +7,7 @@ Future plans:
 	-make unified binning module wrapping the four binning modules
 
 
-metaWRAP v=0.3.5
+metaWRAP v=0.4 (December 2017)
 	Binning module:
 		Added option to immediately run CheckM on resulting bins
 	ReadQC module:
@@ -18,6 +18,7 @@ metaWRAP v=0.3.5
 		removed depricated requirement for prviding reads as input
 		major bug fit to prevent HMMER to run out of space in /tmp/ by providing a new tmp folder
 		bug fix: bin consolidation script now supports contigs in any naming format
+		added plotting functiong to summarize the completion and contamination rankings of the inputs, intermediate interations, and final output
 	Bin_reassembly: this modules takes a set of metagenomic reads, alignes them back to the bins, and uses those reads to reassemble them
 		removed spades parallelization due to strange signmentation fault errors...
 		majob bug fix of bug preventing recruiting of reads for reassembly if the read names had spaces in them

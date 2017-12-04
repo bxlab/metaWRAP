@@ -107,7 +107,6 @@ while true; do
         esac
 done
 
-
 ########################################################################################################
 ########################           MAKING SURE EVERYTHING IS SET UP             ########################
 ########################################################################################################
@@ -130,6 +129,7 @@ fi
 announcement "BEGIN PIPELINE!"
 comm "setting up output folder and copything over bins..."
 mkdir $out
+
 n_binnings=0
 if [[ -d $bins1 ]]; then 
 	cp -r $bins1 ${out}/binsA
@@ -142,36 +142,48 @@ fi
 if [[ -d $bins2 ]]; then cp -r $bins2 ${out}/binsB; n_binnings=$((n_binnings +1)); fi
 if [[ -d $bins3 ]]; then cp -r $bins3 ${out}/binsC; n_binnings=$((n_binnings +1)); fi
 
-# I have to switch directories here - binning_refiner is pretty glitchy..."
+comm "There are $n_binnings bin sets!"
+
+# I have to switch directories here - Bin_refiner dumps everything into the current dir"
 home=$(pwd)
 cd $out
+
 if [ "$refine" == "true" ]; then
 	announcement "BEGIN BIN REFINEMENT"	
-	if [[ n_binnings -eq 1 ]]; then
+	if [[ $n_binnings -eq 1 ]]; then
 		comm "There is only one bin folder, so no refinement of bins possible. Moving on..."
-	elif [[ n_binnings -eq 2 ]]; then
+	elif [[ $n_binnings -eq 2 ]]; then
 		comm "There are two bin folders, so we can consolidate them into a third, more refined bin set."
 		${SOFT}/binning_refiner.py -1 binsA -2 binsB
 		mv outputs/Refined binsAB
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
 		rm -r outputs
-	elif [[ n_binnings -eq 3 ]]; then
+	elif [[ $n_binnings -eq 3 ]]; then
 		comm "There are three bin folders, so there 4 ways we can refine the bins (A+B, B+C, A+C, A+B+C). Will try all four!"
 		
 		comm "pricessing A+B+C"
 		${SOFT}/binning_refiner.py -1 binsA -2 binsB -3 binsC
-		mv outputs/Refined binsABC; rm -r outputs
+		mv outputs/Refined binsABC
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
+		rm -r outputs
 		
 		comm "pricessing A+B"	
 		${SOFT}/binning_refiner.py -1 binsA -2 binsB
-		mv outputs/Refined binsAB; rm -r outputs
+		mv outputs/Refined binsAB
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
+		rm -r outputs
 	
 		comm "pricessing B+C"
 		${SOFT}/binning_refiner.py -1 binsC -2 binsB
-		mv outputs/Refined binsBC; rm -r outputs
+		mv outputs/Refined binsBC
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
+		rm -r outputs
 		
 		comm "pricessing A+C"
 		${SOFT}/binning_refiner.py -1 binsA -2 binsC
-		mv outputs/Refined binsAC; rm -r outputs
+		mv outputs/Refined binsAC
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
+		rm -r outputs
 	else
 		error "Something is off here - somehow there are not 1, 2, or 3 bin folders ($n_binnings)"
 	fi
@@ -180,7 +192,7 @@ else
 	comm "Skipping bin refinement. Will proceed with the $n_binnings bins specified."
 fi
 	
-comm "fix bin naming to .fa convention for consistancy"
+comm "fixing bin naming to .fa convention for consistancy..."
 for i in $(ls); do for j in $(ls $i | grep .fasta); do mv ${i}/${j} ${i}/${j%.*}.fa; done; done
 
 
@@ -188,20 +200,19 @@ for i in $(ls); do for j in $(ls $i | grep .fasta); do mv ${i}/${j} ${i}/${j%.*}
 ########################              RUN CHECKM ON ALL BIN SETS                ########################
 ########################################################################################################
 if [ "$run_checkm" == "true" ]; then
-	mkdir tmp
 	announcement "RUNNING CHECKM ON ALL SETS OF BINS"
 	for bin_set in $(ls | grep -v tmp); do 
 		comm "Running CheckM on $bin_set bins"
-		checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir tmp
+		mkdir ${bin_set}.tmp
+		checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp
 		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 		${SOFT}/summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
 		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
-		rm -r ${bin_set}.checkm
+		rm -r ${bin_set}.checkm; rm -r ${bin_set}.tmp
 
 		num=$(cat ${bin_set}.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
 		comm "There are $num 'good' bins found in $bin_set! (>${comp}% completion and <${cont}% contamination)"
 	done
-	rm -r tmp
 else
 	comm "Skipping CheckM. Warning: bin cnosolidation will not be possible."
 fi
@@ -226,17 +237,17 @@ if [ "$cherry_pick" == "true" ]; then
 			mv binsM1 binsM; mv binsM1.stats binsM.stats
 		done
 
-		if [[ $dereplicate = false ]]; then
+		if [[ $dereplicate == false ]]; then
 			comm "Skipping dereplication of contigs between bins..."
 			mv binsM binsO
 			mv binsM.stats binsO.stats
-		elif [[ $dereplicate = partial ]]; then
+		elif [[ $dereplicate == partial ]]; then
 			comm "Scanning to find duplicate contigs between bins and only keep them in the best bin..."
 			${SOFT}/dereplicate_contigs_in_bins.py binsM.stats binsM binsO
-		elif [[ $dereplicate = complete ]]; then
+		elif [[ $dereplicate == complete ]]; then
 			comm "Scanning to find duplicate contigs between bins and deleting them in all bins..."
 			${SOFT}/dereplicate_contigs_in_bins.py binsM.stats binsM binsO remove
-		else:
+		else
 			error "there was an error in deciding how to dereplicate contigs"
 		fi
 
@@ -271,17 +282,95 @@ else
 	error "something is wrong with the cherry_pick option (${cherry_pick})"
 fi
 
-comm "You will find the best non-reassembled versions of the bins in ${out}/binsO"
+comm "You will find the best non-reassembled versions of the bins in $best_bin_set"
+
+
+########################################################################################################
+########################               FINALIZING THE REFINED BINS              ########################
+########################################################################################################
+announcement "FINALIZING THE REFINED BINS"
+
 
 if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
-	comm "Re-running CheckM on ${out}/binsO bins"
-	checkm lineage_wf -x fa ${out}/binsO ${out}/binsO.checkm -t $threads --tmpdir tmp
-	if [[ ! -s ${out}/binsO.checkm.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
-	${SOFT}/summarize_checkm.py ${out}/binsO.checkm/storage/bin_stats_ext.tsv ${out}/binsO.checkm | (read -r; printf "%s\n" "$REPLY"; sort) > ${out}/binsO.stats
+	comm "Re-running CheckM on binsO bins"
+	mkdir binsO.tmp
+	checkm lineage_wf -x fa binsO binsO.checkm -t $threads --tmpdir binsO.tmp
+	if [[ ! -s binsO.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+	rm -r binsO.tmp
+	${SOFT}/summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv binsO.checkm | (read -r; printf "%s\n" "$REPLY"; sort) > binsO.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
-	num=$(cat ${out}/binsO.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
-	comm "There are $num 'good' bins found in ${out}/binsO.checkm! (>${comp}% completion and <${cont}% contamination)"
+	rm -r binsO.checkm
+	num=$(cat binsO.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
+	comm "There are $num 'good' bins found in binsO.checkm! (>${comp}% completion and <${cont}% contamination)"
+	
+	comm "Removing bins that are inadequate quality..."
+	for bin_name in $(cat binsO.stats | grep -v compl | awk -v c="$comp" -v x="$cont" '{if ($2<c || $2>100 || $3<0 || $3>x) print $1 }' | cut -f1); do
+		echo "${bin_name} will be removed because it fell below the quality threshhold after de-replication of contigs..."
+		rm binsO/${bin_name}.fa
+	done
+	head -n 1 binsO.stats > binsO.stats.tmp
+	cat binsO.stats | awk -v c="$comp" -v x="$cont" '$2>=c && $2<=100 && $3>=0 && $3<=x' >> binsO.stats.tmp
+	mv binsO.stats.tmp binsO.stats
+	n=$(cat binsO.stats | grep -v comp | wc -l)
+	comm "Re-evaluating bin quality after contig de-replication is complete! There are still $n high quality bins."
 fi
+
+
+if [ "$run_checkm" == "true" ]; then
+	comm "making completion and contamination ranking plots for all refinement iterations"
+	${SOFT}/plot_bining_results.py $(ls | grep ".stats")
+	mkdir figures
+	mv binning_results.eps figures/intermediate_binning_results.eps
+	mv binning_results.png figures/intermediate_binning_results.png
+fi
+
+
+comm "Finalizing bin set naming, and moving over intermediate files into 'work_files'"
+if [[ $n_binnings -ne 1 ]]; then
+	mkdir work_files
+	for f in $(ls | grep -v results | grep -v figures | grep -v work); do
+		mv $f work_files/
+	done
+fi
+
+if [ "${bins1:$((${#bins1}-1)):1}" = "/" ]; then bins1=${bins1%/*}; fi
+if [ "${bins2:$((${#bins2}-1)):1}" = "/" ]; then bins2=${bins2%/*}; fi
+if [ "${bins3:$((${#bins3}-1)):1}" = "/" ]; then bins3=${bins3%/*}; fi
+
+if [[ $n_binnings -eq 2 ]]; then
+	cp -r work_files/binsA ${bins1##*/}
+	cp -r work_files/binsB ${bins2##*/}
+	cp -r work_files/binsAB Bin_refiner
+	cp -r work_files/binsO metaWRAP-bins
+
+	cp work_files/binsA.stats ${bins1##*/}.stats	
+	cp work_files/binsB.stats ${bins2##*/}.stats
+	cp work_files/binsAB.stats Bin_refiner.stats
+	cp work_files/binsO.stats metaWRAP-bins.stats
+elif [[ $n_binnings -eq 3 ]]; then
+	cp -r work_files/binsA ${bins1##*/}
+	cp -r work_files/binsB ${bins2##*/}
+	cp -r work_files/binsC ${bins3##*/}
+	cp -r work_files/binsABC Bin_refiner
+	cp -r work_files/binsO metaWRAP-bins
+
+	cp work_files/binsA.stats ${bins1##*/}.stats
+	cp work_files/binsB.stats ${bins2##*/}.stats
+	cp work_files/binsC.stats ${bins3##*/}.stats
+	cp work_files/binsABC.stats Bin_refiner.stats
+	cp work_files/binsO.stats metaWRAP-bins.stats
+else
+	error "something went wrong with determining the number of input bin sets when finalizing output names..."
+fi
+
+if [ "$run_checkm" == "true" ]; then
+        comm "making completion and contamination ranking plots of final outputs"
+        ${SOFT}/plot_bining_results.py $(ls | grep ".stats")
+	mv binning_results.eps figures/binning_results.eps
+	mv binning_results.png figures/binning_results.png
+fi
+
+cd $home
 
 ########################################################################################################
 ########################     BIN_REFINEMENT PIPELINE SUCCESSFULLY FINISHED!!!   ########################
