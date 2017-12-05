@@ -69,7 +69,7 @@
 
 ## DATABASES
 
-Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Again, you may not need all of these if you intend to use specific parts of the pipeline. Here is a full list of the databases:
+Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Again, you may not need all of these if you intend to use specific parts of the pipeline. Don't forget to configure the paths to them in the metaWRAP/bin/config-metawrap file! Here is a full list of the databases:
 
 |    Database     | Size  | Source |  Used in module
 |:---------------:|:---------------:|:---------------:|:-----:| 
