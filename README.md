@@ -71,13 +71,13 @@
 
 Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Again, you may not need all of these if you intend to use specific parts of the pipeline. Here is a full list of the databases:
 
-|    Database     | Size  | Source |
-|:---------------:|:---------------:|:-----:| 
-|Checkm_DB		 |1.4GB| 	CheckM should prompt you to download this during first use	|
-|KRAKEN standard database|161GB | 	Look at the official KRAKEN support website for download instructions 	|
-|RefSeq NCBI_nt 	|71GB | 	Look at the metaWRAP/config.sh for download instructions   |
-|RefSeq NCBI_tax 	|283MB | 	Look at the metaWRAP/config.sh for download instructions	|
-|Indexed hg38  		|  20GB | 	You will need to download the human genome and index it with bmtagger. Look at the bmtagger manual for instructions. 	|
+|    Database     | Size  | Source |  Used in module
+|:---------------:|:---------------:|:---------------:|:-----:| 
+|Checkm_DB	 |1.4GB| CheckM should prompt you to download this during first use | binning, bin_refinement, reassemble_bins |
+|KRAKEN standard database|161GB | Look at the official KRAKEN support website for download instructions | kraken |
+|RefSeq NCBI_nt |71GB | Look at the metaWRAP/config.sh for download instructions | blobology |
+|RefSeq NCBI_tax |283MB | Look at the metaWRAP/config.sh for download instructions | blobology |
+|Indexed hg38  	|  20GB | You will need to download the human genome and index it with bmtagger. Look at the bmtagger manual for instructions. | read_qc |
 
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/iNa6oUF.png)
