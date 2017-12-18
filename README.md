@@ -6,14 +6,10 @@
 ![General walkthrough of metaWRAP modules](https://i.imgur.com/LcC09ym.png)
    
  
- In addition to being a tool wrapper, MetaWRAP offers a innovative hybrid pipeline for extracting high-quality draft genomes (bins) from metagenomic data. By using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses, this pipeline will always produce stronger results than individual approaches. Additionally, due to its diverse binning approach, this pipeline shows promise to produce robust binning results in a variety of microbial communities. 
+ In addition to being a tool wrapper, MetaWRAP offers a innovative hybrid pipeline for extracting high-quality draft genomes (bins) from metagenomic data. By using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses, the [bin refinement module](https://i.imgur.com/JL665Qo.png) will always produce stronger results than individual approaches. Additionally, due to its diverse binning approach, this pipeline shows promise to produce robust binning results in a variety of microbial communities. 
 
-![MetaWRAP bin refinement strategy](https://i.imgur.com/JL665Qo.png)
-
- MetaWRAP also includes a bin reassembly module, which allows to drastically improve the quality of a set of bins by extracting the reads belonging to that draft genome, and reassembling it with a more permissive, non-metagenomic assembler. In addition to improving the N50 of the bins, this modestly increases the compleiton of the bins, and drastically reduces contamination.
- 
- ![MetaWRAP bin reassembly strategy](https://i.imgur.com/GUSMXl8.png)
- 
+ MetaWRAP also includes a [bin reassembly module](https://i.imgur.com/GUSMXl8.png), which allows to drastically improve the quality of a set of bins by extracting the reads belonging to that draft genome, and reassembling it with a more permissive, non-metagenomic assembler. In addition to improving the N50 of the bins, this modestly increases the compleiton of the bins, and drastically reduces contamination.
+  
  If you already have your metagenomic data assembled and binned with two or more software (or the same software with different parameters), try using the BIN_REFINEMENT and REASSEMBLE_BINS modules to see how you can further improve your bin predictions! 
   
 
