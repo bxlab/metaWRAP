@@ -1,34 +1,37 @@
-<<<<<<< HEAD
 # metaWRAP - Comprehensive Metagenome Analysis in One Place
 ## metaWRAP v=0.5
-=======
-# metaWRAP - Comprehensive Metagenome Analysis with Powerfull Hybrid Binning
-## metaWRAP v=0.4
->>>>>>> 47cf5acba2cccddcf41d481b99f8d2e72ef70186
 
- metaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
+ MetaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
  
- Additionally, metaWRAP offers a innovative hybrid pipeline for extracting high-quality draft genomes (bins) from metagenomic data. By using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses, this pipeline will always produce stronger results than individual approaches. Additionally, due to its diverse binning approach, this pipeline shows promise to produce robust binning results in a variety of microbial communities. 
+![General walkthrough of metaWRAP modules](https://i.imgur.com/LcC09ym.png)
+   
+ 
+ In addition to being a tool wrapper, MetaWRAP offers a innovative hybrid pipeline for extracting high-quality draft genomes (bins) from metagenomic data. By using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses, this pipeline will always produce stronger results than individual approaches. Additionally, due to its diverse binning approach, this pipeline shows promise to produce robust binning results in a variety of microbial communities. 
 
- If you already have your metagenomic data assembled and binned with two or more software, try using the BIN_REFINEMENT module to see how you can further improve your bin predictions! This modules uses Bin_refiner to make hybridized bin predictions based on two or three binning softwares, and then uses CheckM to consolidate all resulting bin sets to chose the best possible bins.
+![MetaWRAP bin refinement strategy](https://i.imgur.com/JL665Qo.png)
+
+ MetaWRAP also includes a bin reassembly module, which allows to drastically improve the quality of a set of bins by extracting the reads belonging to that draft genome, and reassembling it with a more permissive, non-metagenomic assembler. In addition to improving the N50 of the bins, this modestly increases the compleiton of the bins, and drastically reduces contamination.
+ 
+ ![MetaWRAP bin reassembly strategy](https://i.imgur.com/GUSMXl8.png)
+ 
+ If you already have your metagenomic data assembled and binned with two or more software (or the same software with different parameters), try using the BIN_REFINEMENT and REASSEMBLE_BINS modules to see how you can further improve your bin predictions! 
   
 
 ## OVERVIEW OF METAWRAP MODULES:
   
-    1) Read QC
-    2) Assembly
-    3) Binning:
-    	a. Binning with 3 softwares
-		b. Bin refinement and consolidation
-		c. Bin reassembly
-		d. Bin quantitation
-    4) Taxonomic profiling with KRAKEN
-    5) Visualization with Blobplots
+Metagemonic data processing modules:
+    	1) Read QC (trimming and human read removal)
+    	2) Assembly (with metaSPAdes or MegaHit, plust assembly QC)
+	3) Kraken (taxonomy profiling and visualization)
+    	3) Binning (MaxBin2, metaBAT2, CONCOCT)
+	
+Bin processing modules:
+	1) Bin refinement and consolidation of multiple bin sets
+	2) Bin reassembly (reassemble bins to improve completiona and reduce contamination)
+	3) Bin quantitation (bin abundance estimation across samples)
+    	5) Blobology (visualize bin success with blobplots)
+	6) Classify bins (asign taxonomy to draft genomes)
   
-    
-  ![General walkthrough of metaWRAP modules](https://i.imgur.com/s9yAuQa.png)
-   
-    
 
   
 ## INSTALLATION
@@ -57,7 +60,6 @@
   ``` bash
   source activate metawrap
   metaWRAP -h
-  source deactivate
   ```
 
   I want to emphasize that because metaWRAP is written in BASH scripts, it is realitively easy to understand why some part of the program is failing, or if there is a dependancy issue. Just to to that line in the code and see how metaWRAP is calling that software. There is not magic here - metaWRAP is simply calling programs from your current environment in a specific sequence just like you would if you were following a pipeline. If it cannot find them, an error pops up. Feel free to dive in the code to see where things went wrong. If you find a bug, please post in the "issues" section!
@@ -97,7 +99,7 @@ Once all the dependencies are in place, running metaWRAP is relatively simple. T
 
 ```
 metaWRAP -h
-	Usage: ./metaWRAP [module] --help
+	Usage: metaWRAP [module] --help
 	Options:
 
 	read_qc		Raw read QC module
