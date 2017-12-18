@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 # metaWRAP - Comprehensive Metagenome Analysis in One Place
 ## metaWRAP v=0.5
+=======
+# metaWRAP - Comprehensive Metagenome Analysis with Powerfull Hybrid Binning
+## metaWRAP v=0.4
+>>>>>>> 47cf5acba2cccddcf41d481b99f8d2e72ef70186
 
  metaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
  
@@ -28,20 +33,20 @@
   
 ## INSTALLATION
 
- Clone or download the metaWRAP directory into a semi-permanent location, then go into the metaWRAP/bin folder and edit the metaWRAP/bin/contig-metawrap file. Make sure that all the paths are correct, especially the paths pointing to the "scripts" and "pipelines" folders in the main metaWRAP directory. Once that is configured, simply copy the contents of metaWRAP/bin into your local bin folder, or simply add metaWRAP/bin/ to your path. If you are unsure how to do this, here are the commands to do this:
+ Clone or download the metaWRAP directory into a semi-permanent location, then go into the metaWRAP/bin folder and edit the metaWRAP/bin/contig-metawrap file. Make sure that all the paths are correct, especially the paths pointing to the "scripts" and "pipelines" folders in the main metaWRAP directory. Once that is configured, simply copy the contents of metaWRAP/bin into your local bin folder, or simply add metaWRAP/bin/ to your path:
  
  ```
- echo "export PATH="/full/path/to/metaWRAP/bin:$PATH"" >> ~/.bash_profile_
+ echo "export PATH="/full/path/to/metaWRAP/bin:$PATH"" >> ~/.bash_profile
  source ~/.bash_profile
  ```
  
- No try running metaWRAP -h to see if everything works!
+ No try running ```metaWRAP -h``` to see if everything works!
 
 
 
 ## DEPENDENCIES
 
-  Since this is a wrapper program, the biggest challenge in installing metaWRAP will likely be configuring all the dependencies correctly. A complete list of dependancies can be viewed in "dependancies.txt". Feel free to install them one by one. However, to make this as painless as possible, I HIGHLY recommend you use Conda, which automatically installs programs and handles dependancies. To start, download [miniconda2](https://conda.io/miniconda.html) and install it. Then create a new environemtn and install all the required packages in conda_dependancies.list. To do so, run:
+  Since this is a wrapper program, the biggest challenge in installing metaWRAP will likely be configuring all the dependencies correctly. A complete list of dependancies can be viewed in "dependancies.txt". Feel free to install them one by one. However, to make this as painless as possible, I HIGHLY recommend you use Conda, which automatically installs programs and handles dependancies. To start, download [miniconda2](https://conda.io/miniconda.html) and install it. Then create a new environment and install all the required packages in metawrap-environment.yml. To do so, run:
   
   ``` bash
   conda env create -f metawrap-environment.yml
@@ -58,7 +63,7 @@
   I want to emphasize that because metaWRAP is written in BASH scripts, it is realitively easy to understand why some part of the program is failing, or if there is a dependancy issue. Just to to that line in the code and see how metaWRAP is calling that software. There is not magic here - metaWRAP is simply calling programs from your current environment in a specific sequence just like you would if you were following a pipeline. If it cannot find them, an error pops up. Feel free to dive in the code to see where things went wrong. If you find a bug, please post in the "issues" section!
 
 
-  After this, there are still a few software that you will need to install and place in yout PATH, becuase they are not currently in Conda. Note that these software are required only for specific modules. 
+  After this, there are still a few software that you will need to install and place in yout PATH, becuase they are not currently in conda. Note that these software are only required only for specific modules. 
 
 |    Software     | Tested version  |  Used in module 			|
 |:---------------:|:---------------:|:---------------------------------:| 
@@ -71,15 +76,15 @@
 
 ## DATABASES
 
-Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Again, you may not need all of these if you intend to use specific parts of the pipeline. Here is a full list of the databases:
+Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Again, you may not need all of these if you intend to use specific parts of the pipeline. Don't forget to configure the paths to them in the metaWRAP/bin/config-metawrap file! Here is a full list of the databases:
 
-|    Database     | Size  | Source |
-|:---------------:|:---------------:|:-----:| 
-|Checkm_DB		 |1.4GB| 	CheckM should prompt you to download this during first use	|
-|KRAKEN standard database|161GB | 	Look at the official KRAKEN support website for download instructions 		|
-|RefSeq NCBI_nt 	|71GB | 	Look at the metaWRAP/config.sh for download instructions					|
-|RefSeq NCBI_tax 	|283MB | 	Look at the metaWRAP/config.sh for download instructions					|
-|Indexed hg38  		|  20GB | 	You will need to download the human genome and index it with bmtagger. Look at the bmtagger manual for instructions. 	|
+|    Database     | Size  | Source |  Used in module
+|:---------------:|:---------------:|:---------------:|:-----:| 
+|Checkm_DB	 |1.4GB| CheckM should prompt you to download this during first use | binning, bin_refinement, reassemble_bins |
+|KRAKEN standard database|161GB | Look at the official KRAKEN support website for download instructions | kraken |
+|RefSeq NCBI_nt |71GB | Look at the metaWRAP/config.sh for download instructions | blobology |
+|RefSeq NCBI_tax |283MB | Look at the metaWRAP/config.sh for download instructions | blobology |
+|Indexed hg38  	|  20GB | You will need to download the human genome and index it with bmtagger. Look at the bmtagger manual for instructions. | read_qc |
 
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/iNa6oUF.png)
