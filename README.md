@@ -85,7 +85,7 @@ Finally, you will need to download several databases and configure their paths i
 |Indexed hg38  	|  20GB | You will need to download the human genome and index it with bmtagger. Look at the bmtagger manual for instructions. | read_qc |
 
 
-  ![Detailed pipeline walkthrough](https://i.imgur.com/iNa6oUF.png)
+  ![Detailed pipeline walkthrough](https://i.imgur.com/5bb6vlY.jpg)
 
 
 
