@@ -1,4 +1,4 @@
-# metaWRAP - Comprehensive Metagenome Analysis in One Place
+# metaWRAP - Comprehensive Metagenomic Bin Analysis in One Place
 ## metaWRAP v=0.5
 
  MetaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
@@ -15,18 +15,18 @@
 
 ## OVERVIEW OF METAWRAP MODULES:
   
-Metagemonic data processing modules:
-    	1) Read QC (trimming and human read removal)
+#### Metagemonic data pre-processing modules:
+		1) Read QC (trimming and human read removal)
     	2) Assembly (with metaSPAdes or MegaHit, plust assembly QC)
-	3) Kraken (taxonomy profiling and visualization)
-    	3) Binning (MaxBin2, metaBAT2, CONCOCT)
+		3) Kraken (taxonomy profiling and visualization)
+    	4) Binning (MaxBin2, metaBAT2, CONCOCT)
 	
-Bin processing modules:
-	1) Bin refinement and consolidation of multiple bin sets
-	2) Bin reassembly (reassemble bins to improve completiona and reduce contamination)
-	3) Bin quantitation (bin abundance estimation across samples)
+#### Bin processing modules:
+		1) Bin refinement and consolidation of multiple bin sets
+		2) Bin reassembly (reassemble bins to improve completiona and reduce contamination)
+		3) Bin quantitation (bin abundance estimation across samples)
     	5) Blobology (visualize bin success with blobplots)
-	6) Classify bins (asign taxonomy to draft genomes)
+		6) Classify bins (asign taxonomy to draft genomes)
   
 
   
