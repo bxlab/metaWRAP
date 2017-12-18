@@ -53,6 +53,10 @@ parser.add_argument('-3',
                     required=False,
                     help='third bin folder name')
 
+parser.add_argument('-o',
+                    required=True,
+                    help='output folder name')
+
 parser.add_argument('-ms',
                     required=False,
                     default=524288,
@@ -60,12 +64,18 @@ parser.add_argument('-ms',
                     help='(optional) minimum size for refined bins, default = 524288 (0.5Mbp)')
 
 args = vars(parser.parse_args())
+output_dir = args['o']
+if output_dir[-1]=='/':
+    output_dir=output_dir[:-1]
+
 input_bin_folder_1 = args['1']
 if input_bin_folder_1[-1] == '/':
     input_bin_folder_1 = input_bin_folder_1[:-1]
+
 input_bin_folder_2 = args['2']
 if input_bin_folder_2[-1] == '/':
     input_bin_folder_2 = input_bin_folder_2[:-1]
+
 if args['3'] != None:
     input_bin_folder_3 = args['3']
     if input_bin_folder_3[-1] == '/':
@@ -86,7 +96,7 @@ else:
 ################################################ Define folder/file name ###############################################
 
 wd = os.getcwd()
-output_folder = 'outputs'
+output_folder = output_dir
 pwd_output_folder = '%s/%s' % (wd, output_folder)
 
 ########################################################################################################################

@@ -24,6 +24,7 @@ help_message () {
 	echo "	-o STR          output directory"
 	echo "	-m INT          memory in GB (default=10)"
 	echo "	-t INT          number of threads (defualt=1)"
+	echo "	-l INT		minimum length of assembled contigs (default=1000)"
 	echo ""
 	echo "	--use-megahit		assemble with megahit (default)"
 	echo "	--use-metaspades	assemble with metaspades instead of megahit (better results, but slower and required a lot of RAM)"
@@ -44,13 +45,13 @@ announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 source config-metawrap
 
 # default params
-mem=10; threads=1; out="false"; reads_1="false"; reads_2="false"
+mem=10; threads=1; out="false"; reads_1="false"; reads_2="false"; min_len=1000
 # long options defaults
 metaspades_assemble=false; megahit_assemble=true
 
 
 # load in params
-OPTS=`getopt -o ht:m:o:1:2: --long help,use-metaspades,use-megahit -- "$@"`
+OPTS=`getopt -o ht:m:o:1:2:l: --long help,use-metaspades,use-megahit -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -62,6 +63,7 @@ while true; do
 		-o) out=$2; shift 2;;
 		-1) reads_1=$2; shift 2;;
 		-2) reads_2=$2; shift 2;;
+		-l) min_len=$2; shift 2;;
 		-h | --help) help_message; exit 1; shift 1;;
 		--use-megahit) megahit_assemble=true; metaspades_assemble=false; shift 1;;
 		--use-metaspades) megahit_assemble=false; metaspades_assemble=true; shift 1;;
@@ -136,14 +138,22 @@ if [ "$megahit_assemble" = true ]; then
 	########################################################################################################
         announcement "ASSEMBLING READS WITH MEGAHIT"
 	
-	rm -r ${out}/megahit
+	#rm -r ${out}/megahit
 	if [ "$metaspades_assemble" = true ]; then
 		comm "assembling ${out}/unused_by_metaspades.fastq with megahit"
-		megahit -r ${out}/unused_by_metaspades.fastq -o ${out}/megahit -t $threads -m ${mem}000000000
+		megahit\
+		 -r ${out}/unused_by_metaspades.fastq\
+		 -o ${out}/megahit\
+		 -t $threads\
+		 -m ${mem}000000000
 		mv ${out}/unused_by_metaspades.fastq ${out}/metaspades/
 	else
 		comm "assembling $reads_1 and $reads_2 with megahit"
-		megahit -1 $reads_1 -2 $reads_2 -o ${out}/megahit -t $threads -m ${mem}000000000
+		megahit\
+		 -1 $reads_1 -2 $reads_2\
+		 -o ${out}/megahit\
+		 -t $threads -m ${mem}000000000\
+		 --continue
 	fi
 
 	if [ ! -f "${out}/megahit/final.contigs.fa" ]; then error "Something went wrong with reassembling with Megahit. Exiting."; fi
@@ -157,23 +167,21 @@ announcement "FORMAT THE ASSEMBLY"
 
 if [ "$megahit_assemble" = true ] && [ "$metaspades_assemble" = true ]; then
 	comm "Reads were assembled with metaspades AND megahit"
-	${SOFT}/fix_megahit_contig_naming.py ${out}/megahit/final.contigs.fa > ${out}/megahit/fixed.contigs.fa
-	${SOFT}/rm_short_contigs.py 1000 ${out}/megahit/fixed.contigs.fa > ${out}/megahit/long.contigs.fa
+	${SOFT}/fix_megahit_contig_naming.py ${out}/megahit/final.contigs.fa $min_len > ${out}/megahit/long.contigs.fa
 	
 	cp ${out}/metaspades/long_scaffolds.fasta ${out}/combined_assembly.fasta
 	cat ${out}/megahit/long.contigs.fa >> ${out}/combined_assembly.fasta
 	${SOFT}/sort_contigs.py ${out}/combined_assembly.fasta > ${out}/final_assembly.fasta
 	rm ${out}/combined_assembly.fasta
 elif [ "$metaspades_assemble" = true ]; then
-	comm "Reads were assembled with metaspades only"
-	${SOFT}/rm_short_contigs.py 1000 ${out}/metaspades/scaffolds.fasta > ${out}/final_assembly.fasta
+	comm "Reads were assembled with metaspades"
+	${SOFT}/rm_short_contigs.py $min_len ${out}/metaspades/scaffolds.fasta > ${out}/final_assembly.fasta
 	if [ ! -s ${out}/final_assembly.fasta ]; then error "metaspades failed to produce long contigs (>500bp). Exiting."; fi
 elif [ "$megahit_assemble" = true ]; then 
-	comm "Reads were assembled with megahit only"
-	${SOFT}/fix_megahit_contig_naming.py ${out}/megahit/final.contigs.fa > ${out}/megahit/fixed.contigs.fa
-	${SOFT}/rm_short_contigs.py 1000 ${out}/megahit/fixed.contigs.fa > ${out}/megahit/long.contigs.fa
-	if [ ! -s ${out}/megahit/long.contigs.fa ]; then error "megahit failed to produce long (>500bp) contigs. Exiting."; fi
-	${SOFT}/sort_contigs.py ${out}/megahit/long.contigs.fa > ${out}/final_assembly.fasta
+	comm "Reads were assembled with megahit. Formatting and sorting the assembly..."
+	${SOFT}/fix_megahit_contig_naming.py ${out}/megahit/final.contigs.fa $min_len > ${out}/final_assembly.fasta
+	if [[ $? -ne 0 ]]; then error "something went wrong with formating and sorting the assembly. Exiting..."; fi
+	if [ ! -s ${out}/final_assembly.fasta ]; then error "megahit failed to produce long (>${min_len}) contigs. Exiting."; fi
 else
 	error "Reads were NOT assembled with metaspades OR megahit..."
 fi

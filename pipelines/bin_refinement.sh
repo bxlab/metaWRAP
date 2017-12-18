@@ -154,36 +154,35 @@ if [ "$refine" == "true" ]; then
 		comm "There is only one bin folder, so no refinement of bins possible. Moving on..."
 	elif [[ $n_binnings -eq 2 ]]; then
 		comm "There are two bin folders, so we can consolidate them into a third, more refined bin set."
-		${SOFT}/binning_refiner.py -1 binsA -2 binsB
-		mv outputs/Refined binsAB
+		${SOFT}/binning_refiner.py -1 binsA -2 binsB -o Refined_AB
+		mv Refined_AB/Refined binsAB
 		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
-		rm -r outputs
+		rm -r Refined_AB
 	elif [[ $n_binnings -eq 3 ]]; then
-		comm "There are three bin folders, so there 4 ways we can refine the bins (A+B, B+C, A+C, A+B+C). Will try all four!"
+		comm "There are three bin folders, so there 4 ways we can refine the bins (A+B, B+C, A+C, A+B+C). Will try all four in parallel!"
 		
-		comm "pricessing A+B+C"
-		${SOFT}/binning_refiner.py -1 binsA -2 binsB -3 binsC
-		mv outputs/Refined binsABC
-		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
-		rm -r outputs
+		${SOFT}/binning_refiner.py -1 binsA -2 binsB -3 binsC -o Refined_ABC &
+		${SOFT}/binning_refiner.py -1 binsA -2 binsB -o Refined_AB &
+		${SOFT}/binning_refiner.py -1 binsC -2 binsB -o Refined_BC &
+		${SOFT}/binning_refiner.py -1 binsA -2 binsC -o Refined_AC &
+
+		wait
+
+		mv Refined_ABC/Refined binsABC
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly with A+B+C. Exiting..."; fi
+		rm -r Refined_ABC
 		
-		comm "pricessing A+B"	
-		${SOFT}/binning_refiner.py -1 binsA -2 binsB
-		mv outputs/Refined binsAB
-		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
-		rm -r outputs
+		mv Refined_AB/Refined binsAB
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly with A+B. Exiting..."; fi
+		rm -r Refined_AB
 	
-		comm "pricessing B+C"
-		${SOFT}/binning_refiner.py -1 binsC -2 binsB
-		mv outputs/Refined binsBC
-		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
-		rm -r outputs
+		mv Refined_BC/Refined binsBC
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly with B+C. Exiting..."; fi
+		rm -r Refined_BC
 		
-		comm "pricessing A+C"
-		${SOFT}/binning_refiner.py -1 binsA -2 binsC
-		mv outputs/Refined binsAC
-		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
-		rm -r outputs
+		mv Refined_AC/Refined binsAC
+		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly with A+C. Exiting..."; fi
+		rm -r Refined_AC
 	else
 		error "Something is off here - somehow there are not 1, 2, or 3 bin folders ($n_binnings)"
 	fi
@@ -252,7 +251,6 @@ if [ "$cherry_pick" == "true" ]; then
 		fi
 
 		best_bin_set=binsO
-		comm "All the best bins are stored in $best_bin_set"
 	else
 		error "Something went wrong with determining the number of bin folders... The number was ${n_binnings}. Exiting."
 	fi

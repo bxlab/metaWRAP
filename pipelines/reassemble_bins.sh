@@ -191,7 +191,7 @@ if [ "$run_checkm" = true ]; then
 		cp $i ${out}/reassembled_bins/${base%.*}.orig.fa
 	done
 
-	comm "Running CheckM on best bins (reassembled and original"
+	comm "Running CheckM on best bins (reassembled and original)"
 	mkdir ${out}/tmp
 	checkm lineage_wf -x fa ${out}/reassembled_bins ${out}/reassembled_bins.checkm -t $threads --tmpdir ${out}/tmp
 	if [[ ! -s ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
@@ -249,11 +249,17 @@ if [ "$run_checkm" = true ]; then
         rm -r ${out}/reassembled_bins.plot
 	
 	comm "you will find the info on the final reassembled bins in ${out}/reassembled_bins.stats, and a figure summarizing it in ${out}/reassembled_bins.png"
+
+	comm "making reassembly N50, compleiton, and contamination summary plots."
+	head -n 1 ${out}/work_files/reassembled_bins.stats > ${out}/original_bins.stats
+	grep orig ${out}/work_files/reassembled_bins.stats >> ${out}/original_bins.stats
+	${SOFT}/plot_reassembly.py $out ${out}/reassembled_bins.stats ${out}/original_bins.stats
+	if [[ $? -ne 0 ]]; then error "Something went wrong with plotting the reassembly summary plots. Exiting..."; fi
 fi
 
 comm "you will find the final bins in ${out}/reassembled_bins"
 ########################################################################################################
-########################      BINNING PIPELINE SUCCESSFULLY FINISHED!!!         ########################
+########################    REASSEMBLY PIPELINE SUCCESSFULLY FINISHED!!!        ########################
 ########################################################################################################
-announcement "BINNING PIPELINE SUCCESSFULLY FINISHED!!!"
+announcement "BIN REASSEMBLY PIPELINE SUCCESSFULLY FINISHED!!!"
 

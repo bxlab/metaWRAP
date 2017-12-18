@@ -1,13 +1,28 @@
 Future plans:
-	-paralelize human/microbe read splitting after bmtagger
-	-filter out the bottom 1% of KRAKEN clasifications
-	-figure out a better replacement for phylosift
-	-allow ALL module to take in multiple samples at once
 	-rename binning modules to something more consistant
-	-make unified binning module wrapping the four binning modules
+	-make unified binning module wrapping the other bin processing modules
 
 
-metaWRAP v=0.4 (December 2017)
+
+metaWRAP v=0.5 (Late December 2017)
+	Added overview flowcharts for most modules, and updated older flowcharts
+	metaWRAP is now much more binning oriented (see overview flowchart)
+	Assembly module:
+		added minimum contig length option (defore the default was 1000bp)
+		sped up megahit assembly re-formatting by removing redundant sorting operations
+	Bin_refinement module:
+		parallelized Binning_refiner such that all four hydridizing operations sun simultaneously
+	Reassemble_bins module:
+		added plotting functiong to summarize the N50, completion, and contamination rankings of the before and after bins
+	New module: Classify bins:
+		Uses MEGABLAST to align the contigs in bins to RefSeq
+		Taxator-tx asigns taxonomy to each contig
+		Use weighted tree algorythm to find consensus taxonomy of each bin
+	
+
+
+metaWRAP v=0.4 (Early December 2017)
+	Most dependancies can now be installed with a pre-configured conda environment
 	Binning module:
 		Added option to immediately run CheckM on resulting bins
 	ReadQC module:

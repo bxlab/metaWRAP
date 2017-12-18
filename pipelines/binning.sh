@@ -42,7 +42,7 @@ run_checkm () {
 	checkm lineage_wf -x fa ${1} ${1}.checkm -t $threads --tmpdir ${i}.tmp
 	if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r ${i}.tmp
-	${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv ${1}\
+	${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv ${1##*/}\
 	| (read -r; printf "%s\n" "$REPLY"; sort) > ${1}.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 	num=$(cat ${1}.stats | awk '{if ($2>=70 && $2<=100 && $3>=0 && $3<=10) print $1 }' | wc -l)

@@ -65,6 +65,8 @@
 |    kronatools   |    v=2.7        |  kraken				|
 |    metabat2     |    v=2.9.1      |  binning				|
 |    maxbin2      |    v=2.2.4      |  binning				|
+|    pplacer      |    v=1.1        |  bin_refinement, reassemble_bins  |
+|    taxator-kt   |    v=1.3.3      |  classify_bins                    |
 
 
 ## DATABASES

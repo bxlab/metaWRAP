@@ -29,12 +29,11 @@ rm -r ${1}.tmp
 comm "Finalizing CheckM stats..."
 ${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv > ${1}.stats
 
-exit 0
-comm "Making CheckM plot of $1 bins"
-checkm bin_qa_plot -x fa ${1}.checkm $1 ${1}.plot
-if [[ ! -s ${1}.plot/bin_qa_plot.png ]]; then warning "Something went wrong with making the CheckM plot. Exiting."; fi
-mv ${1}.plot/bin_qa_plot.png ${1}.png
-rm -r ${1}.plot
+#comm "Making CheckM plot of $1 bins"
+#checkm bin_qa_plot -x fa ${1}.checkm $1 ${1}.plot
+#if [[ ! -s ${1}.plot/bin_qa_plot.png ]]; then warning "Something went wrong with making the CheckM plot. Exiting."; fi
+#mv ${1}.plot/bin_qa_plot.png ${1}.png
+#rm -r ${1}.plot
 
 
 announcement "CheckM pipeline finished"

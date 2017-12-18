@@ -1,3 +1,10 @@
+# path to the custon scripts of metaWRAP
+SOFT=/home-2/guritsk1@jhu.edu/scratch/metaWRAP/scripts
+
+# path to metaWRAP pipelines
+PIPES=/home-2/guritsk1@jhu.edu/scratch/metaWRAP/pipelines
+
+
 # path to kraken standard database
 KRAKEN_DB="/home-2/guritsk1@jhu.edu/scratch/Programs/kraken/kraken_standard_database"
 
@@ -18,9 +25,4 @@ BLASTDB=/home-2/guritsk1@jhu.edu/scratch/RefSeq/NCBI_nt
 ## Default: current directory
 TAXDUMP=/home-2/guritsk1@jhu.edu/scratch/RefSeq/NCBI_tax
 
-# path to the custon scripts of metaWRAP
-SOFT=/home-2/guritsk1@jhu.edu/scratch/metaWRAP/scripts
-
-# path to metaWRAP pipelines
-PIPES=/home-2/guritsk1@jhu.edu/scratch/metaWRAP/pipelines
 
