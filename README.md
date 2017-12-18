@@ -45,18 +45,25 @@
 
 ## DEPENDENCIES
 
-  Since this is a wrapper program, the biggest challenge in installing metaWRAP will likely be configuring all the dependencies correctly. A complete list of dependancies can be viewed in "dependancies.txt". Feel free to install them one by one. However, to make this as painless as possible, I HIGHLY recommend you use Conda, which automatically installs programs and handles dependancies. To start, download [miniconda2](https://conda.io/miniconda.html) and install it. Then create a new environment and install all the required packages in metawrap-environment.yml. To do so, run:
+  Since this is a wrapper program, the biggest challenge in installing metaWRAP will likely be configuring all the dependencies correctly. A complete list of dependancies can be viewed in "dependancies.txt". Feel free to install them one by one. However, to make this as painless as possible, I HIGHLY recommend you use Conda, which automatically installs programs and handles dependancies. To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. 
+  
+  Once you have miniconda2 installed, you can install most packages required by metaWRAP by using the metawrap-environment.yml file found in the metaWRAP folder. To create a new environment and install most of the dependancies, run:
   
   ``` bash
-  conda env create -f metawrap-environment.yml
+  conda env create -f metaWRAP/metawrap-environment.yml
   ```
   
-  To enter and exit the newly created envornment, run:
+  This will install over a hundred dependancy software for you in one go! They will be all added to the conda environment you just created. To use them (and to run metaWRAP), you need to enter the environment:
   
   ``` bash
   source activate metawrap
-  metaWRAP -h
   ```
+  When you are done with using metaWRAP and want to exit the environment, run:
+  
+  ``` bash
+  source deactivate
+  ```
+  
 
   I want to emphasize that because metaWRAP is written in BASH scripts, it is realitively easy to understand why some part of the program is failing, or if there is a dependancy issue. Just to to that line in the code and see how metaWRAP is calling that software. There is not magic here - metaWRAP is simply calling programs from your current environment in a specific sequence just like you would if you were following a pipeline. If it cannot find them, an error pops up. Feel free to dive in the code to see where things went wrong. If you find a bug, please post in the "issues" section!
 
