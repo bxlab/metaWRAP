@@ -60,6 +60,7 @@ dependencies:
 - certifi=2017.11.5=py27h71e7faf_0
 - cffi=1.11.2=py27ha7929c6_0
 - chardet=3.0.4=py27hfa10054_1
+- cloog=0.18.0=0
 - cryptography=2.1.4=py27h6697b16_0
 - curl=7.52.1=0
 - cycler=0.10.0=py27hc7354d3_0
@@ -69,12 +70,14 @@ dependencies:
 - fontconfig=2.12.1=3
 - freetype=2.5.5=2
 - functools32=3.2.3.2=py27h4ead58f_1
+- gcc=4.8.5=7
 - gmp=6.1.2=h6c8ec71_1
 - icu=58.2=h9c2bf20_1
 - idna=2.6=py27h5722d68_1
 - imagesize=0.7.1=py27hd17bf80_0
 - intel-openmp=2018.0.0=hc7b2577_8
 - ipaddress=1.0.18=py27h337fd85_0
+- isl=0.12.2=0
 - jinja2=2.10=py27h4114e70_0
 - joblib=0.11=py27_0
 - libedit=3.1=heed3624_0
@@ -90,6 +93,8 @@ dependencies:
 - markupsafe=1.0=py27h97b2822_1
 - matplotlib=1.5.1=np110py27_0
 - mkl=2018.0.1=h19d6760_4
+- mpc=1.0.3=hec55b23_5
+- mpfr=3.1.5=h11a74b3_2
 - msgpack-python=0.4.8=py27hc2fa789_0
 - ncurses=6.0=h9df7e31_2
 - nose=1.3.7=py27heec2199_2
