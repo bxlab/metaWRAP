@@ -161,6 +161,7 @@ cat ${out}/bin_taxonomy.tab
 
 comm "you will find the consensus taxonomy of each bin in ${out}/bin_taxonomy.tab"
 
+if false; then
 comm "renaming bins to their best taxonomy"
 mkdir ${out}/renamed_bins
 for bin in $(ls $bin_folder); do 
@@ -173,6 +174,8 @@ for bin in $(ls $bin_folder); do
 done
 
 comm "you will find the bins renamed to their best taxonomy estimate in ${out}/renamed_bins "
+fi
+
 
 ########################################################################################################
 ########################    CLASSIFICATION PIPELINE FINISHED SUCCESSFULLY!!!    ########################

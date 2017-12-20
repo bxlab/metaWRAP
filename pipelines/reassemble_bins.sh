@@ -88,7 +88,6 @@ if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure config.sh is in the same filder as the mains scripts and all the paths in the config.sh file are correct"
 fi
 
-
 ########################################################################################################
 ########################               BEGIN REASSEMBLY PIPELINE!               ########################
 ########################################################################################################
@@ -116,8 +115,6 @@ bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads\
  | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins $f_reads $r_reads ${out}/reads_for_reassembly
 
 
-
-
 ########################################################################################################
 ########################             REASSEMBLING BINS WITH SPADES              ########################
 ########################################################################################################
@@ -128,8 +125,10 @@ assemble () {
 	bin=${out}/reads_for_reassembly/$1
 	bin_name=${bin##*/}
 	tmp=${bin_name%_*}
+	tmp_dir=${tmp}.tmp
+	mkdir $tmp
 	comm "NOW REASSEMBLING ${bin_name%_*}"
-	spades.py -t $threads -m $mem --tmp /tmp --careful \
+	spades.py -t $threads -m $mem --tmp $tmp_dir --careful \
 	--untrusted-contigs ${out}/original_bins/${tmp%.*}.fa \
 	-1 ${bin%_*}_1.fastq \
 	-2 ${bin%_*}_2.fastq \
@@ -139,6 +138,7 @@ assemble () {
                 warning "Something went wrong with reassembling ${bin_name%_*}"
 	else 
 		comm "${bin_name%_*} was reassembled successfully!"
+		rm -r $tmp_dir
 	fi
 }
 for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do assemble $i; done
