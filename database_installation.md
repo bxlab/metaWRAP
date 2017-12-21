@@ -36,7 +36,7 @@ Do not forget to set the BLASTDB variable in the contig-metawrap file in metaWRA
 BLASTDB=/your/location/of/database/NCBI_nt
 ```
 
-### Downloading the NCBI_nt taxonomy:
+### Downloading the NCBI taxonomy:
 ``` bash
 mkdir NCBI_tax
 cd NCBI_tax
