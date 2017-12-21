@@ -22,6 +22,7 @@ dependencies:
 - ggplot=0.6.8=py27_0
 - htslib=1.3=0
 - java-jdk=8.0.92=1
+- jellyfish=1.1.11=1
 - jemalloc=4.5.0=0
 - kraken=0.10.6_eaf8fb68=2
 - megahit=1.1.2=py27_0
