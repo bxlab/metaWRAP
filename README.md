@@ -99,7 +99,9 @@ wget "ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.*.tar.gz"
 for a in nt.*.tar.gz; do tar xzf $a; done
 ```
 Do not forget to set the BLASTDB variable in the contig-metawrap file in metaWRAP/bin/
+``` bash
 BLASTDB=/your/location/of/database/NCBI_nt
+```
 
 ### Downloading the NCBI_nt taxonomy:
 ``` bash
@@ -108,7 +110,9 @@ cd NCBI_tax
 wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
 ```
 Do not forget to set the TAXDUMP variable in the contig-metawrap file in metaWRAP/bin/
+``` bash
 TAXDUMP=/your/location/of/database/NCBI_tax
+```
 
 ### Downloading the KRAKEN standard database:
 Note: this will download the entire RefSeq database and index it, which takes a lot of computational power, storage space, and RAM. During database building, you will need >450GB of space and >250GB of RAM. With 24 cores, this will take >5 hours. Note that this is only needed if you intend on running the KRAKEN module.
@@ -117,15 +121,24 @@ kraken-build --standard --threads 24 --db MY_KRAKEN_DATABASE
 kraken-build --db MY_KRAKEN_DATABASE --clean
 ```
 Do not forget to set the KRAKEN_DB variable in the contig-metawrap file in metaWRAP/bin/
+``` bash
 KRAKEN_DB=/path/to/my/database/MY_KRAKEN_DATABASE
+```
 
 ### Downloading the CheckM database:
 ``` bash
+mkdir MY_CHECKM_FOLDER
 checkm data setRoot
 # CheckM will prompt to to chose your storage location...
 checkm data update
+
+# If there is difficulty connecting to the servers, you can update manually:
+cd MY_CHECKM_FOLDER
+wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_v1.0.9.tar.gz
+tar -xvf checkm_data_v1.0.9.tar.gz
+rm checkm_data_v1.0.9.tar.gz
 ```
-Thats it!
+Thats it! CheckM should know what folder to use as its database.
 
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/5bb6vlY.jpg)
