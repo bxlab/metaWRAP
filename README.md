@@ -163,6 +163,8 @@ Done! Now dont forget to specify the BMTAGGER_DB variable in the contig-metawrap
 BMTAGGER_DB=/path/to/your/index/BMTAGGER_INDEX
 ```
 
+## DETAILED PIPELINE WALKTHROUGH
+
   ![Detailed pipeline walkthrough](https://i.imgur.com/5bb6vlY.jpg)
 
 
