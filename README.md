@@ -83,13 +83,40 @@
 
 Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Again, you may not need all of these if you intend to use specific parts of the pipeline. Don't forget to configure the paths to them in the metaWRAP/bin/config-metawrap file! Here is a full list of the databases:
 
-|    Database     | Size  |  Used in module
-|:---------------:|:---------------:|:---------------:|:-----:| 
+|    Database     | Size  |  Used in module |
+|:---------------:|:---------------:|:-----:| 
 |Checkm_DB	 |1.4GB| binning, bin_refinement, reassemble_bins |
 |KRAKEN standard database|161GB |  kraken |
 | NCBI_nt |71GB |  blobology |
 | NCBI_tax |283MB |  blobology |
 |Indexed hg38  	|  20GB |  read_qc |
+
+
+### Downloading the CheckM database:
+``` bash
+mkdir MY_CHECKM_FOLDER
+checkm data setRoot
+# CheckM will prompt to to chose your storage location...
+checkm data update
+
+# If there is difficulty connecting to the servers, you can update manually:
+cd MY_CHECKM_FOLDER
+wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_v1.0.9.tar.gz
+tar -xvf checkm_data_v1.0.9.tar.gz
+rm checkm_data_v1.0.9.tar.gz
+```
+Thats it! CheckM should know what folder to use as its database.
+
+### Downloading the KRAKEN standard database:
+Note: this will download the entire RefSeq database and index it, which takes a lot of computational power, storage space, and RAM. During database building, you will need >450GB of space and >250GB of RAM. With 24 cores, this will take >5 hours. Note that this is only needed if you intend on running the KRAKEN module.
+``` bash
+kraken-build --standard --threads 24 --db MY_KRAKEN_DATABASE
+kraken-build --db MY_KRAKEN_DATABASE --clean
+```
+Do not forget to set the KRAKEN_DB variable in the contig-metawrap file in metaWRAP/bin/
+``` bash
+KRAKEN_DB=/path/to/my/database/MY_KRAKEN_DATABASE
+```
 
 ### Downloading the NCBI_nt BLAST database:
 ``` bash
@@ -114,32 +141,27 @@ Do not forget to set the TAXDUMP variable in the contig-metawrap file in metaWRA
 TAXDUMP=/your/location/of/database/NCBI_tax
 ```
 
-### Downloading the KRAKEN standard database:
-Note: this will download the entire RefSeq database and index it, which takes a lot of computational power, storage space, and RAM. During database building, you will need >450GB of space and >250GB of RAM. With 24 cores, this will take >5 hours. Note that this is only needed if you intend on running the KRAKEN module.
-``` bash
-kraken-build --standard --threads 24 --db MY_KRAKEN_DATABASE
-kraken-build --db MY_KRAKEN_DATABASE --clean
-```
-Do not forget to set the KRAKEN_DB variable in the contig-metawrap file in metaWRAP/bin/
-``` bash
-KRAKEN_DB=/path/to/my/database/MY_KRAKEN_DATABASE
-```
+### Making human genome index for bmtagger
+If you want to remove human reads from tour sequencing in the READ_QC module, you will need to dowlnoad and index the human genome. See the official bmtagger manual for detailed instructions: https://www.hmpdacc.org/hmp/doc/HumanSequenceRemoval_SOP.pdf
 
-### Downloading the CheckM database:
-``` bash
-mkdir MY_CHECKM_FOLDER
-checkm data setRoot
-# CheckM will prompt to to chose your storage location...
-checkm data update
-
-# If there is difficulty connecting to the servers, you can update manually:
-cd MY_CHECKM_FOLDER
-wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_v1.0.9.tar.gz
-tar -xvf checkm_data_v1.0.9.tar.gz
-rm checkm_data_v1.0.9.tar.gz
+First, lets download and merge the human genome hg38:
+``` bash 
+mkdir BMTAGGER_INDEX
+cd BMTAGGER_INDEX
+wget ftp://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/*fa.gz
+gunzip *fa.gz
+cat *fa > hg38.fa
+rm chr*.fa
 ```
-Thats it! CheckM should know what folder to use as its database.
-
+Now lets index the human genome. Note that the file names of the indeces must be exactly as specified for metaWRAP to recognize them! Also note that indexing will take considerable memory and time (here I pass 10GB of RAM as a -M parameter).
+``` bash
+bmtool -d hg38.fa -o hg38.bitmask
+srprism mkindex -i hg38.fa -o hg38.srprism -M 10000
+```
+Done! Now dont forget to specify the BMTAGGER_DB variable in the contig-metawrap file in metaWRAP/bin/
+``` bash
+BMTAGGER_DB=/path/to/your/index/BMTAGGER_INDEX
+```
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/5bb6vlY.jpg)
 
