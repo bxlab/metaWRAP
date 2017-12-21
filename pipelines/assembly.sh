@@ -104,9 +104,13 @@ if [ "$metaspades_assemble" = true ]; then
 	comm "Using reads $reads_1 and $reads_2 for assembly,"
 	if [ ! -f "$reads_1" ] || [ ! -f "$reads_2" ]; then error "Read files $reads_1 and/or $reads_2 dont exist. Exiting."; fi
 	
+	mkdir ${out}/metaspades.tmp
+
 	metaspades.py --tmp-dir ${out}/metaspades.tmp -t $threads -m $mem -o ${out}/metaspades -1 $reads_1 -2 $reads_2 
 	rm -r ${out}/metaspades.tmp
 	if [ ! -f "${out}/metaspades/scaffolds.fasta" ]; then error "Something went wrong with metaSPAdes assembly. Exiting."; fi
+	
+	rm -r ${out}/metaspades.tmp
 fi
 
 
@@ -139,6 +143,7 @@ if [ "$megahit_assemble" = true ]; then
         announcement "ASSEMBLING READS WITH MEGAHIT"
 	
 	#rm -r ${out}/megahit
+	mkdir ${out}/megahit.tmp
 	if [ "$metaspades_assemble" = true ]; then
 		comm "assembling ${out}/unused_by_metaspades.fastq with megahit"
 		megahit\
@@ -146,17 +151,20 @@ if [ "$megahit_assemble" = true ]; then
 		 -o ${out}/megahit\
 		 -t $threads\
 		 -m ${mem}000000000
+		 --tmp-dir ${out}/megahit.tmp\
 		mv ${out}/unused_by_metaspades.fastq ${out}/metaspades/
 	else
 		comm "assembling $reads_1 and $reads_2 with megahit"
 		megahit\
 		 -1 $reads_1 -2 $reads_2\
 		 -o ${out}/megahit\
+		 --tmp-dir ${out}/megahit.tmp\
 		 -t $threads -m ${mem}000000000\
 		 --continue
 	fi
 
 	if [ ! -f "${out}/megahit/final.contigs.fa" ]; then error "Something went wrong with reassembling with Megahit. Exiting."; fi
+	rm -r ${out}/megahit.tmp
 
 fi
 
