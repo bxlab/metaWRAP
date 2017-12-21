@@ -83,13 +83,49 @@
 
 Finally, you will need to download several databases and configure their paths in the config.sh file. This may be the longest step of the installation. Again, you may not need all of these if you intend to use specific parts of the pipeline. Don't forget to configure the paths to them in the metaWRAP/bin/config-metawrap file! Here is a full list of the databases:
 
-|    Database     | Size  | Source |  Used in module
+|    Database     | Size  |  Used in module
 |:---------------:|:---------------:|:---------------:|:-----:| 
-|Checkm_DB	 |1.4GB| CheckM should prompt you to download this during first use | binning, bin_refinement, reassemble_bins |
-|KRAKEN standard database|161GB | Look at the official KRAKEN support website for download instructions | kraken |
-|RefSeq NCBI_nt |71GB | Look at the metaWRAP/config.sh for download instructions | blobology |
-|RefSeq NCBI_tax |283MB | Look at the metaWRAP/config.sh for download instructions | blobology |
-|Indexed hg38  	|  20GB | You will need to download the human genome and index it with bmtagger. Look at the bmtagger manual for instructions. | read_qc |
+|Checkm_DB	 |1.4GB| binning, bin_refinement, reassemble_bins |
+|KRAKEN standard database|161GB |  kraken |
+| NCBI_nt |71GB |  blobology |
+| NCBI_tax |283MB |  blobology |
+|Indexed hg38  	|  20GB |  read_qc |
+
+### Downloading the NCBI_nt BLAST database:
+``` bash
+mkdir NCBI_nt
+cd  NCBI_nt
+wget "ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.*.tar.gz"
+for a in nt.*.tar.gz; do tar xzf $a; done
+```
+Do not forget to set the BLASTDB variable in the contig-metawrap file in metaWRAP/bin/
+BLASTDB=/your/location/of/database/NCBI_nt
+
+### Downloading the NCBI_nt taxonomy:
+``` bash
+mkdir NCBI_tax
+cd NCBI_tax
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
+```
+Do not forget to set the TAXDUMP variable in the contig-metawrap file in metaWRAP/bin/
+TAXDUMP=/your/location/of/database/NCBI_tax
+
+### Downloading the KRAKEN standard database:
+Note: this will download the entire RefSeq database and index it, which takes a lot of computational power, storage space, and RAM. During database building, you will need >450GB of space and >250GB of RAM. With 24 cores, this will take >5 hours. Note that this is only needed if you intend on running the KRAKEN module.
+``` bash
+kraken-build --standard --threads 24 --db MY_KRAKEN_DATABASE
+kraken-build --db MY_KRAKEN_DATABASE --clean
+```
+Do not forget to set the KRAKEN_DB variable in the contig-metawrap file in metaWRAP/bin/
+KRAKEN_DB=/path/to/my/database/MY_KRAKEN_DATABASE
+
+### Downloading the CheckM database:
+``` bash
+checkm data setRoot
+# CheckM will prompt to to chose your storage location...
+checkm data update
+```
+Thats it!
 
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/5bb6vlY.jpg)
