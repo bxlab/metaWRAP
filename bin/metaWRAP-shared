@@ -1,0 +1,106 @@
+#!/bin/bash -l
+#SBATCH
+#SBATCH --job-name=metaWRAP
+#SBATCH --partition=shared
+#SBATCH --time=80:0:0
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=120G
+
+
+##############################################################################################################################################################
+# Master metaWRAP script that calls on individual modules/pipelines 
+##############################################################################################################################################################
+
+help_message () {
+        echo""
+	echo "Usage: metaWRAP [module] --help"
+        echo "Options:"
+        echo ""
+	echo "	read_qc		Raw read QC module"
+        echo "	assembly	Assembly module"
+	echo "	binning		Binning module"
+	echo "	bin_refinement	Refinement of bins from binning module"
+	echo "	reassemble_bins Reassemble bins using metagenomic reads"
+	echo "	quant_bins	Quantify the abundance of each bin across samples"
+	echo "	classify_bins	Assign taxonomy to genomic bins"
+	echo "	blobology	Blobology module"
+	echo "	kraken		KRAKEN module"
+        echo "";}
+
+source config-metawrap
+comm () { ${SOFT}/print_comment.py "$1" "-"; }
+
+########################################################################################################
+########################     LOADING IN THE PARAMETERS AND RUNNING MODULE       ########################
+########################################################################################################
+
+# setting scripts, pipelines, and databases locations from config file (should be in same folder as main script)
+
+if [ "$1" = assembly ]; then
+	echo ${PIPES}/assembly.sh ${@:2}
+	${PIPES}/assembly.sh ${@:2}
+	exit 0
+elif [ "$1" = phylosift ]; then
+        #echo ${PIPES}/phylosift.sh ${@:2}
+        #${PIPES}/phylosift.sh ${@:2}
+	echo "The PHYLOSIFT module of metaWRAP is disabled in this version of metaWRAP"
+        exit 0
+elif [ "$1" = read_qc ]; then
+	echo ${PIPES}/read_qc.sh ${@:2}
+	${PIPES}/read_qc.sh ${@:2}
+	exit 0
+elif [ "$1" = binning ]; then
+        echo ${PIPES}/binning.sh ${@:2}
+        ${PIPES}/binning.sh ${@:2}
+	exit 0
+elif [ "$1" = blobology ]; then
+        echo ${PIPES}/blobology.sh ${@:2}
+	${PIPES}/blobology.sh ${@:2}
+        exit 0
+elif [ "$1" = kraken ]; then
+        echo ${PIPES}/kraken.sh ${@:2}
+	${PIPES}/kraken.sh ${@:2}
+        exit 0
+elif [ "$1" = all ]; then
+	#echo ${PIPES}/all.sh ${@:2}
+        #${PIPES}/all.sh ${@:2}
+	echo "ALL module of metaWRAP is disabled in this version of metaWRAP"
+	exit 0
+elif [ "$1" = bin_refinement ]; then
+        echo ${PIPES}/bin_refinement.sh ${@:2}
+        ${PIPES}/bin_refinement.sh ${@:2}
+        exit 0
+elif [ "$1" = reassemble_bins ]; then
+	echo ${PIPES}/reassemble_bins.sh ${@:2}
+	${PIPES}/reassemble_bins.sh ${@:2}
+	exit 0
+elif [ "$1" = quant_bins ]; then 
+	echo ${PIPES}/quant_bins.sh ${@:2}
+	${PIPES}/quant_bins.sh ${@:2}
+	exit 0
+elif [ "$1" = classify_bins ]; then
+	echo ${PIPES}/classify_bins.sh ${@:2}
+	${PIPES}/classify_bins.sh ${@:2}
+	exit 0
+elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+	help_message
+	exit 0
+elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
+        echo ""
+	echo "metaWRAP v=0.5"
+	echo ""
+        exit 0
+else
+        comm "Please select a proper module of metaWRAP."
+        help_message
+        exit 1
+fi
+
+
+
+########################################################################################################
+########################               END OF METAWRAP PIPELINE                 ########################
+########################################################################################################
+

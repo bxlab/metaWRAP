@@ -125,7 +125,12 @@ if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F a
 announcement "ASIGN TAXONOMY TO CONTIGS WITH MEGABLAST"
 
 
-mkdir $out
+if [ ! -d $out ]; then
+        mkdir $out;
+else
+        echo "Warning: $out already exists."
+fi
+
 assembly=${ASSEMBLY##*/}
 SAMPLE=${assembly%.*}
 

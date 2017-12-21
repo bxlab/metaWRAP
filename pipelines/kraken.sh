@@ -83,7 +83,11 @@ fi
 announcement "RUNNING KRAKEN ON ALL FILES"
 
 # setting up the output folder
-mkdir $out
+if [ ! -d $out ]; then 
+	mkdir $out;
+else 
+	echo "Warning: $out already exists."
+fi
 
 # If there are several pairs of reads passed, they are processed sepperately
 for num in "$@"; do

@@ -95,7 +95,11 @@ if [ ! -s $reads_2 ]; then error "$reads_2 file does not exist. Exiting..."; fi
 
 
 
-mkdir $out
+if [ ! -d $out ]; then
+        mkdir $out;
+else
+        echo "Warning: $out already exists."
+fi
 
 if [ "$pre_qc_report" = true ]; then
 	########################################################################################################

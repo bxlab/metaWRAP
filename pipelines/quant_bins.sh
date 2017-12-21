@@ -106,6 +106,12 @@ fi
 announcement "SETTING UP OUTPUT AND INDEXING ASSEMBLY"
 
 # setting up the output folder
+if [ ! -d ${out}/all_bin_contigs ]; then
+        mkdir $out ${out}/all_bin_contigs
+else
+        echo "Warning: $out already exists."
+fi
+
 mkdir $out ${out}/all_bin_contigs
 
 comm "making a copy of the assembly file"

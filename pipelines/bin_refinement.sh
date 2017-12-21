@@ -128,7 +128,11 @@ fi
 ########################################################################################################
 announcement "BEGIN PIPELINE!"
 comm "setting up output folder and copything over bins..."
-mkdir $out
+if [ ! -d $out ]; then
+        mkdir $out;
+else
+        echo "Warning: $out already exists."
+fi
 
 n_binnings=0
 if [[ -d $bins1 ]]; then 

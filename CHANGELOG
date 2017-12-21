@@ -3,6 +3,12 @@ Future plans:
 	-make unified binning module wrapping the other bin processing modules
 
 
+metaWRAP v=0.6
+	Assembly module:
+		fixed tmp directoty handeling bug
+	Kraken module:
+		added jellyfish v=1.1.11 to conda env file for kraken-build
+	
 
 metaWRAP v=0.5 (Late December 2017)
 	Added overview flowcharts for most modules, and updated older flowcharts

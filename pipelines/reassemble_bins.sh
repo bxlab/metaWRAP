@@ -93,7 +93,12 @@ fi
 ########################################################################################################
 announcement "PEGIN PIPELINE!"
 comm "setting up output folder and copything over bins..."
-if [ ! -d $out ]; then mkdir $out; fi
+if [ ! -d $out ]; then
+        mkdir $out;
+else
+        echo "Warning: $out already exists."
+fi
+
 if [ -d ${out}//original_bins ]; then rm -r ${out}/original_bins; fi
 cp -r $bins ${out}/original_bins
 if [ ! -d ${out}/binned_assembly ]; then mkdir ${out}/binned_assembly; fi

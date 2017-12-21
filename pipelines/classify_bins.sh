@@ -100,7 +100,12 @@ fi
 announcement "ALIGN CONTIGS TO DATABASE WITH MEGABLAST"
 
 comm "setting up ouput folder $out and merging contigs from all bins..."
-mkdir $out
+if [ ! -d $out ]; then
+        mkdir $out;
+else
+        echo "Warning: $out already exists."
+fi
+
 if [[ -s ${out}/all_contigs.fa ]]; then rm ${out}/all_contigs.fa; fi
 for f in $(ls $bin_folder); do cat ${bin_folder}/${f} >> ${out}/all_contigs.fa; done
 if [[ ! -s ${out}/all_contigs.fa ]]; then error "something went wrong with joining files in $bin_folder into ${out}/all_contigs.fa"; fi
