@@ -31,15 +31,13 @@
 
   
 ## INSTALLATION
-
- Clone or download the metaWRAP directory into a semi-permanent location, then go into the metaWRAP/bin folder and edit the metaWRAP/bin/contig-metawrap file. Make sure that all the paths are correct, especially the paths pointing to the "scripts" and "pipelines" folders in the main metaWRAP directory. Once that is configured, simply copy the contents of metaWRAP/bin into your local bin folder, or simply add metaWRAP/bin/ to your path.
- 
- Because metaWRAP is an actively changing software, I highly recommend that you use git to download and regularly update metaWRAP:
- 
+ To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. This will make installing all dependancies of metaWRAP much easier. First, try out conda by installing git, if you do not have it yet: 
  ``` bash
- # isntall git if you do not have it yet:
  conda install git
+ ```
  
+ Once you have git, download and install metaWRAP: 
+ ``` bash
  # download the software:
  git clone https://github.com/ursky/metaWRAP.git
  
@@ -57,18 +55,15 @@
  metaWRAP read_qc -h
  ```
  
- Finally, use your favorite text editor to configure paths to databases in metaWRAP/bin/config-metawrap and make sure all the paths look correct.
-
-
-
-## DEPENDENCIES
-
- To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. Once you have miniconda2 installed, you can install most packages required by metaWRAP by using the metawrap-environment.yml file found in the metaWRAP folder. To create a new environment and install most of the dependancies, run:
-  
-  ``` bash
-  conda env create -f metaWRAP/metawrap-environment.yml
-  ```
-  
+ Finally, use your favorite text editor to configure paths to databases in metaWRAP/bin/config-metawrap and make sure all the paths look correct. This is very important for the functioning of metaWRAP. MetaWRAP is being regularly updated with bug fixes and new features, so I recommend you update your metaWRAP copy regularly. To do so, simply enter the metaWRAP folder, and run:
+ ``` bash
+ git pull
+ ```
+ 
+ Conda allows you to create working environments with most of metaWRAP's dependancies already configured. To create the metawrap environment, enter the metaWRAP directory and run:
+ ``` bash
+ conda env create -f metaWRAP/metawrap-environment.yml
+ ```
   This will install over a hundred dependancy software for you in one go! They will be all added to the conda environment you just created. To use them (and to run metaWRAP), you need to enter the environment:
   
   ``` bash
@@ -80,7 +75,9 @@
   source deactivate
   ```
   
-  After this, there are still a few software that you will need to install and place in yout PATH, becuase they are not currently in conda. Note that these software are only required only for specific modules. 
+## OTHER DEPENDANCIES
+  
+  After creating the metawrap conda environment, there are still a few software that you will need to manually install and place in yout PATH, becuase they are not currently in conda. Note that these software are only required only for specific modules. 
 
 |    Software     | Tested version  |  Used in module 			|
 |:---------------:|:---------------:|:---------------------------------:| 
