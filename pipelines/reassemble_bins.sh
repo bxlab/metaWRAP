@@ -127,27 +127,25 @@ announcement "REASSEMBLING BINS WITH SPADES"
 
 mkdir ${out}/reassemblies
 assemble () {
-	bin=${out}/reads_for_reassembly/$1
-	bin_name=${bin##*/}
-	tmp=${bin_name%_*}
-	tmp_dir=${tmp}.tmp
-	mkdir $tmp
-	comm "NOW REASSEMBLING ${bin_name%_*}"
-	spades.py -t $threads -m $mem --tmp $tmp_dir --careful \
-	--untrusted-contigs ${out}/original_bins/${tmp%.*}.fa \
-	-1 ${bin%_*}_1.fastq \
-	-2 ${bin%_*}_2.fastq \
-	-o ${out}/reassemblies/${bin_name%_*}
+	bin_name=${1%_*}
+	tmp_dir=${out}/reassemblies/${bin_name}.tmp
+	mkdir $tmp_dir
+	comm "NOW REASSEMBLING ${bin_name}"
+	spades.py -t 1 -m $mem --tmp $tmp_dir --careful \
+	--untrusted-contigs ${out}/original_bins/${bin_name%.*}.fa \
+	-1 ${out}/reads_for_reassembly/${1%_*}_1.fastq \
+	-2 ${out}/reads_for_reassembly/${1%_*}_2.fastq \
+	-o ${out}/reassemblies/${bin_name}
 	
-	if [[ ! -s ${out}/reassemblies/${bin_name%_*}/scaffolds.fasta ]]; then
-                warning "Something went wrong with reassembling ${bin_name%_*}"
+	if [[ ! -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]]; then
+                warning "Something went wrong with reassembling ${bin_name}"
 	else 
-		comm "${bin_name%_*} was reassembled successfully!"
+		comm "${bin_name} was reassembled successfully!"
 		rm -r $tmp_dir
 	fi
 }
-for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do assemble $i; done
-#wait
+for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do assemble $i & done
+wait
 sleep 1
 comm "all assemblies complete"
 

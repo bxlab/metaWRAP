@@ -111,12 +111,15 @@ for num in "$@"; do
 			reads_1=${out}/tmp_1.fastq
 			reads_2=${out}/tmp_2.fastq
 			comm "Subsampling done. Starting KRAKEN..."
+			if [ ! -s $reads_1 ]; then error "something went wrong with subsampling sequences. Exiting..."; fi
 		fi
 
-		#run kraken	
+		if [ ! -s $reads_1 ]; then error "$reads_1 doesnt exist. Exiting..."; fi
 		kraken --db ${KRAKEN_DB} --fastq-input --paired --threads $threads\
 	 	--output ${out}/${sample}.krak $reads_1 $reads_2
-
+	
+		if [[ $? -ne 0 ]] || [[ ! -s ${out}/${sample}.krak ]]; then error "Something went wrong with running kraken on $reads_1 and $reads_2 . Exiting..."; fi
+			
 		if [ ! "$depth" = "all" ]; then rm ${out}/tmp_1.fastq ${out}/tmp_2.fastq; fi
 	fi
 
@@ -129,11 +132,9 @@ for num in "$@"; do
 		kraken --db ${KRAKEN_DB} --fasta-input --threads $threads\
 		--output ${out}/${sample}.krak $num
 
+		if [[ $? -ne 0 ]] || [[ ! -s ${out}/${sample}.krak ]]; then error "Something went wrong with running kraken on ${num}. Exiting..."; fi
 	fi
 done
-
-if [[ ! -s ${out}/${sample}.krak ]] ; then error "Something went wrong with running kraken... Exiting."; fi
-
 
 
 
