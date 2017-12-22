@@ -4,15 +4,22 @@ Future plans:
 
 
 metaWRAP v=0.6
+	General:
+		added detailed database download and configuration instructions
+		added missing dependancies in conda file
 	Assembly module:
 		fixed tmp directoty handeling bug
 	Kraken module:
 		added jellyfish v=1.1.11 to conda env file for kraken-build
+	Reassembly module:
+		major bug fixes with tmp directory handling
+		restored parallelization of SPAdes - all bins assemble simmultaneously with 1 thread now
 	
 
 metaWRAP v=0.5 (Late December 2017)
-	Added overview flowcharts for most modules, and updated older flowcharts
-	metaWRAP is now much more binning oriented (see overview flowchart)
+	General:
+		Added overview flowcharts for most modules, and updated older flowcharts
+		metaWRAP is now much more binning oriented (see overview flowchart)
 	Assembly module:
 		added minimum contig length option (defore the default was 1000bp)
 		sped up megahit assembly re-formatting by removing redundant sorting operations
@@ -28,7 +35,8 @@ metaWRAP v=0.5 (Late December 2017)
 
 
 metaWRAP v=0.4 (Early December 2017)
-	Most dependancies can now be installed with a pre-configured conda environment
+	General:
+		Most dependancies can now be installed with a pre-configured conda environment
 	Binning module:
 		Added option to immediately run CheckM on resulting bins
 	ReadQC module:
