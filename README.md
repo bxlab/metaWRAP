@@ -40,14 +40,13 @@
  ``` bash
  # download the software:
  git clone https://github.com/ursky/metaWRAP.git
+ cd metaWRAP
  
- # add metaWRAP/bin/ to PATH
- cd metaWRAP/bin
- echo "export PATH=\$PATH:$(pwd)" >> ~/.bash_profile
+ # add metaWRAP/bin/ to PATH:
+ echo "export PATH=\$PATH:$(pwd)/bin" >> ~/.bash_profile
  source ~/.bash_profile
- cd ../
  
- # add pathway configurations:
+ # add pathway configurations to metaWRAP/bin/config-metawrap:
  ./install.sh
  
  # testing...
