@@ -1,4 +1,4 @@
-### Downloading the CheckM database:
+## Downloading the CheckM database:
 ``` bash
 mkdir MY_CHECKM_FOLDER
 checkm data setRoot
@@ -13,7 +13,9 @@ rm checkm_data_v1.0.9.tar.gz
 ```
 Thats it! CheckM should know what folder to use as its database.
 
-### Downloading the KRAKEN standard database:
+
+
+## Downloading the KRAKEN standard database:
 Note: this will download the entire RefSeq database and index it, which takes a lot of computational power, storage space, and RAM. During database building, you will need >450GB of space and >250GB of RAM. With 24 cores, this will take >5 hours. Note that this is only needed if you intend on running the KRAKEN module.
 ``` bash
 kraken-build --standard --threads 24 --db MY_KRAKEN_DATABASE
@@ -24,7 +26,8 @@ Do not forget to set the KRAKEN_DB variable in the contig-metawrap file in metaW
 KRAKEN_DB=/path/to/my/database/MY_KRAKEN_DATABASE
 ```
 
-### Downloading the NCBI_nt BLAST database:
+
+## Downloading the NCBI_nt BLAST database:
 ``` bash
 mkdir NCBI_nt
 cd  NCBI_nt
@@ -36,7 +39,8 @@ Do not forget to set the BLASTDB variable in the contig-metawrap file in metaWRA
 BLASTDB=/your/location/of/database/NCBI_nt
 ```
 
-### Downloading the NCBI taxonomy:
+
+## Downloading the NCBI taxonomy:
 ``` bash
 mkdir NCBI_tax
 cd NCBI_tax
@@ -47,7 +51,8 @@ Do not forget to set the TAXDUMP variable in the contig-metawrap file in metaWRA
 TAXDUMP=/your/location/of/database/NCBI_tax
 ```
 
-### Making human genome index for bmtagger
+
+## Making human genome index for bmtagger
 If you want to remove human reads from tour sequencing in the READ_QC module, you will need to dowlnoad and index the human genome. See the official bmtagger manual for detailed instructions: https://www.hmpdacc.org/hmp/doc/HumanSequenceRemoval_SOP.pdf
 
 First, lets download and merge the human genome hg38:

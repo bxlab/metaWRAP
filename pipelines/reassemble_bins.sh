@@ -92,7 +92,6 @@ if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure config.sh is in the same filder as the mains scripts and all the paths in the config.sh file are correct"
 fi
 
-if false; then
 ########################################################################################################
 ########################               BEGIN REASSEMBLY PIPELINE!               ########################
 ########################################################################################################
@@ -124,7 +123,6 @@ mkdir ${out}/reads_for_reassembly
 bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads\
  | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins $f_reads $r_reads ${out}/reads_for_reassembly
 
-fi
 
 
 ########################################################################################################

@@ -1,5 +1,5 @@
-# metaWRAP - Comprehensive Metagenomic Bin Analysis in One Place
-## metaWRAP v=0.5
+# MetaWRAP - Wrapper for Metagenomic Bin Analysis
+## MetaWRAP v=0.5
 
  MetaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
  
@@ -31,7 +31,7 @@
 
   
 ## INSTALLATION
- To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. This will make installing all dependancies of metaWRAP much easier. First, try out conda by installing git, if you do not have it yet: 
+ To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. This will make installing all dependancies of metaWRAP much easier. Once you have conda installed, try it out by installing git, which you will use for the installation: 
  ``` bash
  conda install git
  ```
@@ -47,10 +47,10 @@
  source ~/.bash_profile
  
  # add pathway configurations to metaWRAP/bin/config-metawrap:
+ # (you need to me in the metaWRAP directory when running this)
  ./install.sh
  
  # testing...
- metaWRAP -h
  metaWRAP read_qc -h
  ```
  
