@@ -112,15 +112,13 @@ else
         echo "Warning: $out already exists."
 fi
 
-mkdir $out ${out}/all_bin_contigs
-
 comm "making a copy of the assembly file"
 cp $assembly ${out}/all_bin_contigs/assembly.fa
 if [ ! -f ${out}/all_bin_contigs/assembly.fa ]; then error "coppied assembly file not found. exiting..."; fi
 
 
 # Index the assembly
-comm "Indexing assembly file with salmon"
+comm "Indexing assembly file with salmon. Ignore any warnings"
 salmon index -p $threads -t ${out}/all_bin_contigs/assembly.fa -i ${out}/all_bin_contigs/assembly_index
 if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
 

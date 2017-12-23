@@ -7,9 +7,11 @@ metaWRAP v=0.6
 	General:
 		added detailed database download and configuration instructions
 		added missing dependancies in conda file
+		added installation script for simplicity
 	Assembly module:
 		fixed tmp directoty handeling bug
 	Kraken module:
+		fixed major bug preventing subsetting reads if there were spaces in the read identifiers
 		added jellyfish v=1.1.11 to conda env file for kraken-build
 	Reassembly module:
 		major bug fixes with tmp directory handling

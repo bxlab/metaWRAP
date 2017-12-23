@@ -107,7 +107,7 @@ for num in "$@"; do
 			paste $reads_1 $reads_2 | \
 			 awk '{ printf("%s",$0); n++; if(n%4==0) { printf("\n");} else { printf("\t\t");} }' | `#combine paired end reads onto one line` \
 			 shuf | head -n $depth | sed 's/\t\t/\n/g' | `#shuffle reads, select top N reads, and then restore tabulation` \
-			 awk '{print $1 > "'"${out}/tmp_1.fastq"'"; print $2 > "'"${out}/tmp_2.fastq"'"}' `#separate reads into F and R files`
+			 awk -F"\t" '{print $1 > "'"${out}/tmp_1.fastq"'"; print $2 > "'"${out}/tmp_2.fastq"'"}' `#separate reads into F and R files`
 			reads_1=${out}/tmp_1.fastq
 			reads_2=${out}/tmp_2.fastq
 			comm "Subsampling done. Starting KRAKEN..."
