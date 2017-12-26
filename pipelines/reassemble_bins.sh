@@ -32,12 +32,25 @@ comm () { ${SOFT}/print_comment.py "$1" "-"; }
 error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
 warning () { ${SOFT}/print_comment.py "$1" "*"; }
 announcement () { ${SOFT}/print_comment.py "$1" "#"; }
-function pwait() {
-    while [ $(jobs -p | wc -l) -ge $1 ]; do
-        sleep 1
+
+# these functions are for parallelizing the reassembly
+open_sem(){
+    mkfifo pipe-$$
+    exec 3<>pipe-$$
+    rm pipe-$$
+    local i=$1
+    for((;i>0;i--)); do
+        printf %s 000 >&3
     done
 }
-
+run_with_lock(){
+    local x
+    read -u 3 -n 3 x && ((0==x)) || exit $x
+    (
+    "$@" 
+    printf '%.3d' $? >&3
+    )&
+}
 
 ########################################################################################################
 ########################               LOADING IN THE PARAMETERS                ########################
@@ -103,7 +116,7 @@ else
         echo "Warning: $out already exists."
 fi
 
-if [ -d ${out}//original_bins ]; then rm -r ${out}/original_bins; fi
+if [ -d ${out}/original_bins ]; then rm -r ${out}/original_bins; fi
 cp -r $bins ${out}/original_bins
 if [ ! -d ${out}/binned_assembly ]; then mkdir ${out}/binned_assembly; fi
 if [ -s ${out}/binned_assembly/assembly.fa ]; then rm ${out}/binned_assembly/assembly.fa; fi
@@ -122,7 +135,6 @@ comm "Align reads back to assembly, saving every possible alignment of each read
 mkdir ${out}/reads_for_reassembly
 bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads\
  | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins $f_reads $r_reads ${out}/reads_for_reassembly
-
 
 
 ########################################################################################################
@@ -149,9 +161,10 @@ assemble () {
 		rm -r $tmp_dir
 	fi
 }
+
+open_sem $threads
 for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do 
-	assemble $i & 
-	pwait $threads
+	run_with_lock assemble $i
 done
 
 wait
