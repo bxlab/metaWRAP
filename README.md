@@ -48,7 +48,7 @@
  
  # add pathway configurations to metaWRAP/bin/config-metawrap:
  # (you need to me in the metaWRAP directory when running this)
- ./install.sh
+ ./configure_paths.sh
  
  # testing...
  metaWRAP read_qc -h
