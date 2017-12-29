@@ -1,6 +1,8 @@
-# MANDITORY! Paths to custon pipelines and scripts of metaWRAP
-SOFT=/home-2/guritsk1@jhu.edu/scratch/metaWRAP/lib/metawrap-scripts
-PIPES=/home-2/guritsk1@jhu.edu/scratch/metaWRAP/lib/metawrap-modules
+# Paths to custon pipelines and scripts of metaWRAP
+mw_path=$(which metaWRAP)
+bin_path=${mw_path%/*}
+SOFT=${bin_path}/metawrap-scripts
+PIPES=${bin_path}/metawrap-modules
 
 # OPTIONAL databases (see 'Databases' section of metaWRAP README for details)
 # path to kraken standard database
