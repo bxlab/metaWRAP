@@ -135,11 +135,11 @@ fi
 announcement "ALIGNING READS TO MAKE COVERAGE FILES"
 
 # setting up the output folder
-if [ ! -d $out ]; then
-        mkdir $out;
-else
-        echo "Warning: $out already exists."
+if [ ! -d $out ]; then mkdir $out;
+else echo "Warning: $out already exists."
 fi
+
+if [ ! -d ${out}/work_files ]; then mkdir ${out}/work_files; fi
 
 comm "making copy of assembly file $ASSEMBLY"
 cp $ASSEMBLY ${out}/work_files/assembly.fa
