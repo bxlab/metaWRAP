@@ -1,19 +1,16 @@
 # MetaWRAP - Wrapper for Metagenomic Bin Analysis
 ## MetaWRAP v=0.6
 
- MetaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
+ MetaWRAP aims to be an easy-to-use wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual module of the pipeline is also a standalone component.
  
-![General walkthrough of metaWRAP modules](https://i.imgur.com/LcC09ym.png)
-   
- In addition to being a tool wrapper, MetaWRAP offers a innovative hybrid pipeline for extracting high-quality draft genomes (bins) from metagenomic data. By using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses, the [bin refinement module](https://i.imgur.com/JL665Qo.png) will always produce stronger results than individual approaches. Additionally, due to its diverse binning approach, this pipeline shows promise to produce robust binning results in a variety of microbial communities. 
+ In addition to being a tool wrapper, MetaWRAP offers a powerfull hybrid approach for extracting high-quality draft genomes (bins) from metagenomic data by using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses. MetaWRAP's [bin refinement module](https://i.imgur.com/JL665Qo.png) outperforms not only individual binning approaches, but also other bin consolidation programs (Binning_refiner, DAS_Tool) in both synthetic and real datasets.
 
- MetaWRAP also includes a [bin reassembly module](https://i.imgur.com/GUSMXl8.png), which allows to drastically improve the quality of a set of bins by extracting the reads belonging to that draft genome, and reassembling it with a more permissive, non-metagenomic assembler. In addition to improving the N50 of the bins, this modestly increases the compleiton of the bins, and drastically reduces contamination.
-  
- If you already have your metagenomic data assembled and binned with two or more software (or the same software with different parameters), try using the BIN_REFINEMENT and REASSEMBLE_BINS modules to see how you can further improve your bin predictions! 
-  
+ MetaWRAP also includes a novel [bin reassembly module](https://i.imgur.com/GUSMXl8.png), which allows to drastically improve the quality of a set of bins by extracting the reads belonging to that draft genome, and reassembling it with a more permissive, non-metagenomic assembler. In addition to improving the N50 of the bins, this modestly increases the compleiton of the bins, and drastically reduces contamination.
+ 
 
 ## OVERVIEW OF METAWRAP MODULES:
-  
+![General walkthrough of metaWRAP modules](https://i.imgur.com/LcC09ym.png)
+
 #### Metagemonic data pre-processing modules:
 		1) Read QC (trimming and human read removal)
     	2) Assembly (with metaSPAdes or MegaHit, plust assembly QC)
