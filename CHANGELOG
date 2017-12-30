@@ -3,11 +3,11 @@ Future plans:
 	-make unified binning module wrapping the other bin processing modules
 
 
-metaWRAP v=0.6
+metaWRAP v=0.6 (Late December 2017)
 	General:
+		completely moved to installation of metaWRAP and ALL dependancies with conda
 		added detailed database download and configuration instructions
-		added missing dependancies in conda file
-		added installation script for simplicity
+		reduced benign mkdir errors throughout
 	Assembly module:
 		fixed tmp directoty handeling bug
 	Kraken module:
@@ -18,7 +18,7 @@ metaWRAP v=0.6
 		restored parallelization of SPAdes - all bins assemble simmultaneously with 1 thread now
 	
 
-metaWRAP v=0.5 (Late December 2017)
+metaWRAP v=0.5 (Mid December 2017)
 	General:
 		Added overview flowcharts for most modules, and updated older flowcharts
 		metaWRAP is now much more binning oriented (see overview flowchart)
