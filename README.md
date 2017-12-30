@@ -41,7 +41,7 @@
  metaWRAP read_qc -h
  ```
  
- Note: The above conda installation will install over 140 software dependancies. If you already actively use conda, it may be wise to [set up a custom environment in conda](https://conda.io/docs/user-guide/tasks/manage-environments.html) for metaWRAP and install it only in there, so that your current environment and that of metaWRAP dont conflict with each other.
+ WARNING: The conda command will install over 140 softwares, which may cause some conflicts. If you already actively use conda, it may be wise to [set up a custom environment in conda](https://conda.io/docs/user-guide/tasks/manage-environments.html) for metaWRAP and install it only in there. That way your current environment and metaWRAP's environment do not conflict.
 
 ## DATABASES
 
