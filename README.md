@@ -5,7 +5,6 @@
  
 ![General walkthrough of metaWRAP modules](https://i.imgur.com/LcC09ym.png)
    
- 
  In addition to being a tool wrapper, MetaWRAP offers a innovative hybrid pipeline for extracting high-quality draft genomes (bins) from metagenomic data. By using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses, the [bin refinement module](https://i.imgur.com/JL665Qo.png) will always produce stronger results than individual approaches. Additionally, due to its diverse binning approach, this pipeline shows promise to produce robust binning results in a variety of microbial communities. 
 
  MetaWRAP also includes a [bin reassembly module](https://i.imgur.com/GUSMXl8.png), which allows to drastically improve the quality of a set of bins by extracting the reads belonging to that draft genome, and reassembling it with a more permissive, non-metagenomic assembler. In addition to improving the N50 of the bins, this modestly increases the compleiton of the bins, and drastically reduces contamination.
@@ -42,14 +41,16 @@
  metaWRAP read_qc -h
  ```
  
+ Note: The above conda installation will install over 140 software dependancies. If you already actively use conda, it may be wise to [set up a custom environment in conda](https://conda.io/docs/user-guide/tasks/manage-environments.html) for metaWRAP and install it only in there, so that your current environment and that of metaWRAP dont conflict with each other.
+
+## DATABASES
+
  Finally, use your favorite text editor to configure paths to databases in miniconda2/bin/config-metawrap and make sure all the paths look correct. This is very important if you want to use databases (see Database section below). If you are unsure where this config file is, run:
  ``` bash
  which config-metawrap
  ```
 
-## DATABASES
-
-You will need to [download and configure several databases](https://github.com/ursky/metaWRAP/installation/database_installation.md) and adjust their paths in the metaWRAP/bin/config-metawrap file. Note that depending on what modules you plan on using, you may not need all the databases.
+You will need to [download and configure several databases](https://github.com/ursky/metaWRAP/blob/master/installation/database_installation.md) and adjust their paths in the config-metawrap file. Note that depending on what modules you plan on using, you may not need all the databases.
 
 |    Database     | Size  |  Used in module |
 |:---------------:|:---------------:|:-----:| 
@@ -65,11 +66,9 @@ You will need to [download and configure several databases](https://github.com/u
   ![Detailed pipeline walkthrough](https://i.imgur.com/5bb6vlY.jpg)
 
 
-
 ## USAGE
 
 Once all the dependencies are in place, running metaWRAP is relatively simple. The main metaWRAP script wraps around all of its individual modules, which you can call independently.
-
 ```
 metaWRAP -h
 	Usage: metaWRAP [module] --help
@@ -86,7 +85,6 @@ metaWRAP -h
 ```
 
 Each module is run separately. For example, to run the assembly module:
-
 ```
 metaWRAP assembly -h
 
@@ -101,12 +99,6 @@ Options:
 
 	--use-megahit		assemble with megahit (default)
 	--use-metaspades	assemble with metaspades instead of megahit
-```
-
-
-Here is an example of running the binning module with multiple samples as input for better binning:
-```bash
-metaWRAP binning -t 48 -m 500 --checkm-best-bins --checkm-good-bins -a coassembly.fa -o binning_out sampleA_1.fastq sampleA_2.fastq sampleB_1.fastq sampleB_2.fastq sampleC_1.fastq sampleC_2.fastq
 ```
 
 ### Acknowledgements
