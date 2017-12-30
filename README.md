@@ -1,5 +1,5 @@
 # MetaWRAP - Wrapper for Metagenomic Bin Analysis
-## MetaWRAP v=0.5
+## MetaWRAP v=0.6
 
  MetaWRAP aims to be an easy-to-use inclusive wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual component of the pipeline is also a standalone module. This modularity allows the users to use only the modules they are interested in. 
  
@@ -27,74 +27,29 @@
 		3) Bin quantitation (bin abundance estimation across samples)
     	5) Blobology (visualize bin success with blobplots)
 		6) Classify bins (asign taxonomy to draft genomes)
-  
 
-  
+##  SYSTEM REQUIREMENTS
+ The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems.
+
+
 ## INSTALLATION
- To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. This will make installing all dependancies of metaWRAP much easier. Once you have conda installed, try it out by installing git, which you will use for the installation: 
+ To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. This will make installing all dependancies of metaWRAP much easier. Once you have conda installed, you can install metawrap and all its dependancies with the following command:
  ``` bash
- conda install git
+ conda install -c ursky metawrap-binning
  ```
- 
- Once you have git, download and install metaWRAP: 
+ If everything went well, running the following command should result in a help message
  ``` bash
- # download the software:
- git clone https://github.com/ursky/metaWRAP.git
- cd metaWRAP
- 
- # add metaWRAP/bin/ to PATH:
- echo "export PATH=\$PATH:$(pwd)/bin" >> ~/.bash_profile
- source ~/.bash_profile
- 
- # add pathway configurations to metaWRAP/bin/config-metawrap:
- # (you need to me in the metaWRAP directory when running this)
- ./install.sh
- 
- # testing...
  metaWRAP read_qc -h
  ```
  
- Finally, use your favorite text editor to configure paths to databases in metaWRAP/bin/config-metawrap and make sure all the paths look correct. This is very important for the functioning of metaWRAP. MetaWRAP is being regularly updated with bug fixes and new features, so I recommend you update your metaWRAP copy regularly. To do so, simply enter the metaWRAP folder, and run:
+ Finally, use your favorite text editor to configure paths to databases in miniconda2/bin/config-metawrap and make sure all the paths look correct. This is very important if you want to use databases (see Database section below). If you are unsure where this config file is, run:
  ``` bash
- git pull
+ which config-metawrap
  ```
- 
- Conda allows you to create working environments with most of metaWRAP's dependancies already configured. To create the metawrap environment, enter the metaWRAP directory and run:
- ``` bash
- conda env create -f metaWRAP/metawrap-environment.yml
- ```
-  This will install over a hundred dependancy software for you in one go! They will be all added to the conda environment you just created. To use them (and to run metaWRAP), you need to enter the environment:
-  
-  ``` bash
-  source activate metawrap
-  ```
-  When you are done with using metaWRAP and want to exit the environment, run:
-  
-  ``` bash
-  source deactivate
-  ```
-  
-## OTHER DEPENDANCIES
-  
-  After creating the metawrap conda environment, there are still a few software that you will need to manually install and place in yout PATH, becuase they are not currently in conda. Note that these software are only required only for specific modules. 
-
-|    Software     | Tested version  |  Used in module 			|
-|:---------------:|:---------------:|:---------------------------------:| 
-|    kronatools   |    v=2.7        |  kraken				|
-|    metabat2     |    v=2.9.1      |  binning				|
-|    maxbin2      |    v=2.2.4      |  binning				|
-|    pplacer      |    v=1.1        |  bin_refinement, reassemble_bins  |
-|    taxator-kt   |    v=1.3.3      |  classify_bins                    |
-
-  
-
-  I want to emphasize that because metaWRAP is written in BASH scripts, it is realitively easy to understand why some part of the program is failing, or if there is a dependancy issue. Just to to that line in the code and see how metaWRAP is calling that software. There is not magic here - metaWRAP is simply calling programs from your current environment in a specific sequence just like you would if you were following a pipeline. If it cannot find them, an error pops up. Feel free to dive in the code to see where things went wrong. If you find a bug, please post in the "issues" section!
- A complete list of dependancies can be viewed in "dependancies.txt". Feel free to install them one by one. However, to make this as painless as possible, I HIGHLY recommend you use Conda, which automatically installs programs and handles dependancies.
-
 
 ## DATABASES
 
-Finally, you will need to [download and configure several databases](https://github.com/ursky/metaWRAP/blob/master/database_installation.md) and adjust their paths in the metaWRAP/bin/config-metawrap file. Note that depending on what modules you plan on using, you may not need all the databases.
+You will need to [download and configure several databases](https://github.com/ursky/metaWRAP/installation/database_installation.md) and adjust their paths in the metaWRAP/bin/config-metawrap file. Note that depending on what modules you plan on using, you may not need all the databases.
 
 |    Database     | Size  |  Used in module |
 |:---------------:|:---------------:|:-----:| 
@@ -153,13 +108,6 @@ Here is an example of running the binning module with multiple samples as input 
 ```bash
 metaWRAP binning -t 48 -m 500 --checkm-best-bins --checkm-good-bins -a coassembly.fa -o binning_out sampleA_1.fastq sampleA_2.fastq sampleB_1.fastq sampleB_2.fastq sampleC_1.fastq sampleC_2.fastq
 ```
-
-
-
-###  System requirements
- The resource requirements for this pipeline will vary greatly based on the number of reads you are processing, but I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. With the help of conda, installing metaWRAP and its dependencies on a cluster (even without sudo privileges) should be relatively easy even for beginners.
-
-
 
 ### Acknowledgements
 Author of pipeline: German Uritskiy.
