@@ -19,10 +19,10 @@
 	
 #### Bin processing modules:
 		1) Bin refinement and consolidation of multiple bin sets
-		2) Bin reassembly (reassemble bins to improve completiona and reduce contamination)
+		2) Bin reassembly (reassemble bins to improve completion and reduce contamination)
 		3) Bin quantitation (bin abundance estimation across samples)
     	5) Blobology (visualize bin success with blobplots)
-		6) Classify bins (asign taxonomy to draft genomes)
+		6) Classify bins (assign taxonomy to draft genomes)
 
 ##  SYSTEM REQUIREMENTS
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems.
