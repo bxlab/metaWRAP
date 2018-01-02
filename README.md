@@ -29,17 +29,23 @@
 
 
 ## INSTALLATION
- To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. This will make installing all dependancies of metaWRAP much easier. Once you have conda installed, you can install metawrap and all its dependancies with the following command:
+ To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. Once you have conda, you can install metawrap and all its dependancies with the following command
  ``` bash
  conda install -c ursky metawrap-binning
  ```
+ WARNING: The metaWRAP's will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is recommended to [set up a custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current environment and metaWRAP's environment will not conflict.
+ ``` bash
+ conda create -n metawrap-env python=2.7
+ source activate metawrap-env
+ conda install -c ursky metawrap-binning
+ ```
+ 
  If everything went well, running the following command should result in a help message
  ``` bash
  metaWRAP read_qc -h
  ```
  
- WARNING: The conda command will install over 140 softwares, which may cause some conflicts. If you already actively use conda, it may be wise to [set up a custom environment in conda](https://conda.io/docs/user-guide/tasks/manage-environments.html) for metaWRAP and install it only in there. That way your current environment and metaWRAP's environment do not conflict.
-
+ 
 ## DATABASES
 
  Finally, use your favorite text editor to configure paths to databases in miniconda2/bin/config-metawrap and make sure all the paths look correct. This is very important if you want to use databases (see Database section below). If you are unsure where this config file is, run:
