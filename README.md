@@ -33,7 +33,7 @@
  ``` bash
  conda install -c ursky metawrap-binning
  ```
- WARNING: The metaWRAP's will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
+ WARNING: This will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
  ``` bash
  conda create -n metawrap-env python=2.7
  source activate metawrap-env
