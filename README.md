@@ -12,17 +12,17 @@
 ![General walkthrough of metaWRAP modules](https://i.imgur.com/LcC09ym.png)
 
 #### Metagemonic data pre-processing modules:
-1) Read QC (trimming and human read removal)
-2) Assembly (with metaSPAdes or MegaHit, plust assembly QC)
-3) Kraken (taxonomy profiling and visualization)
-4) Binning (MaxBin2, metaBAT2, CONCOCT)
+	1) Read QC (trimming and human read removal)
+	2) Assembly (with metaSPAdes or MegaHit, plust assembly QC)
+	3) Kraken (taxonomy profiling and visualization)
+	4) Binning (MaxBin2, metaBAT2, CONCOCT)
 	
 #### Bin processing modules:
-1) Bin refinement and consolidation of multiple bin sets
-2) Bin reassembly (reassemble bins to improve completion and reduce contamination)
-3) Bin quantitation (bin abundance estimation across samples)
-5) Blobology (visualize bin success with blobplots)
-6) Classify bins (assign taxonomy to draft genomes)
+	1) Bin refinement and consolidation of multiple bin sets
+	2) Bin reassembly (reassemble bins to improve completion and reduce contamination)
+	3) Bin quantitation (bin abundance estimation across samples)
+	5) Blobology (visualize bin success with blobplots)
+	6) Classify bins (assign taxonomy to draft genomes)
 
 ##  SYSTEM REQUIREMENTS
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems.
