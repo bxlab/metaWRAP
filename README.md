@@ -29,11 +29,11 @@
 
 
 ## INSTALLATION
- To start, download [miniconda2](https://conda.io/miniconda.html) (the Python 2.7 version) and install it. Once you have conda, you can install metawrap and all its dependancies with the following command
+ To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Once you have conda, you can install metawrap and all its dependancies with the following command
  ``` bash
  conda install -c ursky metawrap-binning
  ```
- WARNING: The metaWRAP's will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is recommended to [set up a custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current environment and metaWRAP's environment will not conflict.
+ WARNING: The metaWRAP's will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
  ``` bash
  conda create -n metawrap-env python=2.7
  source activate metawrap-env
@@ -53,14 +53,14 @@
  which config-metawrap
  ```
 
-You will need to [download and configure several databases](https://github.com/ursky/metaWRAP/blob/master/installation/database_installation.md) and adjust their paths in the config-metawrap file. Note that depending on what modules you plan on using, you may not need all the databases.
+You will need to download and configure several databases and adjust their paths in the config-metawrap file. Note that depending on what modules you plan on using, you may not need all the databases. [Follow this guide for downloading and configuration instructions](https://github.com/ursky/metaWRAP/blob/master/installation/database_installation.md).
 
 |    Database     | Size  |  Used in module |
 |:---------------:|:---------------:|:-----:| 
 |Checkm_DB	 |1.4GB| binning, bin_refinement, reassemble_bins |
 |KRAKEN standard database|161GB |  kraken |
-| NCBI_nt |71GB |  blobology |
-| NCBI_tax |283MB |  blobology |
+| NCBI_nt |71GB |  blobology, classify_bins |
+| NCBI_tax |283MB |  blobology, classify_bins |
 |Indexed hg38  	|  20GB |  read_qc |
 
 
@@ -104,12 +104,12 @@ Options:
 	--use-metaspades	assemble with metaspades instead of megahit
 ```
 
-### Acknowledgements
-Author of pipeline: German Uritskiy.
+## Acknowledgements
+Author of pipeline: [German Uritskiy](guritsk1@jhu.edu).
 
 Principal Investigators: [James Taylor](http://bio.jhu.edu/directory/james-taylor/) and [Jocelyne DiRuggiero](http://bio.jhu.edu/directory/jocelyne-diruggiero/)
 
 Institution: Johns Hopkins, [Department of Cell, Molecular, Developmental Biology, and Biophysics](http://cmdb.jhu.edu/) 
 
-I do not claim to have any authorship of the many programs this pipeline uses. For questions, bugs, and suggestions, contact me at guritsk1@jhu.edu, or leave a comment on this github page.
+All feedback is welcome! For questions, bugs, and suggestions, contact me at guritsk1@jhu.edu, or leave a comment on this github page.
 
