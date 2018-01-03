@@ -29,7 +29,7 @@
 
 
 ## INSTALLATION
- To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Once you have conda, you can install metawrap and all its dependancies with the following command
+ To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Once you have conda, you can install metawrap and all its dependancies with the following command (unly supports Linux x64):
  ``` bash
  conda install -c ursky metawrap-binning
  ```
