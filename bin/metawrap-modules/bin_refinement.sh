@@ -53,7 +53,7 @@ run_checkm () {
         checkm lineage_wf -x fa $1 ${1}.checkm -t $threads
         if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
         comm "Finalizing CheckM stats and plots..."
-        ${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv > ${1}.stats
+        ${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > ${1}.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 }
 

@@ -9,7 +9,7 @@ metaWRAP v=0.6 (Late December 2017)
 		added detailed database download and configuration instructions
 		reduced benign mkdir errors throughout
 	Assembly module:
-		fixed tmp directoty handeling bug
+		fixed tmp directory handeling bug
 	Kraken module:
 		fixed major bug preventing subsetting reads if there were spaces in the read identifiers
 		added jellyfish v=1.1.11 to conda env file for kraken-build
