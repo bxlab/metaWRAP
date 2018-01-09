@@ -59,6 +59,7 @@ conda config --add channels bioconda
  metaWRAP read_qc -h
  ```
  
+ As of 2018, metaWRAP is being actively improved and developed, so dont forget to update it regularly. ```conda update -c ursky metawrap-binning``` 
  
 ## DATABASES
 
