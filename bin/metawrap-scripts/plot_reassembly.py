@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
 
-max_contamination=10
-min_completion=50
+max_contamination=int(sys.argv[3])
+min_completion=int(sys.argv[2])
 
 ####################################################################################################################################
 ############################################         MAKE THE N50 PLOT                 ############################################
@@ -17,7 +17,7 @@ print "Loading completion info...."
 data={}
 max_n50=0
 # loop over all bin .stats files
-for file_name in sys.argv[2:]:
+for file_name in sys.argv[4:]:
 	bin_set=".".join(file_name.split("/")[-1].split(".")[:-1])
 	data[bin_set]=[]
 	for line in open(file_name):
@@ -65,7 +65,7 @@ ax.spines["bottom"].set_linewidth(0.5)
 ax.spines['bottom'].set_color('black')
 ax.spines["right"].set_visible(False)
 ax.spines["left"].set_visible(False)
-ax.set_facecolor('white')
+ax.set_axis_bgcolor('white')
 
 # Ensure that the axis ticks only show up on the bottom and left of the plot.    
 ax.get_xaxis().tick_bottom()
@@ -124,7 +124,7 @@ print "Loading completion info...."
 data={}
 max_x=0
 # loop over all bin .stats files
-for file_name in sys.argv[2:]:
+for file_name in sys.argv[4:]:
 	bin_set=".".join(file_name.split("/")[-1].split(".")[:-1])
 	data[bin_set]=[]
 	for line in open(file_name):
@@ -173,7 +173,7 @@ ax.spines["bottom"].set_linewidth(0.5)
 ax.spines['bottom'].set_color('black')
 ax.spines["right"].set_visible(False)
 ax.spines["left"].set_visible(False)
-ax.set_facecolor('white')
+ax.set_axis_bgcolor('white')
 
 # Ensure that the axis ticks only show up on the bottom and left of the plot.    
 ax.get_xaxis().tick_bottom()
@@ -246,7 +246,7 @@ print "Loading contamination info..."
 
 data={}
 # loop over all bin .stats files
-for file_name in sys.argv[2:]:
+for file_name in sys.argv[4:]:
 	bin_set=".".join(file_name.split("/")[-1].split(".")[:-1])
 	data[bin_set]=[]
 	for line in open(file_name):
@@ -273,7 +273,7 @@ ax.spines["bottom"].set_linewidth(0.5)
 ax.spines['bottom'].set_color('black')
 ax.spines["right"].set_visible(False)
 ax.spines["left"].set_visible(False)
-ax.set_facecolor('white')
+ax.set_axis_bgcolor('white')
 
 # Ensure that the axis ticks only show up on the bottom and left of the plot.    
 ax.get_xaxis().tick_bottom()

@@ -281,7 +281,7 @@ if [ "$run_checkm" = true ]; then
 	comm "making reassembly N50, compleiton, and contamination summary plots."
 	head -n 1 ${out}/work_files/reassembled_bins.stats > ${out}/original_bins.stats
 	grep orig ${out}/work_files/reassembled_bins.stats >> ${out}/original_bins.stats
-	${SOFT}/plot_reassembly.py $out ${out}/reassembled_bins.stats ${out}/original_bins.stats
+	${SOFT}/plot_reassembly.py $out $comp $cont ${out}/reassembled_bins.stats ${out}/original_bins.stats
 	if [[ $? -ne 0 ]]; then error "Something went wrong with plotting the reassembly summary plots. Exiting..."; fi
 fi
 

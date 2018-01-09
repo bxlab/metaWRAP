@@ -6,8 +6,8 @@ import sys
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
-max_contamination=10
-min_completion=50
+max_contamination=int(sys.argv[2])
+min_completion=int(sys.argv[1])
 
 ####################################################################################################################################
 ############################################         MAKE THE COMPLETION PLOT           ############################################
@@ -16,7 +16,7 @@ print "Loading completion info...."
 data={}
 max_x=0
 # loop over all bin .stats files
-for file_name in sys.argv[1:]:
+for file_name in sys.argv[3:]:
 	bin_set=".".join(file_name.split("/")[-1].split(".")[:-1])
 	data[bin_set]=[]
 	for line in open(file_name):
@@ -25,7 +25,7 @@ for file_name in sys.argv[1:]:
 
 		# skip bins that are too contaminated or very incomplete
 		if float(line.split("\t")[2])>max_contamination: continue
-		if float(line.split("\t")[1])<1: continue
+		if float(line.split("\t")[1])<min_completion: continue
 
 		# save the completion value of each bin into a list
 		data[bin_set].append(float(line.split("\t")[1]))
@@ -65,25 +65,26 @@ ax.spines["bottom"].set_linewidth(0.5)
 ax.spines['bottom'].set_color('black')
 ax.spines["right"].set_visible(False)
 ax.spines["left"].set_visible(False)
-ax.set_facecolor('white')
+#ax.set_facecolor('white')
+ax.set_axis_bgcolor("white")
 
 # Ensure that the axis ticks only show up on the bottom and left of the plot.    
 ax.get_xaxis().tick_bottom()
 ax.get_yaxis().tick_left()
 
 # Limit the range of the plot to only where the data is.    
-plt.ylim(-5, 105)
+plt.ylim(min_completion, 105)
 max_x=0
 for k in data:
 	if len(data[k])>max_x: max_x=len(data[k])
 plt.xlim(0, max_x)
 
 # Make sure your axis ticks are large enough to be easily read.    
-plt.yticks(range(0, 105, 10), [str(x) + "%" for x in range(0, 105, 10)], fontsize=14)    
+plt.yticks(range(min_completion, 105, 10), [str(x) + "%" for x in range(min_completion, 105, 10)], fontsize=14)    
 plt.xticks(fontsize=14)    
 
 # Provide tick lines across the plot to help your viewers trace along    
-for y in range(0, 105, 10):    
+for y in range(min_completion, 105, 10):    
 	plt.plot(range(0, max_x), [y] * len(range(0, max_x)), "--", lw=0.5, color="black", alpha=0.3)    
   
 # Remove the tick marks; they are unnecessary with the tick lines we just plotted.    
@@ -107,7 +108,7 @@ for rank, bin_set in enumerate(labels):
 	# add bin set label to plot
 	y_pos = data[bin_set][len(data[bin_set])*3/4]
 	x_pos=len(data[bin_set])*3/4
-	plt.text(x_pos, y_pos, bin_set, fontsize=14, color=c)
+	plt.text(x_pos, y_pos, bin_set, fontsize=18, color=c)
 
 # add plot and axis titles and adjust edges
 plt.title("Bin completion ranking", fontsize=26) 
@@ -124,7 +125,7 @@ print "Loading contamination info..."
 
 data={}
 # loop over all bin .stats files
-for file_name in sys.argv[1:]:
+for file_name in sys.argv[3:]:
 	bin_set=".".join(file_name.split("/")[-1].split(".")[:-1])
 	data[bin_set]=[]
 	for line in open(file_name):
@@ -133,7 +134,7 @@ for file_name in sys.argv[1:]:
 
 		# skip bins that are too incomplete or way too contaminated
 		if float(line.split("\t")[1])<min_completion: continue
-		if float(line.split("\t")[2])>1000: continue
+		if float(line.split("\t")[2])>max_contamination: continue
 
 		# save the contamination value of each bin into a list
 		data[bin_set].append(float(line.split("\t")[2]))
@@ -151,7 +152,8 @@ ax.spines["bottom"].set_linewidth(0.5)
 ax.spines['bottom'].set_color('black')
 ax.spines["right"].set_visible(False)
 ax.spines["left"].set_visible(False)
-ax.set_facecolor('white')
+#ax.set_facecolor('white')
+ax.set_axis_bgcolor("white")
 
 # Ensure that the axis ticks only show up on the bottom and left of the plot.    
 ax.get_xaxis().tick_bottom()
@@ -159,21 +161,22 @@ ax.get_yaxis().tick_left()
 
 # Limit the range of the plot to only where the data is.    
 #plt.gca().invert_yaxis()
-plt.ylim(0.06, 1600)
-ax.set_yscale('log')
+plt.ylim(0, max_contamination+1)
+#ax.set_yscale('log')
 max_x=0
 for k in data:
 	if len(data[k])>max_x: max_x=len(data[k])
 plt.xlim(0, max_x)
 
-# Make sure your axis ticks are large enough to be easily read.    
-plt.yticks([0.1,1,10,100,1000], ["0.1%","1%","10%","100%","1000%"], fontsize=14)
-plt.xticks(fontsize=14)    
+# Make sure your axis ticks are large enough to be easily read.
+plt.yticks(range(-0, max_contamination+1, 1), [str(x) + "%" for x in range(-0, max_contamination+1, 1)], fontsize=14)
+plt.xticks(fontsize=14)
 
-# Provide tick lines across the plot to help your viewers trace along    
-for y in [0.1,1,10,100,1000]:    
-	plt.plot(range(0, max_x), [y] * len(range(0, max_x)), "--", lw=0.5, color="black", alpha=0.3)    
-  
+# Provide tick lines across the plot to help your viewers trace along
+for y in range(0, max_contamination+1, 1):
+        plt.plot(range(0, max_x), [y] * len(range(0, max_x)), "--", lw=0.5, color="black", alpha=0.3)
+
+ 
 # Remove the tick marks; they are unnecessary with the tick lines we just plotted.    
 plt.tick_params(axis="both", which="both", bottom="off", top="off", labelbottom="on", left="off", right="off", labelleft="on")    
 
@@ -195,7 +198,7 @@ for rank, bin_set in enumerate(labels):
 	# add plot label
 	x_pos = len(data[bin_set])-1
 	y_pos = data[bin_set][-1]
-	plt.text(x_pos, y_pos, bin_set, fontsize=14, color=c)
+	plt.text(x_pos, y_pos, bin_set, fontsize=18, color=c)
 
 # add plot and axis titles and adjust the edges
 plt.title("Bin contamination ranking", fontsize=26) 

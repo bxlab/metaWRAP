@@ -342,24 +342,24 @@ if [ "${bins3:$((${#bins3}-1)):1}" = "/" ]; then bins3=${bins3%/*}; fi
 if [[ $n_binnings -eq 2 ]]; then
 	cp -r work_files/binsA ${bins1##*/}
 	cp -r work_files/binsB ${bins2##*/}
-	cp -r work_files/binsAB Bin_refiner
+	cp -r work_files/binsAB Binning_refiner
 	cp -r work_files/binsO metaWRAP_bins
 
 	cp work_files/binsA.stats ${bins1##*/}.stats	
 	cp work_files/binsB.stats ${bins2##*/}.stats
-	cp work_files/binsAB.stats Bin_refiner.stats
+	cp work_files/binsAB.stats Binning_refiner.stats
 	cp work_files/binsO.stats metaWRAP_bins.stats
 elif [[ $n_binnings -eq 3 ]]; then
 	cp -r work_files/binsA ${bins1##*/}
 	cp -r work_files/binsB ${bins2##*/}
 	cp -r work_files/binsC ${bins3##*/}
-	cp -r work_files/binsABC Bin_refiner
+	cp -r work_files/binsABC Binning_refiner
 	cp -r work_files/binsO metaWRAP_bins
 
 	cp work_files/binsA.stats ${bins1##*/}.stats
 	cp work_files/binsB.stats ${bins2##*/}.stats
 	cp work_files/binsC.stats ${bins3##*/}.stats
-	cp work_files/binsABC.stats Bin_refiner.stats
+	cp work_files/binsABC.stats Binning_refiner.stats
 	cp work_files/binsO.stats metaWRAP_bins.stats
 else
 	error "something went wrong with determining the number of input bin sets when finalizing output names..."
@@ -367,7 +367,7 @@ fi
 
 if [ "$run_checkm" == "true" ]; then
         comm "making completion and contamination ranking plots of final outputs"
-        ${SOFT}/plot_bining_results.py $(ls | grep ".stats")
+        ${SOFT}/plot_binning_results.py $comp $cont $(ls | grep ".stats")
 	mv binning_results.eps figures/binning_results.eps
 	mv binning_results.png figures/binning_results.png
 fi
