@@ -35,6 +35,7 @@ conda config --add channels r
 conda config --add channels defaults
 conda config --add channels conda-forge
 conda config --add channels bioconda
+conda config --add channels ursky
 ```
 
  Once you have conda installed and configured, you can install metawrap and all its dependancies with the following command (unly supports Linux x64):
@@ -50,6 +51,7 @@ conda config --add channels bioconda
  conda config --add channels defaults
  conda config --add channels conda-forge
  conda config --add channels bioconda
+ conda config --add channels ursky
 
  conda install -c ursky metawrap-binning
  ```
