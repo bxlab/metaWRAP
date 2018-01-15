@@ -124,12 +124,14 @@ if [[ $? -ne 0 ]]; then error "Failed to run megablast. Exiting..."; fi
 comm "removing unnecessary lines that lead to bad tax IDs (without a proper rank)"
 ${SOFT}/prune_blast_hits.py ${TAXDUMP}/nodes.dmp ${out}/megablast_out.tab > ${out}/megablast_out.pruned.tab
 if [[ $? -ne 0 ]]; then error "Failed to run prune_blast_hits.py to remove the bad lines. Exiting..."; fi
-cat ${out}/megablast_out.pruned.tab | cut -f1,2,3,4,5,7,8,9,10,11,12 > ${out}/megablast_out.tab
+cat ${out}/megablast_out.pruned.tab | awk -F"\t" '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12}' \
+ > ${out}/megablast_out.tab
+
 if [[ $? -ne 0 ]]; then error "Failed to remove extra column. Exiting..."; fi
 
 
 comm "making mapping file"
-cat ${out}/megablast_out.pruned.tab | cut -f5,6 > ${out}/mapping.tax
+cat ${out}/megablast_out.pruned.tab | awk -F"\t" '{print $5"\t"$6}' > ${out}/mapping.tax
 if [[ $? -ne 0 ]]; then error "Failed to make mapping file. Exiting..."; fi
 
 rm ${out}/megablast_out.pruned.tab
