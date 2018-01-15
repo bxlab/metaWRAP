@@ -2,6 +2,12 @@ Future plans:
 	-rename binning modules to something more consistant
 	-make unified binning module wrapping the other bin processing modules
 
+metaWRAP v=0.7 (Currenly in development)
+	Conda installation:
+		removed gcc as a run dependancy to help resolve gcc library issues on some servers
+	Quant_bins:
+		fixed bug where quantitation would fail if the contig names had a different naming conventaion from metaSPAdes
+		improved run time by not making unnecesary coppies of assembly	
 
 metaWRAP v=0.6 (Late December 2017)
 	General:

@@ -8,6 +8,18 @@ for bin_name in os.listdir(sys.argv[2]):
 		if line[0]!=">": continue
 		bins[line[1:-1]]=bin_name
 
+# load contig lengths:
+contig_lengths={}
+length=0
+for line in open(sys.argv[3]):
+	if line[0]==">":
+		if length!=0: 
+			contig_lengths[contig]=length
+		length=0
+		contig=line[1:-1]
+	else:
+		length+=len(line.strip())
+
 # load in the salmon abundances
 bin_abundances={}
 for salmon_file in os.listdir(sys.argv[1]):
@@ -24,8 +36,8 @@ for salmon_file in os.listdir(sys.argv[1]):
 			bin_abundances[bin]["total_cov"]=0
 			bin_abundances[bin]["samples"]={}
 	
-		bin_abundances[bin]["total_len"]+=int(line.split("\t")[0].split("_")[3])
-		bin_abundances[bin]["total_cov"]+=abun * int(line.split("\t")[0].split("_")[3])
+		bin_abundances[bin]["total_len"]+=contig_lengths[line.split("\t")[0]]
+		bin_abundances[bin]["total_cov"]+=abun * contig_lengths[line.split("\t")[0]]
 	
 	
 	for bin in bin_abundances:

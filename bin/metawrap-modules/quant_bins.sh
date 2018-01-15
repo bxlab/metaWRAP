@@ -19,6 +19,7 @@ help_message () {
 	echo "	-b STR          folder containing draft genomes (bins) in fasta format"
 	echo "	-o STR          output directory"
 	echo "	-a STR		fasta file with entire metagenomic assembly"
+	echo "	-t INT		number of threads"
 	echo ""
 	echo "";}
 
@@ -107,19 +108,17 @@ announcement "SETTING UP OUTPUT AND INDEXING ASSEMBLY"
 
 # setting up the output folder
 if [ ! -d ${out}/all_bin_contigs ]; then
-        mkdir $out ${out}/all_bin_contigs
+        mkdir $out
 else
         echo "Warning: $out already exists."
 fi
 
-comm "making a copy of the assembly file"
-cp $assembly ${out}/all_bin_contigs/assembly.fa
-if [ ! -f ${out}/all_bin_contigs/assembly.fa ]; then error "coppied assembly file not found. exiting..."; fi
+if [ ! -f $assembly ]; then error "Assembly file $assembly does not exist. Exiting..."; fi
 
 
 # Index the assembly
 comm "Indexing assembly file with salmon. Ignore any warnings"
-salmon index -p $threads -t ${out}/all_bin_contigs/assembly.fa -i ${out}/all_bin_contigs/assembly_index
+salmon index -p $threads -t $assembly -i ${out}/assembly_index
 if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
 
 
@@ -141,7 +140,7 @@ for arg in "$@"; do
 		sample=${tmp%_*}
 
 		comm "processing sample $sample with reads $reads_1 and $reads_2..."
-		salmon quant -i ${out}/all_bin_contigs/assembly_index --libType IU -1 $reads_1 -2 $reads_2 -o ${out}/alignment_files/${sample}.quant
+		salmon quant -i ${out}/assembly_index --libType IU -1 $reads_1 -2 $reads_2 -o ${out}/alignment_files/${sample}.quant
 		if [[ $? -ne 0 ]]; then error "Something went wrong with aligning $sample fastq files back to assembly! Exiting..."; fi
 	fi
 done
@@ -166,7 +165,7 @@ n=$(ls ${out}/quant_files/ | grep counts | wc -l)
 if [[ $n -lt 1 ]]; then error "There were no files found in ${out}/quant_files/"; fi
 comm "There were $n samples detected. Making abundance table!"
 
-${SOFT}/split_salmon_out_into_bins.py ${out}/quant_files/ $bin_folder > ${out}/abundance_table.tab
+${SOFT}/split_salmon_out_into_bins.py ${out}/quant_files/ $bin_folder $assembly > ${out}/abundance_table.tab
 if [[ $? -ne 0 ]]; then error "something went wrong with making summary abundance table. Exiting..."; fi
 comm "Average bin abundance table stored in ${out}/abundance_table.tab"
 

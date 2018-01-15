@@ -95,6 +95,9 @@ if [ $out = false ] || [ $ASSEMBLY = false ] ; then
 	help_message; exit 1
 fi
 
+#check if the assembly file exists
+if [ ! -s $ASSEMBLY ]; then error "$ASSEMBLY does not exist. Exiting..."; fi
+
 # check for at least one pair of read fastq files:
 F="no"; R="no"
 for num in "$@"; do
@@ -159,7 +162,8 @@ for num in "$@"; do
 	if [[ $num == *"_1.fastq"* ]]; then 
 		reads_1=$num
 		reads_2=${num%_*}_2.fastq
-		if [ "$reads_2" = "false" ]; then error "$reads_2 does not exist. Exiting..."; fi
+		if [ ! -s $reads_1 ]; then error "$reads_1 does not exist. Exiting..."; fi
+		if [ ! -s $reads_2 ]; then error "$reads_2 does not exist. Exiting..."; fi
 
 		tmp=${reads_1##*/}
 		sample=${tmp%_*}
@@ -237,11 +241,12 @@ if [ $maxbin2 = true ]; then
 	-abund_list ${out}/work_files/mb2_abund_list.txt
 
 	if [[ $? -ne 0 ]]; then error "Something went wrong with running MaxBin2. Exiting."; fi
-	
+	if [[ $(ls ${out}/work_files/maxbin2_out/ | grep bin | grep .fasta | wc -l) -lt 1 ]]; then error "MaxBin2 did not pruduce a single bin. Something went wrong. Exiting."; fi
+
 	mkdir ${out}/maxbin2_bins
 	N=0
-	for i in ${out}/work_files/maxbin2_out/bin*.fasta; do
-		cp $i ${out}/maxbin2_bins/bin.${N}.fa
+	for i in $(ls ${out}/work_files/maxbin2_out/ | grep bin | grep .fasta); do
+		cp ${out}/work_files/maxbin2_out/$i ${out}/maxbin2_bins/bin.${N}.fa
 		N=$((N + 1))
 	done
 	comm "MaxBin2 finished successfully, and found $(ls -l ${out}/maxbin2_bins | grep .fa | wc -l) bins!"
