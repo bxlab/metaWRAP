@@ -1,5 +1,4 @@
 # MetaWRAP - Wrapper for Metagenomic Bin Analysis
-## MetaWRAP v=0.6
 
  MetaWRAP aims to be an easy-to-use wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual module of the pipeline is also a standalone component.
  
@@ -15,12 +14,12 @@
 	1) Read QC (trimming and human read removal)
 	2) Assembly (with metaSPAdes or MegaHit, plust assembly QC)
 	3) Kraken (taxonomy profiling and visualization)
-	4) Binning (MaxBin2, metaBAT2, CONCOCT)
 	
 #### Bin processing modules:
-	1) Bin refinement and consolidation of multiple bin sets
-	2) Bin reassembly (reassemble bins to improve completion and reduce contamination)
-	3) Bin quantitation (bin abundance estimation across samples)
+	1) Binning (MaxBin2, metaBAT2, CONCOCT)
+	2) Bin refinement and consolidation of multiple bin sets
+	3) Bin reassembly (reassemble bins to improve completion and reduce contamination)
+	4) Bin quantitation (bin abundance estimation across samples)
 	5) Blobology (visualize bin success with blobplots)
 	6) Classify bins (assign taxonomy to draft genomes)
 
