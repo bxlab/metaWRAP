@@ -177,9 +177,13 @@ for bin in $(ls $bin_folder); do
 	cp ${bin_folder}/$bin ${out}/renamed_bins/${final_name}.fa
 done
 
-rm ${out}/megablast_out.pruned.tab ${out}/megablast_out.raw.tab
+comm "cleaning up..."
+mkdir ${out}/work_files
+for file in $(ls $out | grep -v "contig_taxonomy.tab" | grep -v "bin_taxonomy.tab"); do
+	mv ${out}/$file ${out}/work_files/
+done
 
-comm "you will find the bins renamed to their best taxonomy estimate in ${out}/renamed_bins "
+comm "you will find the bins taxonomy estimates in ${out}/bin_taxonomy.tab"
 fi
 
 
