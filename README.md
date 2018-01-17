@@ -1,28 +1,27 @@
 # MetaWRAP - Wrapper for Metagenomic Bin Analysis
-## MetaWRAP v=0.6
 
- MetaWRAP aims to be an easy-to-use wrapper program that accomplishes the most basic tasks in metagenomic analysis: QC, assembly, binning, visualization, and taxonomic profiling. While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual module of the pipeline is also a standalone component.
+ MetaWRAP aims to be an easy-to-use wrapper suite that accomplishes the core tasks of metagenomic analysis: read QC, assembly, visualization, taxonomic profiling, and binning. However, unlike similar pipelines before it, metaWRAP takes bin extraction and analysis to the next level (see module overview below). While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual module of metaWRAP is also a standalone program. For example, if you are interested only in the Read_qc because you want to remove human reads from your data, or Quant_bins because you have bins wyou want to accurately quantify accross samples, you awe welcome to only use those modules.
  
- In addition to being a tool wrapper, MetaWRAP offers a powerfull hybrid approach for extracting high-quality draft genomes (bins) from metagenomic data by using a variety of software (metaBAT2, CONCOCT, MaxBin2) and utilizing their individual strengths and minimizing their weaknesses. MetaWRAP's [bin refinement module](https://i.imgur.com/JL665Qo.png) outperforms not only individual binning approaches, but also other bin consolidation programs (Binning_refiner, DAS_Tool) in both synthetic and real datasets.
+ In addition to being a tool wrapper, MetaWRAP offers a powerfull hybrid approach for extracting high-quality draft genomes (bins) from metagenomic data by using a variety of software (metaBAT2, CONCOCT, and MaxBin2, for example, since they are already wrapped into the Binning module) and utilizing their individual strengths and minimizing their weaknesses. MetaWRAP's [bin refinement module](https://i.imgur.com/JL665Qo.png) outperforms not only individual binning approaches, but also other bin consolidation programs (Binning_refiner, DAS_Tool) in both synthetic and real datasets. I emphasize that because this module is a standalone component, I encourage you to use your favorite binning softwares for the 3 intitial predictions (they do not have to come from metaBAT2, CONCOCT and MaxBin2). These predictions can also come from different parameters of the same software.
 
- MetaWRAP also includes a novel [bin reassembly module](https://i.imgur.com/GUSMXl8.png), which allows to drastically improve the quality of a set of bins by extracting the reads belonging to that draft genome, and reassembling it with a more permissive, non-metagenomic assembler. In addition to improving the N50 of the bins, this modestly increases the compleiton of the bins, and drastically reduces contamination.
+ MetaWRAP also includes a novel [bin reassembly module](https://i.imgur.com/GUSMXl8.png), which allows to drastically improve the quality of a set of bins by extracting the reads belonging to that draft genome, and reassembling it with a more permissive, non-metagenomic assembler. In addition to improving the N50 of the bins, this modestly increases the compleiton of the bins, and drastically reduces contamination. I recommend you run the reassembly on the final bins set from the Bin_refinement module, but this can be any bin set.
  
 
 ## OVERVIEW OF METAWRAP MODULES:
 ![General walkthrough of metaWRAP modules](https://i.imgur.com/LcC09ym.png)
 
 #### Metagemonic data pre-processing modules:
-	1) Read QC (trimming and human read removal)
-	2) Assembly (with metaSPAdes or MegaHit, plust assembly QC)
-	3) Kraken (taxonomy profiling and visualization)
-	4) Binning (MaxBin2, metaBAT2, CONCOCT)
+	1) Read_QC: read trimming and human read removal
+	2) Assembly: metagenomic assembly and QC with metaSPAdes or MegaHit
+	3) Kraken: taxonomy profiling and visualization or reads or contigs
 	
 #### Bin processing modules:
-	1) Bin refinement and consolidation of multiple bin sets
-	2) Bin reassembly (reassemble bins to improve completion and reduce contamination)
-	3) Bin quantitation (bin abundance estimation across samples)
-	5) Blobology (visualize bin success with blobplots)
-	6) Classify bins (assign taxonomy to draft genomes)
+	1) Binning: initial bin extraction with MaxBin2, metaBAT2, and/or CONCOCT
+	2) Bin_refinement: consolidate of multiple binning predicitons into a superior bin set
+	3) Reassemble_bins: reassemble bins to improve completion and N50, and reduce contamination
+	4) Quant_bins: estimate bin abundance across samples
+	5) Blobology: visualize the community and extracted bins with blobplots
+	6) Classify_bins: conservative but accurate taxonomy prediction for bins
 
 ##  SYSTEM REQUIREMENTS
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems.
@@ -31,10 +30,10 @@
 ## INSTALLATION
  To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Then add channels to your conda environment:
  ``` bash
-conda config --add channels r
 conda config --add channels defaults
 conda config --add channels conda-forge
 conda config --add channels bioconda
+conda config --add channels r
 conda config --add channels ursky
 ```
 
@@ -47,10 +46,10 @@ conda config --add channels ursky
  conda create -n metawrap-env python=2.7
  source activate metawrap-env
  
- conda config --add channels r
  conda config --add channels defaults
  conda config --add channels conda-forge
  conda config --add channels bioconda
+ conda config --add channels r
  conda config --add channels ursky
 
  conda install -c ursky metawrap-binning
