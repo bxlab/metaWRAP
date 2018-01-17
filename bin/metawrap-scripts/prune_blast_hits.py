@@ -12,6 +12,7 @@ exclude=["no rank", "subspecies", "varietas", "forma"]
 #prune blast output to remove mappings without a rank and remove taxid columnn
 for  line in open(sys.argv[2]):
 	cut=line.strip().split('\t')
+	for i in range(len(cut)): cut[i]=cut[i].strip()
 	ids=cut[5]
 	if len(ids.split(';'))<1: continue
 	ct=0

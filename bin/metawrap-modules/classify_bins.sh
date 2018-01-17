@@ -112,29 +112,26 @@ if [[ ! -s ${out}/all_contigs.fa ]]; then error "something went wrong with joini
 
 
 
-comm "aligning ${out}/all_contigs.fa to ${BLASTDB} database with MEGABLAST. This is the longest step - please be patient. You may look at the classification progress in ${out}/megablast_out.tab"
+comm "aligning ${out}/all_contigs.fa to ${BLASTDB} database with MEGABLAST. This is the longest step - please be patient. You may look at the classification progress in ${out}/megablast_out.raw.tab"
 blastn -task megablast -num_threads $threads\
  -db ${BLASTDB}/nt\
  -outfmt '6 qseqid qstart qend qlen sseqid staxids sstart send bitscore evalue nident length'\
- -query ${out}/all_contigs.fa > ${out}/megablast_out.tab
+ -query ${out}/all_contigs.fa > ${out}/megablast_out.raw.tab
 
 if [[ $? -ne 0 ]]; then error "Failed to run megablast. Exiting..."; fi
 
 
 comm "removing unnecessary lines that lead to bad tax IDs (without a proper rank)"
-${SOFT}/prune_blast_hits.py ${TAXDUMP}/nodes.dmp ${out}/megablast_out.tab > ${out}/megablast_out.pruned.tab
+${SOFT}/prune_blast_hits.py ${TAXDUMP}/nodes.dmp ${out}/megablast_out.raw.tab > ${out}/megablast_out.pruned.tab
 if [[ $? -ne 0 ]]; then error "Failed to run prune_blast_hits.py to remove the bad lines. Exiting..."; fi
-cat ${out}/megablast_out.pruned.tab | awk -F"\t" '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12}' \
- > ${out}/megablast_out.tab
-
+cat ${out}/megablast_out.pruned.tab | cut -f1,2,3,4,5,7,8,9,10,11,12 > ${out}/megablast_out.tab
 if [[ $? -ne 0 ]]; then error "Failed to remove extra column. Exiting..."; fi
 
 
 comm "making mapping file"
-cat ${out}/megablast_out.pruned.tab | awk -F"\t" '{print $5"\t"$6}' > ${out}/mapping.tax
+cat ${out}/megablast_out.pruned.tab | cut -f5,6 > ${out}/mapping.tax
 if [[ $? -ne 0 ]]; then error "Failed to make mapping file. Exiting..."; fi
 
-rm ${out}/megablast_out.pruned.tab
 
 
 ########################################################################################################
@@ -179,6 +176,8 @@ for bin in $(ls $bin_folder); do
 	echo "$bin was renamed to ${final_name}.fa"
 	cp ${bin_folder}/$bin ${out}/renamed_bins/${final_name}.fa
 done
+
+rm ${out}/megablast_out.pruned.tab ${out}/megablast_out.raw.tab
 
 comm "you will find the bins renamed to their best taxonomy estimate in ${out}/renamed_bins "
 fi

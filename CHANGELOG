@@ -5,9 +5,13 @@ Future plans:
 metaWRAP v=0.7 (Currenly in development)
 	Conda installation:
 		removed gcc as a run dependancy to help resolve gcc library issues on some servers
-	Quant_bins:
+		changed taxator-tk version from 1.3.3 to 1.3.3e, which sources from a more updated binary source
+	Quant_bins module:
 		fixed bug where quantitation would fail if the contig names had a different naming conventaion from metaSPAdes
 		improved run time by not making unnecesary coppies of assembly	
+	Classify_bins module:
+		fixed bug in processing columns of the blast output
+
 
 metaWRAP v=0.6 (Late December 2017)
 	General:
