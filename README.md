@@ -41,7 +41,7 @@ conda config --add channels ursky
  ``` bash
  conda install -c ursky metawrap-binning
  ```
- WARNING: This will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
+ WARNING: This will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is strongly recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
  ``` bash
  conda create -n metawrap-env python=2.7
  source activate metawrap-env
@@ -60,16 +60,16 @@ conda config --add channels ursky
  metaWRAP read_qc -h
  ```
  
- As of 2018, metaWRAP is being actively improved and developed, so dont forget to update it regularly. ```conda update -c ursky metawrap-binning``` 
+ As of 2018, metaWRAP is being actively improved and developed, so please check for updates regularly: ```conda update -c ursky metawrap-binning``` 
  
 ## DATABASES
 
- Finally, use your favorite text editor to configure paths to databases in miniconda2/bin/config-metawrap and make sure all the paths look correct. This is very important if you want to use databases (see Database section below). If you are unsure where this config file is, run:
+ In addition to the Conda installation, you will need to configure the paths to some databases that you downloaded onto your system. Use your favorite text editor to configure these paths in /some/path/miniconda2/bin/config-metawrap and make sure everything looks correct. If you are unsure where this config file is, run:
  ``` bash
  which config-metawrap
  ```
 
-You will need to download and configure several databases and adjust their paths in the config-metawrap file. Note that depending on what modules you plan on using, you may not need all the databases. [Follow this guide for downloading and configuration instructions](https://github.com/ursky/metaWRAP/blob/master/installation/database_installation.md).
+This is very important if you want to use any functions requiring databases, but depending on what you plan to do, the databases are not mandatory for metaWRAP (see Database section below). [Follow this guide for download and configuration instructions](https://github.com/ursky/metaWRAP/blob/master/installation/database_installation.md).
 
 |    Database     | Size  |  Used in module |
 |:---------------:|:---------------:|:-----:| 
