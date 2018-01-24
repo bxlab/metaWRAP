@@ -1,8 +1,6 @@
-Future plans:
-	-rename binning modules to something more consistant
-	-make unified binning module wrapping the other bin processing modules
+metaWRAP v=0.8 (Currently in development)
 
-metaWRAP v=0.7 (Currenly in development)
+metaWRAP v=0.7 (January 2017_
 	Conda installation:
 		removed gcc as a run dependancy to help resolve gcc library issues on some servers
 		changed taxator-tk version from 1.3.3 to 1.3.3e, which sources from a more updated binary source
