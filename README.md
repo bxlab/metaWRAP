@@ -1,6 +1,6 @@
 # MetaWRAP - Wrapper for Metagenomic Bin Analysis
 
- MetaWRAP aims to be an **easy-to-use wrapper** suite that accomplishes the core tasks of metagenomic analysis: read QC, assembly, visualization, taxonomic profiling, and binning. However, unlike similar pipelines before it, metaWRAP takes bin extraction and analysis to the next level (see module overview below). While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual module of metaWRAP is also a standalone program. For example, if you are interested only in the Read_qc because you want to remove human reads from your data, or Quant_bins because you have bins wyou want to accurately quantify accross samples, you awe welcome to only use those modules.
+ MetaWRAP aims to be an **easy-to-use wrapper** suite that accomplishes the core tasks of metagenomic analysis: read QC, assembly, visualization, taxonomic profiling, extracting draft genomes (binning), and functional annotation. However, unlike similar pipelines before it, metaWRAP takes bin extraction and analysis to the next level (see module overview below). While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual module of metaWRAP is also a standalone program. For example, if you are interested only in the Read_qc because you want to remove human reads from your data, or Quant_bins because you have bins wyou want to accurately quantify accross samples, you awe welcome to only use those modules.
  
  In addition to being a tool wrapper, MetaWRAP offers a **powerfull hybrid approach** for extracting high-quality draft genomes (bins) from metagenomic data by using a variety of software (metaBAT2, CONCOCT, and MaxBin2, for example, since they are already wrapped into the Binning module) and utilizing their individual strengths and minimizing their weaknesses. MetaWRAP's [bin refinement module](https://i.imgur.com/JL665Qo.png) outperforms not only individual binning approaches, but also other bin consolidation programs (Binning_refiner, DAS_Tool) in both synthetic and real datasets. I emphasize that because this module is a standalone component, I encourage you to use your favorite binning softwares for the 3 intitial predictions (they do not have to come from metaBAT2, CONCOCT and MaxBin2). These predictions can also come from different parameters of the same software.
 
@@ -8,7 +8,7 @@
  
 
 ## OVERVIEW OF METAWRAP MODULES:
-![General walkthrough of metaWRAP modules](https://i.imgur.com/LcC09ym.png)
+![General walkthrough of metaWRAP modules](https://i.imgur.com/6GqRsm3.png)
 
 #### Metagemonic data pre-processing modules:
 	1) Read_QC: read trimming and human read removal
@@ -22,6 +22,7 @@
 	4) Quant_bins: estimate bin abundance across samples
 	5) Blobology: visualize the community and extracted bins with blobplots
 	6) Classify_bins: conservative but accurate taxonomy prediction for bins
+	7) Annotate_bins: functionally annotate genes in a set of bins
 
 ##  SYSTEM REQUIREMENTS
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems.
@@ -38,7 +39,7 @@ conda config --add channels r
 conda config --add channels ursky
 ```
 
- Once you have conda installed and configured, you can install metawrap and all its dependancies with the following command (unly supports Linux x64):
+ Once you have conda installed and configured, you can install metawrap and all its dependancies with the following command (only supports Linux x64 - your laptop would not have the power anyways):
  ``` bash
  conda install -c ursky metawrap-binning
  ```
@@ -85,7 +86,7 @@ This is very important if you want to use any functions requiring databases, but
 
 ## DETAILED PIPELINE WALKTHROUGH
 
-  ![Detailed pipeline walkthrough](https://i.imgur.com/5bb6vlY.jpg)
+  ![Detailed pipeline walkthrough](https://i.imgur.com/HDUPeXC.png)
 
 
 ## USAGE
