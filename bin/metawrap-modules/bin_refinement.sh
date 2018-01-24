@@ -129,7 +129,8 @@ fi
 announcement "BEGIN PIPELINE!"
 comm "setting up output folder and copything over bins..."
 if [ ! -d $out ]; then
-        mkdir $out;
+        mkdir $out
+	if [ ! -d $out ]; then error "cannot make $out"; fi
 else
         echo "Warning: $out already exists."
 fi
@@ -299,7 +300,7 @@ if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
 	checkm lineage_wf -x fa binsO binsO.checkm -t $threads --tmpdir binsO.tmp
 	if [[ ! -s binsO.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r binsO.tmp
-	${SOFT}/summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv binsO.checkm | (read -r; printf "%s\n" "$REPLY"; sort) > binsO.stats
+	${SOFT}/summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv binsO.checkm | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 	rm -r binsO.checkm
 	num=$(cat binsO.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
@@ -320,7 +321,7 @@ fi
 
 if [ "$run_checkm" == "true" ]; then
 	comm "making completion and contamination ranking plots for all refinement iterations"
-	${SOFT}/plot_bining_results.py $(ls | grep ".stats")
+	${SOFT}/plot_binning_results.py $(ls | grep ".stats")
 	mkdir figures
 	mv binning_results.eps figures/intermediate_binning_results.eps
 	mv binning_results.png figures/intermediate_binning_results.png

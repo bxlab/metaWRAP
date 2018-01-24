@@ -11,6 +11,11 @@ metaWRAP v=0.7 (Currenly in development)
 		improved run time by not making unnecesary coppies of assembly	
 	Classify_bins module:
 		fixed bug in processing columns of the blast output
+	Bin_refinement:
+		improved error handling
+		fixed bugs related to plot making
+	New module: Annotate_bins:
+		quickly functionally annotate a set of bins with PROKKA
 
 
 metaWRAP v=0.6 (Late December 2017)

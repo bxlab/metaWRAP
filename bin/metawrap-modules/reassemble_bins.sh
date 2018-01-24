@@ -95,7 +95,7 @@ done
 ########################################################################################################
 
 # check if all parameters are entered
-if [ $out = None ] || [  bins = None ] || [ f_reads = None ] || [ r_reads = None ] ; then 
+if [ $out = None ] || [  $bins = None ] || [ $f_reads = None ] || [ $r_reads = None ] ; then 
 	comm "Some non-optional parameters were not entered"
 	help_message; exit 1
 fi
@@ -108,7 +108,7 @@ fi
 ########################################################################################################
 ########################               BEGIN REASSEMBLY PIPELINE!               ########################
 ########################################################################################################
-announcement "PEGIN PIPELINE!"
+announcement "BEGIN PIPELINE!"
 comm "setting up output folder and copything over bins..."
 if [ ! -d $out ]; then
         mkdir $out;

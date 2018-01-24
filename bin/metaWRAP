@@ -25,6 +25,7 @@ help_message () {
 	echo "	reassemble_bins Reassemble bins using metagenomic reads"
 	echo "	quant_bins	Quantify the abundance of each bin across samples"
 	echo "	classify_bins	Assign taxonomy to genomic bins"
+	echo "	annotate_bins	Functional annotation of draft genomes"
 	echo "	blobology	Blobology module"
 	echo "	kraken		KRAKEN module"
         echo "";}
@@ -84,12 +85,16 @@ elif [ "$1" = classify_bins ]; then
 	echo ${PIPES}/classify_bins.sh ${@:2}
 	${PIPES}/classify_bins.sh ${@:2}
 	exit 0
+elif [ "$1" = annotate_bins ]; then
+        echo ${PIPES}/annotate_bins.sh ${@:2}
+        ${PIPES}/annotate_bins.sh ${@:2}
+        exit 0
 elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	help_message
 	exit 0
 elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
         echo ""
-	echo "metaWRAP v=0.6.6"
+	echo "metaWRAP v=0.7.0"
 	echo ""
         exit 0
 else
