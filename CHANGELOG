@@ -1,6 +1,6 @@
 metaWRAP v=0.8 (Currently in development)
 
-metaWRAP v=0.7 (January 2017_
+metaWRAP v=0.7 (January 2017)
 	Conda installation:
 		removed gcc as a run dependancy to help resolve gcc library issues on some servers
 		changed taxator-tk version from 1.3.3 to 1.3.3e, which sources from a more updated binary source
