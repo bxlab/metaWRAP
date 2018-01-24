@@ -3,15 +3,14 @@
 mkdir MY_CHECKM_FOLDER
 checkm data setRoot
 # CheckM will prompt to to chose your storage location...
-checkm data update
 
-# If there is difficulty connecting to the servers, you can update manually:
+# Now manually download the database:
 cd MY_CHECKM_FOLDER
-wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_v1.0.9.tar.gz
+wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_2015_01_16.tar.gz
 tar -xvf checkm_data_v1.0.9.tar.gz
 rm checkm_data_v1.0.9.tar.gz
 ```
-Thats it! CheckM should know what folder to use as its database.
+Thats it! CheckM should now use that folder and its contents as its database.
 
 
 
