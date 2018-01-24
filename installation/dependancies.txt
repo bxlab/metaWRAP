@@ -23,6 +23,7 @@
 -seaborn 0.8.1
 -salmon
 -taxator-tk
+-prokka
 
 #DATABASES:
 1.4GB	Checkm_DB (past of CheckM installation)
@@ -90,3 +91,5 @@ classify_bins.sh
 -NCBI_nt database
 -NCBI_tax database
 
+annotate_bins.sh
+-prokka
