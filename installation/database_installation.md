@@ -63,10 +63,10 @@ gunzip *fa.gz
 cat *fa > hg38.fa
 rm chr*.fa
 ```
-Now lets index the human genome. Note that the file names of the indeces must be exactly as specified for metaWRAP to recognize them! Also note that indexing will take considerable memory and time (here I pass 10GB of RAM as a -M parameter).
+Now lets index the human genome. Note that the file names of the indeces must be exactly as specified for metaWRAP to recognize them! Also note that indexing will take considerable memory and time (here I pass 100GB of RAM as a -M parameter).
 ``` bash
 bmtool -d hg38.fa -o hg38.bitmask
-srprism mkindex -i hg38.fa -o hg38.srprism -M 10000
+srprism mkindex -i hg38.fa -o hg38.srprism -M 100000
 ```
 Note: metaWRAP looks for files hg38.bitmask and hg38.srprism - make sure they are names exactly like this.
 Done! Now dont forget to specify the BMTAGGER_DB variable in the contig-metawrap file! Run `which config-metawrap` to find it.
