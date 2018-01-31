@@ -15,13 +15,16 @@ wget ftp.sra.ebi.ac.uk/vol1/fastq/ERR011/ERR011349/ERR011349_2.fastq.gz
 ```
 
 Unzip the data
-`gunzip *qz`
+```
+gunzip *qz
+```
 
 
 Place the raw sequencing reads into a new folder
 ```
 mkdir RAW_READS
 mv *fastq RAW_READS
+
 ls RAW_READS
 ERR011347_1.fastq
 ERR011347_2.fastq
@@ -51,17 +54,6 @@ post-QC_report
 pre-QC_report
 ```
 
-These are reads taht have been quality trimmed with trimgalore:
-```
-trimmed_1.fastq
-trimmed_2.fastq
-```
-
-These are human reads that have been pulled out with bmtagger (in case you need them):
-```
-human_reads_1.fastq
-human_reads_2.fastq
-```
 These are the final trimmed and de-contaminated reads:
 ```
 final_pure_reads_1.fastq
@@ -88,14 +80,17 @@ cat CLEAN_READS/ERR*_1.fastq > CLEAN_READS/ALL_READS_1.fastq
 cat CLEAN_READS/ERR*_2.fastq > CLEAN_READS/ALL_READS_2.fastq
 ```
 
-Assemble the reads with metaSPAdes (usually prefered unless you have a very large data set):
-`metawrap assembly -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -m 200 -t 96 --use-metaspades -o ASSEMBLY`
+Assemble the reads with the metaSPAdes option flag (usually prefered over MegaHIT unless you have a very large data set):
+```
+metawrap assembly -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -m 200 -t 96 --use-metaspades -o ASSEMBLY
+```
 
 You will find the assembly file in ASSEMBLY/final_assembly.fasta, and the QUAST assembly report html in ASSEMBLY/assembly_report.html!
 
 Looking at the top 10 contigs shows we got some longer contigs (considering that we are working with just 7Gbp of data)!
 ```
 grep ">" ASSEMBLY/final_assembly.fasta | head
+
 >NODE_1_length_196124_cov_2.427049
 >NODE_2_length_176373_cov_3.889994
 >NODE_3_length_163601_cov_3.070200
@@ -112,7 +107,9 @@ grep ">" ASSEMBLY/final_assembly.fasta | head
 Running kraken on the reads will give us an idea of the taxonomic composition of the communities in the three samples, while running kraken on the assembly will give us an idea what taxonomic groups were assembled better than others (the assembly process is heavily biased and should not be used to infer overall community composition).
 
 Run the Kraken module on all files at once, subsetting the reads to 1M reads per sample to speed up the run
-`metawrap kraken -o KRAKEN -t 96 -s 1000000 CLEAN_READS/ERR*fastq ASSEMBLY/final_assembly.fasta`
+```
+metawrap kraken -o KRAKEN -t 96 -s 1000000 CLEAN_READS/ERR*fastq ASSEMBLY/final_assembly.fasta
+```
 
 Lets have a look out the output folder:
 ```
@@ -128,18 +125,33 @@ The .kraken files contain the KRAKEN-estimated taxonomy of each read or contig, 
 
 The initial binning process with CONCOCT, MaxBin, and metaBAT will be the more time intensive steps (especially CONCOCT and MaxBin), so I would advise you to run the Binning module with each of the algorithms seperately. However, metaWRAP supports running all three together. Our dataset is reasonably small, so I will run all three binning predictions at the same time.
 
-If you are used to a different binning software(s), feel free to run them instead. The downstream refinement process takes in up to 3 different bin sets.
+If you are used to a different binning software(s), feel free to run them instead. The downstream refinement process (the Bin_refinement module) takes in up to 3 different bin sets, although you can get around this by running splitting your bin sets into groups and then recursively consolidating them.
 
 Run the binning module with all three binners - notice how I put both the F and R read files at the end of the command.
 ```
 metawrap binning -o INITIAL_BINNING -t 96 -a ASSEMBLY/final_assembly.fasta --metabat2 --maxbin2 --concoct CLEAN_READS/ERR*fastq
 ```
 
+In the output folder, we see folders with the 3 final bin sets, and a file containing the average and standard deviation of the library insert sizes (this may or may not be usefull to you).  
+```
+insert_sizes.txt  concoct_bins	maxbin2_bins  metabat2_bins  work_files
+```
+Looking inside these folders reveals that we found 47, 29, and 20 bins with concoct, metabat2, and maxbin2, respectively.
 
 
+## Step 5: Consolidate 3 bin sets with the Bin_refinement module
+Note: make sure you downloaded the CheckM database (see metaWRAP database instrucitons)
 
+Now what you have metabat2, maxbin2, and concoct bins, lets consolidate them into a single, stronger bin set! If you used your own binning software, feel free to use any 3 bin sets. If you have more than 3, you can run them in groups. For example if you have 5 bin sets, try consolidating 1+2+3 and 4+5, and then consolidate again between the outputs.
 
+When you do your refinement, make sure to put some thought into the minimum compleiton (-c) and maximum contamination (-x) parameters that you enter. During refinement, metaWRAP will have to chose the best version of each bin between 7 different versions of each bin. It will dynamically adjust to prioritize the bin quality that you desire. Consider this example: bin_123 comes in four versions in terms of completion/contamination: 95/15, 90/10, 80/5, 70/5. Which one is the best version? The high completion but high contamination, or the less complete but pure bin? This is subjective and depends on what you value in a bin and on what your purposes for bin extraction are. 
 
+By default, the minimum completion if 70%, and maximum contamination is 5%. However, because of the relatively poor depth of these demonstration samples, we will set minimum completion to 50% and maximum contamination to 10%, but feel free to be much more picky. Parameters like -c 90 -x 5 are not unreasonable in some data (but you will get fewer bins, of course).
+
+Run metaWRAP's Bin_refinement module:
+```
+metawrap bin_refinement -o BIN_REFINEMENT -t 96 -A INITIAL_BINNING/metabat2_bins/ -B INITIAL_BINNING/maxbin2_bins/ -C INITIAL_BINNING/concoct_bins/ -c 50 -x 10
+```
 
 
 
