@@ -139,7 +139,7 @@ insert_sizes.txt  concoct_bins	maxbin2_bins  metabat2_bins  work_files
 Looking inside these folders reveals that we found 47, 29, and 20 bins with concoct, metabat2, and maxbin2, respectively.
 
 
-## Step 5: Consolidate 3 bin sets with the Bin_refinement module
+## Step 5: Consolidate bin sets with the Bin_refinement module
 Note: make sure you downloaded the CheckM database (see metaWRAP database instrucitons)
 
 Now what you have metabat2, maxbin2, and concoct bins, lets consolidate them into a single, stronger bin set! If you used your own binning software, feel free to use any 3 bin sets. If you have more than 3, you can run them in groups. For example if you have 5 bin sets, try consolidating 1+2+3 and 4+5, and then consolidate again between the outputs.
@@ -153,9 +153,42 @@ Run metaWRAP's Bin_refinement module:
 metawrap bin_refinement -o BIN_REFINEMENT -t 96 -A INITIAL_BINNING/metabat2_bins/ -B INITIAL_BINNING/maxbin2_bins/ -C INITIAL_BINNING/concoct_bins/ -c 50 -x 10
 ```
 
+In the output directory, you will see the three original bin folders we fed in, as well as `metaWRAP` directory, which contains the final, consilidated bins. You will also see .stats files for each one of the bin directories. 
+```
+concoct_bins.stats	maxbin2_bins.stats	metabat2_bins.stats	metaWRAP.stats
+concoct_bins		maxbin2_bins		metabat2_bins		metaWRAP
+```
+
+The .stat files contain usefull information about each bin, inscuding its completeness and contamination. For example, `cat BIN_REFINEMENT/metaWRAP.stats`:
+```
+bin	completeness	contamination	GC	lineage	N50	size	binner
+bin.5	100.0	1.6	0.311	Euryarchaeota	12686	1705532	binsO.checkm
+bin.4	99.32	1.342	0.408	Clostridiales	58825	2083650	binsO.checkm
+bin.14	86.69	5.896	0.293	Bacteria	3754	2199676	binsO.checkm
+bin.6	86.22	2.348	0.371	Clostridiales	4283	2055792	binsO.checkm
+bin.8	83.16	2.516	0.446	Clostridiales	2723	1467846	binsO.checkm
+bin.2	80.34	0.0	0.469	Bacteria	11936	3579466	binsO.checkm
+bin.9	76.57	2.648	0.425	Selenomonadales	3155	1796524	binsO.checkm
+bin.13	74.82	1.710	0.435	Bacteroidales	7456	3643185	binsO.checkm
+bin.3	74.53	0.377	0.284	Clostridiales	10440	1241933	binsO.checkm
+bin.10	65.78	0.0	0.263	Bacteria	3045	1159966	binsO.checkm
+bin.11	64.85	3.776	0.417	Bacteroidales	2086	3103352	binsO.checkm
+bin.1	57.36	0.0	0.430	Bacteria	4628	2673426	binsO.checkm
+bin.7	52.94	1.724	0.501	Bacteria	3614	1465011	binsO.checkm
+```
+
+To evaluate how many "good bins" (based on out >50% comp., <10% cont. metric) metaWRAP produced, we can run
+```
+cat BIN_REFINEMENT/metabat2_bins.stats | awk '$2>50 && $3<10' | wc -l
+13
+```
+
+By inspecting the other files, we find that metaBAT2, MaxBin2, CONCOCT, and metaWRAP produced 11, 7, 10, and 13 bins, respectively. Not bad! But this is just the number of bins. To closer compare the bin sets in terms of completion and contamination, we can look at the plots in `BIN_REFINEMENT/figures/`
 
 
+## Step 6: Bin re-assemble the consolidated bin set with the Reassemble_bins module
 
-
-
+```
+metawrap reassemble_bins -o BIN_REASSEMBLY -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -t 96 -m 800 -c 50 -x 10 -b BIN_REFINEMENT/metaWRAP_bins
+```
 
