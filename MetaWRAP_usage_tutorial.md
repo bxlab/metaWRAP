@@ -183,7 +183,7 @@ cat BIN_REFINEMENT/metabat2_bins.stats | awk '$2>50 && $3<10' | wc -l
 13
 ```
 
-By inspecting the other files, we find that metaBAT2, MaxBin2, CONCOCT, and metaWRAP produced 11, 7, 10, and 13 bins, respectively. Not bad! But this is just the number of bins. To closer compare the bin sets in terms of completion and contamination, we can look at the plots in `BIN_REFINEMENT/figures/`
+By inspecting the other files, we find that metaBAT2, MaxBin2, CONCOCT, and metaWRAP produced 11, 7, 10, and 13 bins, respectively. So metaWRAP produced 2 more bins that the best single binner. Not bad! But this is just the number of bins. To closer compare the bin sets in terms of completion and contamination, we can look at the plots in `BIN_REFINEMENT/figures/`.
 
 
 ## Step 6: Bin re-assemble the consolidated bin set with the Reassemble_bins module
