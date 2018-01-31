@@ -44,6 +44,7 @@ BLASTDB=/your/location/of/database/NCBI_nt
 mkdir NCBI_tax
 cd NCBI_tax
 wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
+tar -xvf taxdump.tar.gz
 ```
 Do not forget to set the TAXDUMP variable in the contig-metawrap file! Run `which config-metawrap` to find it.
 ``` bash
