@@ -7,8 +7,8 @@ checkm data setRoot
 # Now manually download the database:
 cd MY_CHECKM_FOLDER
 wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_2015_01_16.tar.gz
-tar -xvf checkm_data_v1.0.9.tar.gz
-rm checkm_data_v1.0.9.tar.gz
+tar -xvf *.tar.gz
+rm *.gz
 ```
 Thats it! CheckM should now use that folder and its contents as its database.
 
