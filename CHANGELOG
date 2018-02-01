@@ -1,0 +1,166 @@
+<<<<<<< HEAD
+metaWRAP v=0.8 (In development)
+	Conda installation:
+		added R (important)
+		fixed channel ordering
+	Read_qc:
+		removed unnecessary large intermediate files
+		added clean-up feature
+	Binning:
+		removed unnecessary large intermediate files
+		added clean-up feature
+	Reassemble_bins:
+		changed  plotting color scheme
+	Blobology
+		added clean-up feature
+		plotting bugfixes
+
+
+metaWRAP v=0.7 (January 2018)
+=======
+metaWRAP v=0.8 (Currently in development)
+
+metaWRAP v=0.7 (January 2017)
+>>>>>>> 230a7de50f100d3a7247f051c2670fed13699791
+	Conda installation:
+		removed gcc as a run dependancy to help resolve gcc library issues on some servers
+		changed taxator-tk version from 1.3.3 to 1.3.3e, which sources from a more updated binary source
+	Quant_bins module:
+		fixed bug where quantitation would fail if the contig names had a different naming conventaion from metaSPAdes
+		improved run time by not making unnecesary coppies of assembly	
+	Classify_bins module:
+		fixed bug in processing columns of the blast output
+	Bin_refinement:
+		improved error handling
+		fixed bugs related to plot making
+	New module: Annotate_bins:
+		quickly functionally annotate a set of bins with PROKKA
+
+
+metaWRAP v=0.6 (Late December 2017)
+	General:
+		completely moved to installation of metaWRAP and ALL dependancies with conda
+		added detailed database download and configuration instructions
+		reduced benign mkdir errors throughout
+	Assembly module:
+		fixed tmp directory handeling bug
+	Kraken module:
+		fixed major bug preventing subsetting reads if there were spaces in the read identifiers
+		added jellyfish v=1.1.11 to conda env file for kraken-build
+	Reassembly module:
+		major bug fixes with tmp directory handling
+		restored parallelization of SPAdes - all bins assemble simmultaneously with 1 thread now
+	
+
+metaWRAP v=0.5 (Mid December 2017)
+	General:
+		Added overview flowcharts for most modules, and updated older flowcharts
+		metaWRAP is now much more binning oriented (see overview flowchart)
+	Assembly module:
+		added minimum contig length option (defore the default was 1000bp)
+		sped up megahit assembly re-formatting by removing redundant sorting operations
+	Bin_refinement module:
+		parallelized Binning_refiner such that all four hydridizing operations sun simultaneously
+	Reassemble_bins module:
+		added plotting functiong to summarize the N50, completion, and contamination rankings of the before and after bins
+	New module: Classify bins:
+		Uses MEGABLAST to align the contigs in bins to RefSeq
+		Taxator-tx asigns taxonomy to each contig
+		Use weighted tree algorythm to find consensus taxonomy of each bin
+	
+
+
+metaWRAP v=0.4 (Early December 2017)
+	General:
+		Most dependancies can now be installed with a pre-configured conda environment
+	Binning module:
+		Added option to immediately run CheckM on resulting bins
+	ReadQC module:
+		Major bug fix that prevented bmtagger from filtering out human reads when the read names in the fastq had spaces
+		Module now exits if the provided fastq files do not exist
+	Bin_refinement: this module consolidats all possible binning version of the bins from the Binning module
+		added contig dereplication to avoid situations where a contig ends up in more than one bin
+		removed depricated requirement for prviding reads as input
+		major bug fit to prevent HMMER to run out of space in /tmp/ by providing a new tmp folder
+		bug fix: bin consolidation script now supports contigs in any naming format
+		added plotting functiong to summarize the completion and contamination rankings of the inputs, intermediate interations, and final output
+	Bin_reassembly: this modules takes a set of metagenomic reads, alignes them back to the bins, and uses those reads to reassemble them
+		removed spades parallelization due to strange signmentation fault errors...
+		majob bug fix of bug preventing recruiting of reads for reassembly if the read names had spaces in them
+		major bug fit to prevent HMMER to run out of space in /tmp/ by providing a new tmp folder
+
+
+
+metaWRAP v=0.3 (November 2017)
+	General:
+		Error handling is greatly improved throughout the pipelines by incorporating the $? error code instead of relying on output files
+		Disabled PHYLOSIFT module (this software is too old)
+		Temporarily disabled ALL module due to increased complexity of the metaWRAP pipeline
+	ReadQC module:
+		Fixed issue with program thinking READQC did not finish correctly
+	Assembly module:
+		Removed joint assembly feature. Now you can only assemble with metaSPAdes OR Megahit.
+		(megahit is defualt due to its speed)
+		Changed minimum contig length from 500bp to 1000bp
+	Binning module:
+		This module is now split into four parts for modularity:
+		Binning module: this module is a basic wrapper around existing binning software (but conviniently handles intermediate files)
+			You can now bin with metaBAT2 and/or MaxBin2 and/or CONCOCT
+			Pipeline now calculates library insert sizes on the fly (and correctly)
+			Samtools tmp files bug fix
+			Samtools sort -m memory option fixes
+		Bin_refinement: this module consolidats all possible binning version of the bins from the Binning module
+			Runs CheckM on binning iterations
+			Produces the best possible bins
+			Allows user to input the minimum desired completion and maximum contamination
+			No longer quits if there are too many bins to plot
+		Bin_reassembly: this modules takes a set of metagenomic reads, alignes them back to the bins, and uses those reads to reassemble them
+			The reassembly function as a whole is now 100+ times faster than before due to paralelization
+			The read filtering for each bin is now parallelized into the same BWA alignment operation
+			The reassembly itself is not parallelized into 1 thread operations for each bin, which ends up being much faster
+		Quant_bins:
+			This module takes in (non-reassembled) bins and reads from many samples, and estimates the abundance of each bin in each sample with salmon
+			The process is paralelized and the alignment time does not scale with number of bins
+	Blobology module:
+		Allows for paralel processing of multiple read sets (but one assembly). Produces one figure per sample, with colors being consistant.
+		Changed annotations to blobplot file when the --bins option is selected - added additional columns
+		Now makes multiple bin annotation plots, annotating bins and their taxonomy
+		Blastn does not re-run if there is an output file with the same name already in the output folder
+
+
+
+metaWRAP v=0.2
+	General:
+		Added compatibility with long input parameters (eg. --options asdf) with getopt instead of getopts
+		Chenged instalation style of metaWRAP so that the contents of bin needs to be added to PATH to run. The user still needs to edit the config file first
+		Changed name of contig.sh to config-metawrap so be more distinguishable in PATH
+		All modules are now called through the master "metaWRAP" script (including the ALL module)
+		Changed heirarchy of pipeline scripts. Now they are hidden away in a "pipelines" folder, and only metaWRAP is visible
+		Changed the commenting system to be done through a python script that writes out pretty comments
+		New module: Phylosift. Currently all it does is randomly subsamples reads and runs Phylosift on them	
+	ReadQC module:
+		Added --skip-bmtagger option (reduces runtime signifficantly)
+		Added --skip-trimming option
+		Added --skip-pre-qc-report option
+		Added --skip-post-qc-report option
+	Assembly module:
+		Added --only-metaspades option (for those who dont like the idea of double assembly)
+		Added --only-megahit option (signifficantly reduces resourse requirements and time)
+	Binning module:
+		Added --skip-checkm option (reduces runtime)
+		New feature where bins that are >20% completion and <10% contamination are placed into a new folder - "good bins"
+		Added --checkm-good-bins option, to allow making a checkm figure for only good bins (makes a prettier figure)
+		Added --skip-reassembly option (reduces runtime signifficantly)
+		New feature where after reassembly the best variant of each bin (original, strict, or permissive reassemblies) is placed into a new folder - "best bins"
+		Added --checkm-best-bins option, to allow re-making the checkm figure on only the best versions of each bin
+		Removed KRAKEN from the binning module. KRAKEN now has to be run seperately on the output bins
+		Not also returns the average and stdev of insert lengths for each sample - useful for library assessment
+	Blobology module:
+		Added --bins option, which allows to annotate the blobplot with bins from a binning folder
+	ALL module:
+		Major bug fixes and improvements
+		Added a Phylosift and Kraken on bins steps to pipeline
+		All output figures and reports are now saved to "metaWRAP_figures" folder at the end of the pipeline
+		Added --fast option, which skips some non-essential and computationally expensive parts of the pipeline
+
+metaWRAP v=0.1: First user-friendly release of metaWRAP
