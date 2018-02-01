@@ -81,15 +81,13 @@ fi
 #  Checks for NCBI_nt database for BLAST
 if [ ! -f "${BLASTDB}/nt.00.nhd" ]; then
 	error "The file ${BLASTDB}/nt.00.nhd doesnt exist, which likely means that you havent set the correct path to your NCBI_nt database or\
-	 havent downloaded it. Please look and the the script and manually set the correct path to NCBI_nt, and follow these steps to download the\
-	  database: wget ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.*.tar.gz; for a in nt.*.tar.gz; do tar xzf $a; done"
+	 havent downloaded it. Please follow the metaWRAP database installation instructions."
 fi
 
 #  Checks for NCBI_tax database for BLAST
 if [ ! -f "${TAXDUMP}/citations.dmp" ]; then
 	error "The file ${TAXDUMP}/citations.dmp doesnt exist, which likely means that you havent set the correct path to your NCBI_tax database,\
-	 or havent downloaded it yet. Please look and the the script and manually set the correct path to NCBI_tax, and follow these steps to download \
-	 the database: wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz; tar -xvf taxdump.tar.gz;"
+	havent downloaded it. Please follow the metaWRAP database installation instructions."
 fi
 
 
@@ -260,6 +258,8 @@ if [ ! "$bin_folder" = false ]; then
 	if [[ $? -ne 0 ]]; then error "Something went wrong with making the binned superkingdom blobplot image. Exiting..."; fi
 fi
 
+comm "cleaning up..."
+rm ${out}/*bam
 ########################################################################################################
 ########################      BLOBPLOT PIPELINE FINISHED SUCCESSFULLY!!!        ########################
 ########################################################################################################

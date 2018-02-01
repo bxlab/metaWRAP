@@ -39,7 +39,7 @@ print "Plotting completion data..."
 # MAKING THE PLOT PRETTY!!!!
 # set some color schemes
 tableau20 = [(214, 39, 40), (31, 119, 180), (255, 127, 14),    
-             (44, 160, 44), (255, 15, 150),    
+             (255,0,0), (0,0,255),
              (197, 176, 213), (140, 86, 75), (196, 156, 148),    
              (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),    
              (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]
@@ -145,24 +145,6 @@ for bin_set in data:
 	data[bin_set].sort(reverse=True)
 
 print "Plotting completion data..."
-# MAKING THE PLOT PRETTY!!!!
-# set some color schemes
-tableau20 = [(214, 39, 40), (31, 119, 180), (255, 127, 14),    
-             (44, 160, 44), (255, 15, 150),    
-             (197, 176, 213), (140, 86, 75), (196, 156, 148),    
-             (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),    
-             (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]
-
-for i in range(len(tableau20)):    
-	r, g, b = tableau20[i]    
-	tableau20[i] = (r / 255., g / 255., b / 255.)
-plot_colors={}
-for i, label in enumerate(sys.argv[1:]):
-	bin_set=".".join(label.split("/")[-1].split(".")[:-1])
-	plot_colors[bin_set]=tableau20[i]
-
-
-
 # set figure size
 plt.style.use('ggplot')
 

@@ -133,6 +133,8 @@ if [ "$trim" = true ]; then
 	
 	reads_1=${out}/trimmed_1.fastq
 	reads_2=${out}/trimmed_2.fastq
+	
+	rm ${out}/${sample}_1_trimmed.fq ${out}/${sample}_2_trimmed.fq
 fi
 
 if [ "$bmtagger" = true ]; then
@@ -162,6 +164,8 @@ if [ "$bmtagger" = true ]; then
 	rm ${out}/${sample}.bmtagger.list
 	reads_1=${out}/${sample}_1.clean.fastq
 	reads_2=${out}/${sample}_2.clean.fastq
+
+	rm ${out}/trimmed_1.fastq ${out}/trimmed_2.fastq
 fi	
 
 mv $reads_1 ${out}/final_pure_reads_1.fastq

@@ -267,7 +267,7 @@ if [ "$run_checkm" = true ]; then
         if [[ ! -s ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r ${out}/tmp
         comm "Finalizing CheckM stats..."
-        ${SOFT}/summarize_checkm.py ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv > ${out}/reassembled_bins.stats
+        ${SOFT}/summarize_checkm.py ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv | (read -r; printf "%s\n" "$REPLY"; sort) > ${out}/reassembled_bins.stats
         if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 
         comm "Making CheckM plot of ${out}/reassembled_bins bins"

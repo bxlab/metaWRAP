@@ -67,8 +67,7 @@ fi
 
 # Checks for KRAKEN database 
 if [ ! -d "$KRAKEN_DB" ]; then
-	error "The folder $KRAKEN_DB doesnt exist. Please look and the the script and manually set the correct path to the KRAKEN standard database. \
-	If you do not have it yet, you can download it like this: ${KRAKEN}/kraken-build --standard --threads $threads --db ${KRAKEN}/kraken/KRAKEN_DB"
+	error "The folder $KRAKEN_DB doesnt exist. Please consult the metaWRAP database guite to download and build the KRAKEN database"
 fi
 
 ########################################################################################################
