@@ -168,10 +168,10 @@ Run metaWRAP's Bin_refinement module:
 metawrap bin_refinement -o BIN_REFINEMENT -t 96 -A INITIAL_BINNING/metabat2_bins/ -B INITIAL_BINNING/maxbin2_bins/ -C INITIAL_BINNING/concoct_bins/ -c 50 -x 10
 ```
 
-In the output directory, you will see the three original bin folders we fed in, as well as `metaWRAP` directory, which contains the final, consilidated bins. You will also see .stats files for each one of the bin directories. 
+In the output directory, you will see the three original bin folders we fed in, as well as `metaWRAP` directory, which contains the final, consilidated bins. You will also see a `Binning_refiner` bin set - this is an internal benchmark for the bins produced by using another consolidation software (Binning_refiner). You can ignore this set - it will likely have low contamination and completion. You will also see .stats files for each one of the bin directories. 
 ```
-concoct_bins.stats	maxbin2_bins.stats	metabat2_bins.stats	metaWRAP.stats
-concoct_bins		maxbin2_bins		metabat2_bins		metaWRAP
+concoct_bins.stats	maxbin2_bins.stats	metabat2_bins.stats	metaWRAP.stats	Binning_refiner.stats
+concoct_bins		maxbin2_bins		metabat2_bins		metaWRAP	Binning_refiner
 ```
 
 The .stat files contain usefull information about each bin, inscuding its completeness and contamination. For example, `cat BIN_REFINEMENT/metaWRAP.stats`:
