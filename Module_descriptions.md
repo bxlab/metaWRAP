@@ -28,4 +28,6 @@ First, the taxonomy of each contig is estimated with Mega-BLAST by taking the to
   ## Classify_bins
   The metaWRAP:: Classify_bins module is a conservative, but accurate way to assign taxonomy to a set of metagenomic bins. First, the contigs in all bins are combined into one file, and MegaBLAST is used to align the contigs to the NCBI_nt database.  The alignment results are then used by taxator-kt to estimate the most likely taxonomy of each contig. Finally, the overall most likely taxonomy of each metagenomic bin is estimated from individual contig taxonomy predictions. Taxonomy of each contig are added to a phylogenetic tree, adding weight to each branch based on the length of that contig. The tree is then traversed from the root, going down a taxonomic rank only if the weight of the next branch is >50% of the current branch, indicating a minimum confidence in that prediction. Once no further taxonomic rank can be estimated, the final taxonomy of that bin is reported.
 
+## Annotate_bins
+The metaWRAP::Annotate_bins module takes in a set of bins and quickly functionally annotates them with PROKKA v1.12. The annotation process is parallelized for any number of bins and threads. For each bin, the module returns the annotation file in GFF format, and two FastA files with untranslated and translated genes.
 
