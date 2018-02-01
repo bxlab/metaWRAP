@@ -27,16 +27,17 @@
 ##  SYSTEM REQUIREMENTS
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems.
 
+You will also need a **functional installaiton of R** for the blobology module plotting function. Unfortunately, I cannot package R into the conda installation without running into system-specific conflicts. Keep in mind that the Blobology module is just for visualization, and is therefore completely optional. Future versions of metaWRAP will likely drop this dependancy. 
 
 ## INSTALLATION
 #### Basic installation:
  To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Then add channels to your conda environment:
  ``` bash
-conda config --add channels defaults
-conda config --add channels conda-forge
-conda config --add channels bioconda
-conda config --add channels r
-conda config --add channels ursky
+ # ORDER IS IMPORTANT!!!
+ conda config --add channels defaults
+ conda config --add channels conda-forge
+ conda config --add channels bioconda
+ conda config --add channels ursky
 ```
 
  Once you have conda installed and configured, you can install metawrap and all its dependancies with the following command (only supports Linux x64 - your laptop would not have the power anyways):
@@ -50,10 +51,10 @@ conda config --add channels ursky
  conda create -n metawrap-env python=2.7
  source activate metawrap-env
  
+ # ORDER IS IMPORTANT!!!
  conda config --add channels defaults
  conda config --add channels conda-forge
  conda config --add channels bioconda
- conda config --add channels r
  conda config --add channels ursky
 
  conda install -c ursky metawrap-binning
