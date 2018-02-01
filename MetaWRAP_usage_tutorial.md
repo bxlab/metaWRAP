@@ -56,6 +56,12 @@ post-QC_report
 pre-QC_report
 ```
 
+Original raw reads:
+![Read quality before QC](https://i.imgur.com/x8aaFWs.png)
+Final QC'ed reads:
+![Read quality before QC](https://i.imgur.com/drJfxC9.png)
+
+
 These are the final trimmed and de-contaminated reads:
 ```
 final_pure_reads_1.fastq
@@ -89,6 +95,10 @@ metawrap assembly -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fa
 
 You will find the assembly file in ASSEMBLY/final_assembly.fasta, and the QUAST assembly report html in ASSEMBLY/assembly_report.html!
 
+Assembly statistics:
+![Assembly stats](https://i.imgur.com/RbDldGU.png)
+
+
 Looking at the top 10 contigs shows we got some longer contigs (considering that we are working with just 7Gbp of data)!
 ```
 grep ">" ASSEMBLY/final_assembly.fasta | head
@@ -121,6 +131,9 @@ ERR011347.krona   ERR011348.krona   ERR011349.krona   final_assembly.krona
 
 The .kraken files contain the KRAKEN-estimated taxonomy of each read or contig, while the .krona files summarize taxonomy statistics to be fed into KronaTools, which makes the kronagram.html file. The kronagram.html contains all the taxonomy information from all the samples and the co-assembly. Inspecting the kronas in a web browser will show you what the community composition is like.
 
+For example, here is the taxonomic composition of our first sample:
+![Krona](https://i.imgur.com/jZiFPUV.png)
+
 
 
 ## Step 4: Bin the co-assembly with three different algorithms with the Binning module
@@ -138,7 +151,7 @@ In the output folder, we see folders with the 3 final bin sets, and a file conta
 ```
 insert_sizes.txt  concoct_bins	maxbin2_bins  metabat2_bins  work_files
 ```
-Looking inside these folders reveals that we found 47, 29, and 20 bins with concoct, metabat2, and maxbin2, respectively.
+Looking inside these folders reveals that we found 47, 29, and 20 bins with concoct, metabat2, and maxbin2, respectively. But we do not know how good these bins are yet (inless you used the `--run-checkm` flag).
 
 
 ## Step 5: Consolidate bin sets with the Bin_refinement module
@@ -185,7 +198,11 @@ cat BIN_REFINEMENT/metaWRAP_bins.stats | awk '$2>50 && $3<10' | wc -l
 13
 ```
 
-By inspecting the other files, we find that metaBAT2, MaxBin2, CONCOCT, and metaWRAP produced 11, 7, 10, and 13 bins, respectively. So metaWRAP produced 2 more bins that the best single binner. Not bad! But this is just the number of bins. To closer compare the bin sets in terms of completion and contamination, we can look at the plots in `BIN_REFINEMENT/figures/`.
+By inspecting the other files, we find that metaBAT2, MaxBin2, CONCOCT, and metaWRAP produced 11, 7, 10, and 13 bins, respectively. So metaWRAP produced 2 more bins that the best single binner. Not bad! But this is just the number of bins. 
+
+To closer compare the bin sets in terms of completion and contamination, we can look at the plots in `BIN_REFINEMENT/figures/`:
+![Bin_refinement](https://i.imgur.com/m6RRJxi.jpg)
+As you can see, the refinment process signifficantly produced the best bin set in terms of both compleiton and contamination. Keep in mind that these improvements are even more dramatic in more complex samples.
 
 
 ## Step 6: Visualize the community and the extracted bins with the Blobology module
@@ -199,7 +216,14 @@ Note2: You will need R for this module.
 metawrap blobology -a ASSEMBLY/final_assembly.fasta -t 96 -o BLOBOLOGY --bins BIN_REFINEMENT/metaWRAP_bins CLEAN_READS/ERR*fastq
 ```
 
-You will find that the output has a number of blob plots of our communities, annotated with different levels of taxonomy or their bin membership. Note that to help with visualizing the bins, some of the plots only contain the contigs that were successfully binned.
+You will find that the output has a number of blob plots of our communities, annotated with different levels of taxonomy or their bin membership. Note that to help with visualizing the bins, some of the plots only contain the contigs that were successfully binned (these files have `.binned.blobplot.` in their names). 
+
+Phyla taxonomy of the entire assembled community:
+![Phyla](https://i.imgur.com/VihLGWb.jpg)
+
+Bin membership of all the contigs:
+![bins](https://i.imgur.com/GDmIYe5.jpg)
+
 
 ## Step 7: Find the abundaces of the draft genomes (bins) across the samples
 We would like to know how the extracted genomes are distributed across the samples, and in what abundances each bin is present in each sample. The Quant_bin module can give us this information. It used Salmon - a tool conventionally used for transcript quantitation - to estimate the abundance of each scaffold in each sample, and then computes the average bin abundances.
@@ -211,7 +235,11 @@ Lets run the Quant_bins module:
 metawrap quant_bins -b BIN_REFINEMENT/metaWRAP_bins -o QUANT_BINS -a ASSEMBLY/final_assemN_READS/ERR*fastq
 ```
 
-The output contains several usefull files. First, there is the `genome_abundance_heatmap.png` - a quick heatmap made to visualize the bin abundances across the samples. The raw data for this plot (as you will most likely want to make your own heatmaps to analyze) is in `abundance_table.tab`:
+The output contains several usefull files. First, there is the `genome_abundance_heatmap.png` - a quick heatmap made to visualize the bin abundances across the samples. 
+![heatmap](https://i.imgur.com/K1RaPUT.png)
+
+
+The raw data for this plot (as you will most likely want to make your own heatmaps to analyze) is in `abundance_table.tab`:
 ```
 Genomic bins	ERR011349	ERR011348	ERR011347
 bin.9	0.113912116828	35.851964987	39.8440491514
@@ -266,8 +294,13 @@ bin.8.strict	83.89	1.342	0.446	Clostridiales	3870	1474833	NA
 ```
 
 But how much did our bin set really improve? We can look at the `BIN_REASSEMBLY/reassembly_results.png` plot to compare the original and reassembled sets. We can see that the bin reassembly modestly improved the bin N50 and completion metrics, and signifficantly reduced contamination. Fantastic!
+![heatmap](https://i.imgur.com/V8IosYQ.jpg)
 
-We can also view the CheckM plot of the final bins in `BIN_REASSEMBLY/reassembled_bins.png`.
+
+We can also view the CheckM plot of the final bins in `BIN_REASSEMBLY/reassembled_bins.png`:
+![heatmap](https://i.imgur.com/Yx00fuQ.png)
+
+
 
 ## Step 9: Determine the taxonomy of each bin with the Classify_bins module
 Note: you will need the NCBI_nt and NCBI_tax databases for this module (see Database Installation section).
