@@ -1,4 +1,6 @@
-# Guide to analyzing metagenomic data with metaWRAP
+# A guide to analyzing metagenomic data with metaWRAP
+
+Note: This pipeline is only a guide. None of metaWRAP's modules are dependant of each other, so if you want to do certain steps with another software, you are free to do so. For example, if you want to try the Reassemble_bins module on your own bins, you do not need to run the other modules just to get to that point. Or if you want to use a different assembler that metaSPAdes of MegaHit, you can do so, and then proceed to the rest of the pipeline with your own assembly.
 
 ## Step 0: Download sample metagenomic data from the metaHIT gut survey (or use your own unzipped, demultiplex, paired-end Illumina reads). 
 
@@ -179,16 +181,145 @@ bin.7	52.94	1.724	0.501	Bacteria	3614	1465011	binsO.checkm
 
 To evaluate how many "good bins" (based on out >50% comp., <10% cont. metric) metaWRAP produced, we can run
 ```
-cat BIN_REFINEMENT/metabat2_bins.stats | awk '$2>50 && $3<10' | wc -l
+cat BIN_REFINEMENT/metaWRAP_bins.stats | awk '$2>50 && $3<10' | wc -l
 13
 ```
 
 By inspecting the other files, we find that metaBAT2, MaxBin2, CONCOCT, and metaWRAP produced 11, 7, 10, and 13 bins, respectively. So metaWRAP produced 2 more bins that the best single binner. Not bad! But this is just the number of bins. To closer compare the bin sets in terms of completion and contamination, we can look at the plots in `BIN_REFINEMENT/figures/`.
 
 
-## Step 6: Bin re-assemble the consolidated bin set with the Reassemble_bins module
+## Step 6: Visualize the community and the extracted bins with the Blobology module
+Lets use the Blobology module to project the entire assembly onto a GC vs Abundance plane, and annote them with taxonomy and bin information. This will not only give us an idea of what these microbial communities are structured like, but will also show us our binning success in a more visual way. 
 
+NOTE: In order to annotate the blobplot with bins with the `--bins` flag, you **MUST use the non-reassembled bins**! In other words, use the bins produced by the Bin_Refinment module, not the Reassemble_bins module. 
+
+Note2: You will need R for this module.
+
+```
+metawrap blobology -a ASSEMBLY/final_assembly.fasta -t 96 -o BLOBOLOGY --bins BIN_REFINEMENT/metaWRAP_bins CLEAN_READS/ERR*fastq
+```
+
+You will find that the output has a number of blob plots of our communities, annotated with different levels of taxonomy or their bin membership. Note that to help with visualizing the bins, some of the plots only contain the contigs that were successfully binned.
+
+## Step 7: Find the abundaces of the draft genomes (bins) across the samples
+We would like to know how the extracted genomes are distributed across the samples, and in what abundances each bin is present in each sample. The Quant_bin module can give us this information. It used Salmon - a tool conventionally used for transcript quantitation - to estimate the abundance of each scaffold in each sample, and then computes the average bin abundances.
+
+NOTE: In order to run this module, you **MUST use the non-reassembled bins**! In other words, use the bins produced by the Bin_Refinment module, not the Reassemble_bins module. 
+
+Lets run the Quant_bins module:
+```
+metawrap quant_bins -b BIN_REFINEMENT/metaWRAP_bins -o QUANT_BINS -a ASSEMBLY/final_assemN_READS/ERR*fastq
+```
+
+The output contains several usefull files. First, there is the `genome_abundance_heatmap.png` - a quick heatmap made to visualize the bin abundances across the samples. The raw data for this plot (as you will most likely want to make your own heatmaps to analyze) is in `abundance_table.tab`:
+```
+Genomic bins	ERR011349	ERR011348	ERR011347
+bin.9	0.113912116828	35.851964987	39.8440491514
+bin.10	0.273774684856	9.52869077293	39.988244574
+bin.1	7.87827599808	31.3262582417	72.4475075589
+bin.4	1.11852631889	100.052540293	111.213423224
+bin.2	42.0242612674	69.0094806385	80.200001212
+bin.5	2.16260151787	22.06396779	43.7720962538
+bin.11	64.2884105466	25.3703846834	29.5444322752
+bin.6	517.890689122	0.379711918465	0.834196723864
+bin.7	0.499019812767	61.2121001057	82.5953338481
+bin.14	5.49635966692	14.631433905	32.98399834
+bin.13	0.230760165209	56.0018529273	91.6502833521
+bin.8	98.4767064505	38.0691238971	22.8857472565
+bin.3	349.730007621	0.0911113402849	0.196554603409
+```
+
+When analyzing these abundances, however, remember that these are raw depth estimates of each bin. You will likely need to standardize these values to the read depth of each sample. The read counts of the samples can be found in `sample_read_count.tab`:
+```
+#samples	n_lines
+ERR011349	11442938
+ERR011347	12044408
+ERR011348	10438629
+```
+
+Finally, you can view the abundances of all the individual contigs in all the samples in the `quant_files` folder.
+
+## Step 8: Re-assemble the consolidated bin set with the Reassemble_bins module
+Now that we have our final, consilidated bin set in `BIN_REFINEMENT/metaWRAP_bins`, we can try to further improve it with reassembly. The Reassemble bins module will collect reads belonging to each bun, and then reassemble them sepperately with a "permissive" and a "strict" algorithm. Only the bins that improved through reassembly will be altered in the final set.
+
+Let us run the Reassemble_bins module with all the reads we have:
 ```
 metawrap reassemble_bins -o BIN_REASSEMBLY -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -t 96 -m 800 -c 50 -x 10 -b BIN_REFINEMENT/metaWRAP_bins
 ```
+
+Looking at the output in `BIN_REASSEMBLY/reassembled_bins.stats`, we can see that 3 bins were improved though strict reassembly, 6 improved thorugh permissive reassembly, and 4 bins could not be improved (`.strict`, `.permissive`, and `.orig` bin extensions, respectively):
+```
+bin	completeness	contamination	GC	lineage	N50	size	binner
+bin.10.orig	65.78	0.0	0.263	Bacteria	3045	1159966	NA
+bin.7.strict	54.94	0.671	0.501	Clostridiales	3947	1474089	NA
+bin.4.permissive	99.32	1.342	0.408	Clostridiales	72135	2088821	NA
+bin.2.permissive	82.06	0.0	0.469	Bacteria	18989	3604843	NA
+bin.14.strict	85.84	3.066	0.293	Bacteria	4576	2201824	NA
+bin.9.permissive	76.74	2.554	0.425	Selenomonadales	3601	1802438	NA
+bin.13.permissive	78.37	1.357	0.435	Bacteroidales	9887	3675176	NA
+bin.11.orig	64.85	3.776	0.417	Bacteroidales	2086	3103352	NA
+bin.6.permissive	88.04	1.006	0.371	Clostridiales	6288	2070146	NA
+bin.5.orig	100.0	1.6	0.311	Euryarchaeota	12686	1705532	NA
+bin.3.permissive	74.91	0.396	0.284	Clostridiales	16578	1243641	NA
+bin.1.orig	57.36	0.0	0.430	Bacteria	4628	2673426	NA
+bin.8.strict	83.89	1.342	0.446	Clostridiales	3870	1474833	NA
+```
+
+But how much did our bin set really improve? We can look at the `BIN_REASSEMBLY/reassembly_results.png` plot to compare the original and reassembled sets. We can see that the bin reassembly modestly improved the bin N50 and completion metrics, and signifficantly reduced contamination. Fantastic!
+
+We can also view the CheckM plot of the final bins in `BIN_REASSEMBLY/reassembled_bins.png`.
+
+## Step 9: Determine the taxonomy of each bin with the Classify_bins module
+Note: you will need the NCBI_nt and NCBI_tax databases for this module (see Database Installation section).
+
+We already got an idea for the approximate taxonomy of each bin from CheckM in the `.stats` files in the Bin_refinment and Reassemble_bins modules. We can do better than that, however. The Classify_bins module uses Taxator-tk to accurately assign taxonomy to each contig, and then consolidates the results to estimate the taxonomy of the whole bin. Of course the success and accuracy of our predictions will rely heavily on the existing database.
+
+Estimate the taxonomy of our final, reassembled bins with the Classify_bins module:
+```
+metawrap classify_bins -b BIN_REASSEMBLY/reassembled_bins -o BIN_CLASSIFICATION -t 48
+```
+
+We can view the final estimated taxonomy in `BIN_CLASSIFICATION/bin_taxonomy.tab`:
+```
+bin.1.orig.fa	Bacteria_85;Firmicutes_79;Clostridia_86;Clostridiales_100
+bin.5.orig.fa	Archaea_100;Euryarchaeota_100;Methanobacteria_100;Methanobacteriales_100;Methanobacteriaceae_100;Methanobrevibacter_97;Methanobrevibacter smithii_100
+bin.11.orig.fa	Bacteria_95;Bacteroidetes_87;Bacteroidia_99;Bacteroidales_100;Bacteroidaceae_98;Bacteroides_98
+bin.2.permissive.fa	uncultured organism_67
+bin.10.orig.fa	Bacteria_85;Firmicutes_74;Clostridia_74;Clostridiales_95;Clostridiaceae_54
+bin.14.strict.fa	Bacteria_94;Firmicutes_66
+bin.8.strict.fa	Bacteria_97
+bin.9.permissive.fa	Bacteria_92
+bin.6.permissive.fa	Bacteria_94;Firmicutes_69;Clostridia_78;Clostridiales_95
+bin.3.permissive.fa	Bacteria_99;Firmicutes_77;Clostridia_56;Clostridiales_100;Clostridiaceae_79
+bin.4.permissive.fa	Bacteria_100
+bin.13.permissive.fa	Bacteria_95;Bacteroidetes_67;Bacteroidia_95;Bacteroidales_98;Bacteroidaceae_93
+bin.7.strict.fa	Bacteria_94
+```
+The number next to each classification is the confidance (in percent) of that taxonomy rank classification. As you can see some of the bins are annotated very deeply and others can only be classified as "Bacteria".
+
+
+## Step 10: Functionally annotate bins with the Annotate_bins module
+Now that we have our finalized reassembled bins, we are ready to functionally annotate them for downstream functional analysis. This module simply annotates the genes with PROKKA - it cannot do the actual functional analysis for you.
+
+Run the functional annotation module on the final, reassembled bins: 
+```
+metaWRAP annotate_bins -o FUNCT_ANNOT -t 96 -b BIN_REASSEMBLY/reassembled_bins/
+```
+
+You will find the functional annotations of each bin in GFF format in the `FUNCT_ANNOT/bin_funct_annotations` folder
+```
+head FUNCT_ANNOT/bin_funct_annotations/bin.1.orig.gff
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	2866	3645	.	-	0	ID=HMOHEJHL_00001;inference=ab initio prediction:Prodigal:2.6;locus_tag=HMOHEJHL_00001;product=hypothetical protein
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	3642	4478	.	-	0	ID=HMOHEJHL_00002;inference=ab initio prediction:Prodigal:2.6;locus_tag=HMOHEJHL_00002;product=hypothetical protein
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	4606	5859	.	-	0	ID=HMOHEJHL_00003;inference=ab initio prediction:Prodigal:2.6;locus_tag=HMOHEJHL_00003;product=hypothetical protein
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	5856	6575	.	-	0	ID=HMOHEJHL_00004;Name=ypdB;gene=ypdB;inference=ab initio prediction:Prodigal:2.6,similar to AA sequence:UniProtKB:P0AE39;locus_tag=HMOHEJHL_00004;product=Transcriptional regulatory protein YpdB
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	6603	7658	.	-	0	ID=HMOHEJHL_00005;eC_number=1.1.1.261;Name=egsA;gene=egsA;inference=ab initio prediction:Prodigal:2.6,similar to AA sequence:UniProtKB:P94527;locus_tag=HMOHEJHL_00005;product=Glycerol-1-phosphate dehydrogenase [NAD(P)+]
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	7843	11946	.	-	0	ID=HMOHEJHL_00006;eC_number=3.2.1.78;inference=ab initio prediction:Prodigal:2.6,similar to AA sequence:UniProtKB:A1A278;locus_tag=HMOHEJHL_00006;product=Mannan endo-1%2C4-beta-mannosidase
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	12597	13586	.	-	0	ID=HMOHEJHL_00007;eC_number=3.2.1.89;Name=ganB_1;gene=ganB_1;inference=ab initio prediction:Prodigal:2.6,similar to AA sequence:UniProtKB:Q65CX5;locus_tag=HMOHEJHL_00007;product=Arabinogalactan endo-beta-1%2C4-galactanase
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	13719	14564	.	-	0	ID=HMOHEJHL_00008;Name=malG_1;gene=malG_1;inference=ab initio prediction:Prodigal:2.6,similar to AA sequence:UniProtKB:P68183;locus_tag=HMOHEJHL_00008;product=Maltose transport system permease protein MalG
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	14565	15476	.	-	0	ID=HMOHEJHL_00009;Name=malF_1;gene=malF_1;inference=ab initio prediction:Prodigal:2.6,similar to AA sequence:UniProtKB:P02916;locus_tag=HMOHEJHL_00009;product=Maltose transport system permease protein MalF
+NODE_75_length_31799_cov_0.983871	Prodigal:2.6	CDS	15484	16704	.	-	0	ID=HMOHEJHL_00010;Name=malE;gene=malE;inference=ab initio prediction:Prodigal:2.6,similar to AA sequence:UniProtKB:P0AEY0;locus_tag=HMOHEJHL_00010;product=Maltose-binding periplasmic protein
+```
+
+You will also find the translated and unstranslated predicted genes in fasta format in `FUNCT_ANNOT/bin_translated_genes` and `FUNCT_ANNOT/bin_untranslated_genes` folders. Finally, you can find the raw PROKKA output files in `FUNCT_ANNOT/prokka_out`.
 
