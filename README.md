@@ -1,4 +1,5 @@
-### New: [MetaWRAP usage tutorial](https://github.com/ursky/metaWRAP/blob/master/MetaWRAP_usage_tutorial.md)!
+### New: [MetaWRAP usage tutorial](https://github.com/ursky/metaWRAP/blob/master/Usage_tutorial.md)
+### New: [MetaWRAP module descriptions](https://github.com/ursky/metaWRAP/blob/master/Module_descriptions.md)
 
 # MetaWRAP - Pipeline for Metagenomic Bin Analysis
 
@@ -10,7 +11,10 @@
  
 
 ## OVERVIEW OF METAWRAP MODULES:
+
 ![General walkthrough of metaWRAP modules](https://i.imgur.com/6GqRsm3.png)
+
+#### Please read the [metaWRAP module descriptions](https://github.com/ursky/metaWRAP/blob/master/Module_descriptions.md)
 
 #### Metagemonic data pre-processing modules:
 	1) Read_QC: read trimming and human read removal
