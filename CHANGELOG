@@ -7,6 +7,7 @@ metaWRAP v=0.8 (In development)
 		removed unnecessary large intermediate files
 		added clean-up feature
 	Binning:
+		fixed bug that caused maxbin to fail with absolute path
 		removed unnecessary large intermediate files
 		added clean-up feature
 	Reassemble_bins:

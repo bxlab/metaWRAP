@@ -231,7 +231,11 @@ if [ $maxbin2 = true ]; then
 		sample=$(head -n 1 ${out}/work_files/mb2_master_depth.txt | cut -f $i)
 		echo "processing $sample depth file..."
 		grep -v totalAvgDepth ${out}/work_files/mb2_master_depth.txt | cut -f 1,$i > ${out}/work_files/mb2_${sample%.*}.txt
-		echo $(pwd)/${out}/work_files/mb2_${sample%.*}.txt >> ${out}/work_files/mb2_abund_list.txt
+		if [[ $out == /* ]]; then
+			echo ${out}/work_files/mb2_${sample%.*}.txt >> ${out}/work_files/mb2_abund_list.txt
+		else
+			echo $(pwd)/${out}/work_files/mb2_${sample%.*}.txt >> ${out}/work_files/mb2_abund_list.txt
+		fi
 	done
 	
 	comm "Starting binning with MaxBin2..."
