@@ -7,8 +7,8 @@ checkm data setRoot
 # Now manually download the database:
 cd MY_CHECKM_FOLDER
 wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_2015_01_16.tar.gz
-tar -xvf checkm_data_v1.0.9.tar.gz
-rm checkm_data_v1.0.9.tar.gz
+tar -xvf *.tar.gz
+rm *.gz
 ```
 Thats it! CheckM should now use that folder and its contents as its database.
 
@@ -20,7 +20,7 @@ Note: this will download the entire RefSeq database and index it, which takes a 
 kraken-build --standard --threads 24 --db MY_KRAKEN_DATABASE
 kraken-build --db MY_KRAKEN_DATABASE --clean
 ```
-Do not forget to set the KRAKEN_DB variable in the contig-metawrap file!
+Do not forget to set the KRAKEN_DB variable in the contig-metawrap file! Run `which config-metawrap` to find it.
 ``` bash
 KRAKEN_DB=/path/to/my/database/MY_KRAKEN_DATABASE
 ```
@@ -44,8 +44,9 @@ BLASTDB=/your/location/of/database/NCBI_nt
 mkdir NCBI_tax
 cd NCBI_tax
 wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
+tar -xvf taxdump.tar.gz
 ```
-Do not forget to set the TAXDUMP variable in the contig-metawrap file!
+Do not forget to set the TAXDUMP variable in the contig-metawrap file! Run `which config-metawrap` to find it.
 ``` bash
 TAXDUMP=/your/location/of/database/NCBI_tax
 ```
@@ -63,12 +64,13 @@ gunzip *fa.gz
 cat *fa > hg38.fa
 rm chr*.fa
 ```
-Now lets index the human genome. Note that the file names of the indeces must be exactly as specified for metaWRAP to recognize them! Also note that indexing will take considerable memory and time (here I pass 10GB of RAM as a -M parameter).
+Now lets index the human genome. Note that the file names of the indeces must be exactly as specified for metaWRAP to recognize them! Also note that indexing will take considerable memory and time (here I pass 100GB of RAM as a -M parameter).
 ``` bash
 bmtool -d hg38.fa -o hg38.bitmask
-srprism mkindex -i hg38.fa -o hg38.srprism -M 10000
+srprism mkindex -i hg38.fa -o hg38.srprism -M 100000
 ```
-Done! Now dont forget to specify the BMTAGGER_DB variable in the contig-metawrap file!
+Note: metaWRAP looks for files hg38.bitmask and hg38.srprism - make sure they are names exactly like this.
+Done! Now dont forget to specify the BMTAGGER_DB variable in the contig-metawrap file! Run `which config-metawrap` to find it.
 ``` bash
 BMTAGGER_DB=/path/to/your/index/BMTAGGER_INDEX
 ```

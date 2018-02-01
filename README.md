@@ -1,4 +1,7 @@
-# MetaWRAP - Wrapper for Metagenomic Bin Analysis
+### New: [MetaWRAP usage tutorial](https://github.com/ursky/metaWRAP/blob/master/Usage_tutorial.md)
+### New: [MetaWRAP module descriptions](https://github.com/ursky/metaWRAP/blob/master/Module_descriptions.md)
+
+# MetaWRAP - Pipeline for Metagenomic Bin Analysis
 
  MetaWRAP aims to be an **easy-to-use wrapper** suite that accomplishes the core tasks of metagenomic analysis: read QC, assembly, visualization, taxonomic profiling, extracting draft genomes (binning), and functional annotation. However, unlike similar pipelines before it, metaWRAP takes bin extraction and analysis to the next level (see module overview below). While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual module of metaWRAP is also a standalone program. For example, if you are interested only in the Read_qc because you want to remove human reads from your data, or Quant_bins because you have bins wyou want to accurately quantify accross samples, you awe welcome to only use those modules.
  
@@ -8,7 +11,10 @@
  
 
 ## OVERVIEW OF METAWRAP MODULES:
+
 ![General walkthrough of metaWRAP modules](https://i.imgur.com/6GqRsm3.png)
+
+#### Please read the [metaWRAP module descriptions](https://github.com/ursky/metaWRAP/blob/master/Module_descriptions.md)
 
 #### Metagemonic data pre-processing modules:
 	1) Read_QC: read trimming and human read removal
@@ -27,16 +33,17 @@
 ##  SYSTEM REQUIREMENTS
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems.
 
+You will also need a **functional installaiton of R** for the blobology module plotting function. Unfortunately, I cannot package R into the conda installation without running into system-specific conflicts. Keep in mind that the Blobology module is just for visualization, and is therefore completely optional. Future versions of metaWRAP will likely drop this dependancy. 
 
 ## INSTALLATION
 #### Basic installation:
  To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Then add channels to your conda environment:
  ``` bash
-conda config --add channels defaults
-conda config --add channels conda-forge
-conda config --add channels bioconda
-conda config --add channels r
-conda config --add channels ursky
+ # ORDER IS IMPORTANT!!!
+ conda config --add channels defaults
+ conda config --add channels conda-forge
+ conda config --add channels bioconda
+ conda config --add channels ursky
 ```
 
  Once you have conda installed and configured, you can install metawrap and all its dependancies with the following command (only supports Linux x64 - your laptop would not have the power anyways):
@@ -50,10 +57,10 @@ conda config --add channels ursky
  conda create -n metawrap-env python=2.7
  source activate metawrap-env
  
+ # ORDER IS IMPORTANT!!!
  conda config --add channels defaults
  conda config --add channels conda-forge
  conda config --add channels bioconda
- conda config --add channels r
  conda config --add channels ursky
 
  conda install -c ursky metawrap-binning
@@ -90,6 +97,8 @@ This is very important if you want to use any functions requiring databases, but
 
 
 ## USAGE
+
+Please look at the [MetaWRAP usage tutorial](https://github.com/ursky/metaWRAP/blob/master/MetaWRAP_usage_tutorial.md) for detailed run instructions and examples.
 
 Once all the dependencies are in place, running metaWRAP is relatively simple. The main metaWRAP script wraps around all of its individual modules, which you can call independently.
 ```
