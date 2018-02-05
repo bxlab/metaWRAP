@@ -279,8 +279,13 @@ if [ $concoct = true ]; then
         mkdir ${out}/work_files/concoct_out
         cd ${out}/work_files/concoct_out
 
-        concoct --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly.fa
-        if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting."; fi
+	if [[ $out == /* ]]; then
+		concoct --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly.fa
+	else
+	        concoct --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly.fa
+        fi
+
+	if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting."; fi
         cd $home
 
         comm "splitting contigs into bins"

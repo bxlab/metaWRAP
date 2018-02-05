@@ -178,7 +178,7 @@ comm "Average bin abundance table stored in ${out}/abundance_table.tab"
 announcement "MAKING GENOME ABUNDANCE HEATMAP WITH SEABORN"
 
 comm "counting reads in each sample for standardization, and storing in ${out}/sample_read_count.tab"
-echo -e "#samples\tn_lines" > ${out}/sample_read_count.tab
+echo -e "#samples\treads" > ${out}/sample_read_count.tab
 
 count_lines () {
 	if [[ $1 == *"_1.fastq"* ]]; then
