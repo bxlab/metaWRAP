@@ -14,6 +14,8 @@ metaWRAP v=0.7 (In development)
 	Blobology
 		added clean-up feature
 		plotting bugfixes
+	Quant_bins
+		fixed bug that threw an error when contig names had spaces
 
 
 metaWRAP v=0.6 (January 2017)
