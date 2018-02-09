@@ -16,7 +16,7 @@ for line in open(sys.argv[3]):
 		if length!=0: 
 			contig_lengths[contig]=length
 		length=0
-		contig=line[1:-1]
+		contig=line[1:-1].split()[0]
 	else:
 		length+=len(line.strip())
 
