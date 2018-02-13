@@ -94,7 +94,7 @@ elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
         echo ""
-	echo "metaWRAP v=0.7.3"
+	echo "metaWRAP v=0.7.4"
 	echo ""
         exit 0
 else

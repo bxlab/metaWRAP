@@ -232,8 +232,8 @@ if [[ ! -s ${out}/${SAMPLE}.blobplot.taxlevel_phylum.png ]]; then
 fi
 
 if [ ! "$bin_folder" = false ]; then
-	comm "making blobplot image with bin annotations"
-	${SOFT}/blobology/makeblobplot_with_bins.R ${out}/${SAMPLE}.blobplot 0.005 bin
+	comm "making blobplot images with bin annotations"
+	${SOFT}/blobology/makeblobplot_with_colored_bins.R ${out}/${SAMPLE}.blobplot 0.000001 bin
 	if [[ $? -ne 0 ]]; then error "Something went wrong with making the blobplot image with bin annotations. Exiting..."; fi
 
 	${SOFT}/blobology/makeblobplot_with_bins.R ${out}/${SAMPLE}.blobplot 0.005 binned_yes_no
@@ -243,8 +243,8 @@ if [ ! "$bin_folder" = false ]; then
 	if [[ $? -ne 0 ]]; then error "Something went wrong with making the blobplot image with binned phylum annotations. Exiting..."; fi
 	
 
-	comm "making blobplot images of only the contigs taht were binned"
-	${SOFT}/blobology/makeblobplot_with_bins.R ${out}/${SAMPLE}.binned.blobplot 0.01 bin
+	comm "making blobplot images of only the contigs that were binned"
+	${SOFT}/blobology/makeblobplot_with_colored_bins.R ${out}/${SAMPLE}.binned.blobplot 0.000001 bin
 	if [[ $? -ne 0 ]]; then error "Something went wrong with making the blobplot image with bin annotations. Exiting..."; fi
 
 	comm "making blobplots of only binned contigs with phylogeny annotations (order, phylum, and superkingdom)."

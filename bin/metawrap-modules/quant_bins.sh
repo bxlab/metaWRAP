@@ -199,7 +199,7 @@ if [[ $? -ne 0 ]]; then error "something went wrong with making the heatmap. Exi
 
 
 comm "cleaning up..."
-rm -r ${out}/all_bin_contigs ${out}/alignment_files/ 
+rm -r ${out}/alignment_files/ 
 
 ########################################################################################################
 ########################     QUANT_BINS PIPELINE SUCCESSFULLY FINISHED!!!       ########################

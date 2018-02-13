@@ -19,6 +19,8 @@ for line in open(sys.argv[3]):
 		contig=line[1:-1].split()[0]
 	else:
 		length+=len(line.strip())
+contig_lengths[contig]=length
+
 
 # load in the salmon abundances
 bin_abundances={}

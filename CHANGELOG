@@ -1,6 +1,6 @@
-metaWRAP v=0.7 (In development)
+metaWRAP v=0.8 (In development)
 	Conda installation:
-		added R (important)
+		added R dependancy
 		fixed channel ordering
 	Read_qc:
 		removed unnecessary large intermediate files
@@ -14,11 +14,14 @@ metaWRAP v=0.7 (In development)
 	Blobology
 		added clean-up feature
 		plotting bugfixes
+		added more colors for bin labeling
+		fixed axis labels
 	Quant_bins
 		fixed bug that threw an error when contig names had spaces
+		fixed bug that would caused the last contig in the assembly file to not be read
 
 
-metaWRAP v=0.6 (January 2017)
+metaWRAP v=0.7 (January 2017)
 	Conda installation:
 		removed gcc as a run dependancy to help resolve gcc library issues on some servers
 		changed taxator-tk version from 1.3.3 to 1.3.3e, which sources from a more updated binary source
@@ -34,7 +37,7 @@ metaWRAP v=0.6 (January 2017)
 		quickly functionally annotate a set of bins with PROKKA
 
 
-metaWRAP v=0.5 (Late December 2017)
+metaWRAP v=0.6 (Late December 2017)
 	General:
 		completely moved to installation of metaWRAP and ALL dependancies with conda
 		added detailed database download and configuration instructions
@@ -49,7 +52,7 @@ metaWRAP v=0.5 (Late December 2017)
 		restored parallelization of SPAdes - all bins assemble simmultaneously with 1 thread now
 	
 
-metaWRAP v=0.4 (Mid December 2017)
+metaWRAP v=0.5 (Mid December 2017)
 	General:
 		Added overview flowcharts for most modules, and updated older flowcharts
 		metaWRAP is now much more binning oriented (see overview flowchart)
@@ -67,7 +70,7 @@ metaWRAP v=0.4 (Mid December 2017)
 	
 
 
-metaWRAP v=0.3 (Early December 2017)
+metaWRAP v=0.4 (Early December 2017)
 	General:
 		Most dependancies can now be installed with a pre-configured conda environment
 	Binning module:
@@ -88,7 +91,7 @@ metaWRAP v=0.3 (Early December 2017)
 
 
 
-metaWRAP v=0.2 (November 2017)
+metaWRAP v=0.3 (November 2017)
 	General:
 		Error handling is greatly improved throughout the pipelines by incorporating the $? error code instead of relying on output files
 		Disabled PHYLOSIFT module (this software is too old)
@@ -126,7 +129,7 @@ metaWRAP v=0.2 (November 2017)
 
 
 
-metaWRAP v=0.1 (Summer 2017)
+metaWRAP v=0.2 (August 2017)
 	General:
 		Added compatibility with long input parameters (eg. --options asdf) with getopt instead of getopts
 		Chenged instalation style of metaWRAP so that the contents of bin needs to be added to PATH to run. The user still needs to edit the config file first
@@ -160,3 +163,6 @@ metaWRAP v=0.1 (Summer 2017)
 		All output figures and reports are now saved to "metaWRAP_figures" folder at the end of the pipeline
 		Added --fast option, which skips some non-essential and computationally expensive parts of the pipeline
 
+
+metaWRAP v=0.1 (July 2017)
+	First user-firendly version of metaWRAP!
