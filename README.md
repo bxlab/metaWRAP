@@ -96,7 +96,7 @@ This is very important if you want to use any functions requiring databases, but
 
 ## USAGE
 
-Please look at the [MetaWRAP usage tutorial](https://github.com/bxlab/metaWRAP/blob/master/MetaWRAP_usage_tutorial.md) for detailed run instructions and examples.
+Please look at the [MetaWRAP usage tutorial](https://github.com/bxlab/metaWRAP/blob/master/Usage_tutorial.md) for detailed run instructions and examples.
 
 Once all the dependencies are in place, running metaWRAP is relatively simple. The main metaWRAP script wraps around all of its individual modules, which you can call independently.
 ```
