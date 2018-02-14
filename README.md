@@ -1,5 +1,5 @@
-### New: [MetaWRAP usage tutorial](https://github.com/ursky/metaWRAP/blob/master/Usage_tutorial.md)
-### New: [MetaWRAP module descriptions](https://github.com/ursky/metaWRAP/blob/master/Module_descriptions.md)
+### New: [MetaWRAP usage tutorial](https://github.com/bxlab/metaWRAP/blob/master/Usage_tutorial.md)
+### New: [MetaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
@@ -14,7 +14,7 @@
 
 ![General walkthrough of metaWRAP modules](https://i.imgur.com/6GqRsm3.png)
 
-#### Please read the [metaWRAP module descriptions](https://github.com/ursky/metaWRAP/blob/master/Module_descriptions.md)
+#### Please read the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md)
 
 #### Metagemonic data pre-processing modules:
 	1) Read_QC: read trimming and human read removal
@@ -78,7 +78,7 @@
  which config-metawrap
  ```
 
-This is very important if you want to use any functions requiring databases, but depending on what you plan to do, the databases are not mandatory for metaWRAP (see Database section below). [Follow this guide for download and configuration instructions](https://github.com/ursky/metaWRAP/blob/master/installation/database_installation.md).
+This is very important if you want to use any functions requiring databases, but depending on what you plan to do, the databases are not mandatory for metaWRAP (see Database section below). [Follow this guide for download and configuration instructions](https://github.com/bxlab/metaWRAP/blob/master/installation/database_installation.md).
 
 |    Database     | Size  |  Used in module |
 |:---------------:|:---------------:|:-----:| 
@@ -96,7 +96,7 @@ This is very important if you want to use any functions requiring databases, but
 
 ## USAGE
 
-Please look at the [MetaWRAP usage tutorial](https://github.com/ursky/metaWRAP/blob/master/MetaWRAP_usage_tutorial.md) for detailed run instructions and examples.
+Please look at the [MetaWRAP usage tutorial](https://github.com/bxlab/metaWRAP/blob/master/MetaWRAP_usage_tutorial.md) for detailed run instructions and examples.
 
 Once all the dependencies are in place, running metaWRAP is relatively simple. The main metaWRAP script wraps around all of its individual modules, which you can call independently.
 ```
