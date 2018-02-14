@@ -16,6 +16,7 @@ metaWRAP v=0.8 (In development)
 		plotting bugfixes
 		added more colors for bin labeling
 		fixed axis labels
+		fixed bug with error handling when bin and assembly contig sdont match
 	Quant_bins
 		fixed bug that threw an error when contig names had spaces
 		fixed bug that would caused the last contig in the assembly file to not be read

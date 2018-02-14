@@ -202,8 +202,8 @@ if [ ! "$bin_folder" = false ]; then
 	
 	if [[ $? -ne 0 ]]; then error "Something went wrong with annotating the blobplot by bins. Exiting..."; fi
 
-	if [ $(cut -f12 ${out}/${SAMPLE}.binned.blobplot | grep -v "Unbinned" | wc -l) -lt 2 ]; then 
-		warning "No contigs matches were found in the bins privided. The blobplot will not be annotated with bins."
+	if [ $(cat ${out}/${SAMPLE}.binned.blobplot | grep -v "Unbinned" | wc -l) -lt 2 ]; then 
+		warning "No contigs matches were found in the bins privided. This may be because the contigs in the $bin_folder folder are not the same as the contigs in the $ASSEMBLY file. Please check your inputs. The blobplot will not be annotated with bins."
 		rm ${out}/${SAMPLE}.binned.blobplot
 		$bin_folder=false
 	else
