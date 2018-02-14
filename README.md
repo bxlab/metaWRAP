@@ -1,7 +1,7 @@
 ### New: [MetaWRAP usage tutorial](https://github.com/ursky/metaWRAP/blob/master/Usage_tutorial.md)
 ### New: [MetaWRAP module descriptions](https://github.com/ursky/metaWRAP/blob/master/Module_descriptions.md)
 
-# MetaWRAP - Pipeline for Metagenomic Bin Analysis
+# MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
  MetaWRAP aims to be an **easy-to-use wrapper** suite that accomplishes the core tasks of metagenomic analysis: read QC, assembly, visualization, taxonomic profiling, extracting draft genomes (binning), and functional annotation. However, unlike similar pipelines before it, metaWRAP takes bin extraction and analysis to the next level (see module overview below). While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple first pass program before you delve deeper into parameterization of your approach. Each individual module of metaWRAP is also a standalone program. For example, if you are interested only in the Read_qc because you want to remove human reads from your data, or Quant_bins because you have bins you want to accurately quantify accross samples, you are welcome to only use those modules.
  
