@@ -107,15 +107,34 @@ if [ -d ${out}/prokka_out ]; then rm -r ${out}/prokka_out; fi
 mkdir ${out}/prokka_out
 
 
+manual_perl="false"
+prokka -v 
+if [ $? -ne 0 ] ; then
+	manual_perl="true"
+	comm "Looks like your perl is oddly configured. Will have to run perl manually using your conda perl lib..."
+	prokka_path=$(which prokka)
+	conda_path=$(which conda)
+	conda_path=${conda_path%/*}
+	conda_path=${conda_path%/*}
+	if [ ${conda_path##*/} != miniconda2 ]; then conda_path=${conda_path%/*}; fi
+	if [ ${conda_path##*/} != miniconda2 ]; then error "Cannot find conda perl libraries for prokka!"; fi
+	perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
+fi
+
+
 annotate () {
 	bin_name=${1%.*}
 	bin_file=${bins}/$1
 	comm "NOW ANNOTATING ${bin_name}"
-
-	prokka --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
 	
+	if [ $manual_perl = "true" ]; then
+		perl -I $perl_libs $prokka_path --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
+	else
+		prokka --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
+	fi
+
 	if [[ ! -s ${out}/prokka_out/${bin_name}/${bin_name}.gff ]]; then
-                error "Something went wrong with reassembling ${bin_name}. Exiting..."
+                error "Something went wrong with annotating ${bin_name}. Exiting..."
 	fi
 }
 
@@ -126,6 +145,9 @@ done
 
 wait
 sleep 1
+
+if [[ $(ls ${out}/prokka_out/) -lt 1 ]]; then error "Something went wrong with running prokka on all the bins! Exiting..."; fi
+
 comm "PROKKA finished annotating all the bins!"
 
 
