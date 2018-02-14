@@ -132,7 +132,7 @@ Options:
 ```
 
 ### Acknowledgements
-Author of pipeline: [German Uritskiy](https://github.com/ursky).
+Author of pipeline: [Gherman Uritskiy](https://github.com/ursky).
 
 Principal Investigators: [James Taylor](http://bio.jhu.edu/directory/james-taylor/) and [Jocelyne DiRuggiero](http://bio.jhu.edu/directory/jocelyne-diruggiero/)
 
