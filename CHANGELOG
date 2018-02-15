@@ -22,6 +22,9 @@ metaWRAP v=0.8 (In development)
 		fixed bug that would caused the last contig in the assembly file to not be read
 	Annotate_bins
 		fixed improper perl5 library handling on some systems
+		removed parallelization of prokka (did not work on all systems)
+	Kraken
+		added -a option to ktImportText - now kronas do not require internet to view
 
 
 metaWRAP v=0.7 (January 2017)

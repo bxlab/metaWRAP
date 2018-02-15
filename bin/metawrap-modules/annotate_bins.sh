@@ -128,9 +128,9 @@ annotate () {
 	comm "NOW ANNOTATING ${bin_name}"
 	
 	if [ $manual_perl = "true" ]; then
-		perl -I $perl_libs $prokka_path --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
+		perl -I $perl_libs $prokka_path --cpus $2 --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
 	else
-		prokka --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
+		prokka --cpus $2 --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
 	fi
 
 	if [[ ! -s ${out}/prokka_out/${bin_name}/${bin_name}.gff ]]; then
@@ -138,13 +138,31 @@ annotate () {
 	fi
 }
 
-open_sem $threads
-for i in $(ls ${bins}); do 
-	run_with_lock annotate $i
+# parrallel run (has issues...)
+#open_sem $threads
+#for i in $(ls ${bins}); do 
+	#run_with_lock annotate $i 1
+#done
+#wait
+#sleep 1
+
+# normal run
+for i in $(ls ${bins}); do
+        bin_name=${i%.*}
+        bin_file=${bins}/$i
+        comm "NOW ANNOTATING ${bin_name}"
+
+        if [ $manual_perl = "true" ]; then
+                perl -I $perl_libs $prokka_path --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
+        else
+                prokka --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
+        fi
+
+	if [[ $? -ne 0 ]]; then error "Something went wrong with annotating ${bin_name}. Exiting..."; fi
+        if [[ ! -s ${out}/prokka_out/${bin_name}/${bin_name}.gff ]]; then error "Something went wrong with annotating ${bin_name}. Exiting..."; fi
 done
 
-wait
-sleep 1
+
 
 if [[ $(ls ${out}/prokka_out/) -lt 1 ]]; then error "Something went wrong with running prokka on all the bins! Exiting..."; fi
 
