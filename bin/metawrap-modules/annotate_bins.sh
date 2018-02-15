@@ -110,12 +110,15 @@ fi
 for i in $(ls ${bins}); do
         bin_name=${i%.*}
         bin_file=${bins}/$i
+	echo "${SOFT}/shorten_contig_names.py $bin_file > ${out}/tmp_bin.fa"
+	${SOFT}/shorten_contig_names.py $bin_file > ${out}/tmp_bin.fa
+	if [[ $? -ne 0 ]]; then error "Could not process/shorten the contig names of ${bin_file}. Exiting..."; fi
         comm "NOW ANNOTATING ${bin_name}"
 
         if [ $manual_perl = "true" ]; then
-                cmd="perl -I $perl_libs $prokka_path --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file"
+                cmd="perl -I $perl_libs $prokka_path --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name ${out}/tmp_bin.fa"
         else
-                cmd="prokka --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file"
+                cmd="prokka --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name ${out}/tmp_bin.fa"
         fi
 
 	echo $cmd
@@ -123,6 +126,7 @@ for i in $(ls ${bins}); do
 
 	if [[ $? -ne 0 ]]; then error "Something went wrong with annotating ${bin_name}. Exiting..."; fi
         if [[ ! -s ${out}/prokka_out/${bin_name}/${bin_name}.gff ]]; then error "Something went wrong with annotating ${bin_name}. Exiting..."; fi
+	rm ${out}/tmp_bin.fa
 done
 
 
@@ -156,7 +160,7 @@ for i in $(ls ${out}/prokka_out/); do
 done
 
 comm "You will find the bin annotation gff files in ${out}/bin_funct_annotations."
-
+warning "Your contigs may be truncated in the annotation because they are too long for PROKKA to take as input! Check the final annotation files to see what the contig naming convention is."
 ########################################################################################################
 ########################    ANNOTATION PIPELINE SUCCESSFULLY FINISHED!!!        ########################
 ########################################################################################################
