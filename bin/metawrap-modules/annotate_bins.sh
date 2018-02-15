@@ -27,24 +27,6 @@ error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
 warning () { ${SOFT}/print_comment.py "$1" "*"; }
 announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 
-# these functions are for parallelizing the annotation
-open_sem(){
-    mkfifo pipe-$$
-    exec 3<>pipe-$$
-    rm pipe-$$
-    local i=$1
-    for((;i>0;i--)); do
-        printf %s 000 >&3
-    done
-}
-run_with_lock(){
-    local x
-    read -u 3 -n 3 x && ((0==x)) || exit $x
-    (
-    "$@" 
-    printf '%.3d' $? >&3
-    )&
-}
 
 ########################################################################################################
 ########################               LOADING IN THE PARAMETERS                ########################
@@ -113,50 +95,31 @@ if [ $? -ne 0 ] ; then
 	manual_perl="true"
 	comm "Looks like your perl is oddly configured. Will have to run perl manually using your conda perl lib..."
 	prokka_path=$(which prokka)
+	echo "PROKKA path: $prokka_path"
 	conda_path=$(which conda)
+	echo "conda path: $conda_path"
 	conda_path=${conda_path%/*}
 	conda_path=${conda_path%/*}
 	if [ ${conda_path##*/} != miniconda2 ]; then conda_path=${conda_path%/*}; fi
 	if [ ${conda_path##*/} != miniconda2 ]; then error "Cannot find conda perl libraries for prokka!"; fi
 	perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
+	comm "Will use perl libraries located in $perl_libs - hopefully they are there..."
 fi
 
 
-annotate () {
-	bin_name=${1%.*}
-	bin_file=${bins}/$1
-	comm "NOW ANNOTATING ${bin_name}"
-	
-	if [ $manual_perl = "true" ]; then
-		perl -I $perl_libs $prokka_path --cpus $2 --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
-	else
-		prokka --cpus $2 --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
-	fi
-
-	if [[ ! -s ${out}/prokka_out/${bin_name}/${bin_name}.gff ]]; then
-                error "Something went wrong with annotating ${bin_name}. Exiting..."
-	fi
-}
-
-# parrallel run (has issues...)
-#open_sem $threads
-#for i in $(ls ${bins}); do 
-	#run_with_lock annotate $i 1
-#done
-#wait
-#sleep 1
-
-# normal run
 for i in $(ls ${bins}); do
         bin_name=${i%.*}
         bin_file=${bins}/$i
         comm "NOW ANNOTATING ${bin_name}"
 
         if [ $manual_perl = "true" ]; then
-                perl -I $perl_libs $prokka_path --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
+                cmd="perl -I $perl_libs $prokka_path --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file"
         else
-                prokka --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file
+                cmd="prokka --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name $bin_file"
         fi
+
+	echo $cmd
+	$cmd
 
 	if [[ $? -ne 0 ]]; then error "Something went wrong with annotating ${bin_name}. Exiting..."; fi
         if [[ ! -s ${out}/prokka_out/${bin_name}/${bin_name}.gff ]]; then error "Something went wrong with annotating ${bin_name}. Exiting..."; fi

@@ -23,6 +23,7 @@ metaWRAP v=0.8 (In development)
 	Annotate_bins
 		fixed improper perl5 library handling on some systems
 		removed parallelization of prokka (did not work on all systems)
+		improved error handling
 	Kraken
 		added -a option to ktImportText - now kronas do not require internet to view
 

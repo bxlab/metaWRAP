@@ -254,7 +254,7 @@ if [ "$run_checkm" = true ]; then
 		mv ${out}/reads_for_reassembly ${out}/work_files/
 		mv ${out}/binned_assembly ${out}/work_files/
 		mv ${out}/reassemblies ${out}/work_files/
-		rm -r ${out}/original_bins
+		#rm -r ${out}/original_bins
 		mv ${out}/reassembled_best_bins ${out}/reassembled_bins 
 	else
 		error "there are no good bins found in ${out}/reassembled_best_bins - something went wrong with choosing the best bins between the reassemblies."
