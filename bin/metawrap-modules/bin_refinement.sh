@@ -132,7 +132,8 @@ if [ ! -d $out ]; then
         mkdir $out
 	if [ ! -d $out ]; then error "cannot make $out"; fi
 else
-        echo "Warning: $out already exists."
+        echo "Warning: $out already exists. Cleaning..."
+	rm -r ${out}/*
 fi
 
 n_binnings=0
@@ -143,9 +144,16 @@ else
 	error "$bins1 is not a valid directory. Exiting."
 fi
 
+comm "there are $(ls ${out}/binsA | wc -l) bins in binsA"
 #copy over the other bin folders if they are specified
-if [[ -d $bins2 ]]; then cp -r $bins2 ${out}/binsB; n_binnings=$((n_binnings +1)); fi
-if [[ -d $bins3 ]]; then cp -r $bins3 ${out}/binsC; n_binnings=$((n_binnings +1)); fi
+if [[ -d $bins2 ]]; then 
+	cp -r $bins2 ${out}/binsB; n_binnings=$((n_binnings +1))
+	comm "there are $(ls ${out}/binsB | wc -l) bins in binsB"
+fi
+if [[ -d $bins3 ]]; then 
+	cp -r $bins3 ${out}/binsC; n_binnings=$((n_binnings +1))
+	comm "there are $(ls ${out}/binsC | wc -l) bins in binsC"
+fi
 
 comm "There are $n_binnings bin sets!"
 
@@ -170,8 +178,14 @@ if [ "$refine" == "true" ]; then
 		${SOFT}/binning_refiner.py -1 binsA -2 binsB -o Refined_AB &
 		${SOFT}/binning_refiner.py -1 binsC -2 binsB -o Refined_BC &
 		${SOFT}/binning_refiner.py -1 binsA -2 binsC -o Refined_AC &
-
+		
 		wait
+	
+		comm "there are $(ls Refined_AB/Refined | wc -l) refined bins in binsAB"
+		comm "there are $(ls Refined_BC/Refined | wc -l) refined bins in binsBC"
+		comm "there are $(ls Refined_AC/Refined | wc -l) refined bins in binsAC"
+		comm "there are $(ls Refined_ABC/Refined | wc -l) refined bins in binsABC"
+
 
 		mv Refined_ABC/Refined binsABC
 		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly with A+B+C. Exiting..."; fi
@@ -300,7 +314,7 @@ if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
 	checkm lineage_wf -x fa binsO binsO.checkm -t $threads --tmpdir binsO.tmp
 	if [[ ! -s binsO.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r binsO.tmp
-	${SOFT}/summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv binsO.checkm | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats
+	${SOFT}/summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv manual binsM.stats | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 	rm -r binsO.checkm
 	num=$(cat binsO.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)

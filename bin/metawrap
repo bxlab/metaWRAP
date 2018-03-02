@@ -31,6 +31,11 @@ help_message () {
         echo "";}
 
 source config-metawrap
+if [[ $? -ne 0 ]]; then 
+	echo "cannot find config-metawrap file - something went wrong with the installation!"
+	exit 1
+fi
+
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
 
 ########################################################################################################
@@ -40,8 +45,8 @@ comm () { ${SOFT}/print_comment.py "$1" "-"; }
 # setting scripts, pipelines, and databases locations from config file (should be in same folder as main script)
 
 if [ "$1" = assembly ]; then
-	echo ${PIPES}/assembly.sh ${@:2}
-	${PIPES}/assembly.sh ${@:2}
+	echo metawrap ${PIPES}/assembly ${@:2}
+	time ${PIPES}/assembly.sh ${@:2}
 	exit 0
 elif [ "$1" = phylosift ]; then
         #echo ${PIPES}/phylosift.sh ${@:2}
@@ -49,20 +54,20 @@ elif [ "$1" = phylosift ]; then
 	echo "The PHYLOSIFT module of metaWRAP is disabled in this version of metaWRAP"
         exit 0
 elif [ "$1" = read_qc ]; then
-	echo ${PIPES}/read_qc.sh ${@:2}
-	${PIPES}/read_qc.sh ${@:2}
+	echo metawrap ${PIPES}/read_qc ${@:2}
+	time ${PIPES}/read_qc.sh ${@:2}
 	exit 0
 elif [ "$1" = binning ]; then
-        echo ${PIPES}/binning.sh ${@:2}
-        ${PIPES}/binning.sh ${@:2}
+        echo metawrap ${PIPES}/binning ${@:2}
+        time ${PIPES}/binning.sh ${@:2}
 	exit 0
 elif [ "$1" = blobology ]; then
-        echo ${PIPES}/blobology.sh ${@:2}
-	${PIPES}/blobology.sh ${@:2}
+        echo metawrap ${PIPES}/blobology ${@:2}
+	time ${PIPES}/blobology.sh ${@:2}
         exit 0
 elif [ "$1" = kraken ]; then
-        echo ${PIPES}/kraken.sh ${@:2}
-	${PIPES}/kraken.sh ${@:2}
+        echo metawrap ${PIPES}/kraken ${@:2}
+	time ${PIPES}/kraken.sh ${@:2}
         exit 0
 elif [ "$1" = all ]; then
 	#echo ${PIPES}/all.sh ${@:2}
@@ -70,24 +75,24 @@ elif [ "$1" = all ]; then
 	echo "ALL module of metaWRAP is disabled in this version of metaWRAP"
 	exit 0
 elif [ "$1" = bin_refinement ]; then
-        echo ${PIPES}/bin_refinement.sh ${@:2}
-        ${PIPES}/bin_refinement.sh ${@:2}
+        echo metawrap ${PIPES}/bin_refinement ${@:2}
+        time ${PIPES}/bin_refinement.sh ${@:2}
         exit 0
 elif [ "$1" = reassemble_bins ]; then
-	echo ${PIPES}/reassemble_bins.sh ${@:2}
-	${PIPES}/reassemble_bins.sh ${@:2}
+	echo metawrap ${PIPES}/reassemble_bins ${@:2}
+	time ${PIPES}/reassemble_bins.sh ${@:2}
 	exit 0
 elif [ "$1" = quant_bins ]; then 
-	echo ${PIPES}/quant_bins.sh ${@:2}
-	${PIPES}/quant_bins.sh ${@:2}
+	echo metawrap ${PIPES}/quant_bins ${@:2}
+	time ${PIPES}/quant_bins.sh ${@:2}
 	exit 0
 elif [ "$1" = classify_bins ]; then
-	echo ${PIPES}/classify_bins.sh ${@:2}
-	${PIPES}/classify_bins.sh ${@:2}
+	echo metawrap ${PIPES}/classify_bins ${@:2}
+	time ${PIPES}/classify_bins.sh ${@:2}
 	exit 0
 elif [ "$1" = annotate_bins ]; then
-        echo ${PIPES}/annotate_bins.sh ${@:2}
-        ${PIPES}/annotate_bins.sh ${@:2}
+        echo metawrap ${PIPES}/annotate_bins ${@:2}
+        time ${PIPES}/annotate_bins.sh ${@:2}
         exit 0
 elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	help_message

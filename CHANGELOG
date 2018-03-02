@@ -1,16 +1,27 @@
 metaWRAP v=0.8 (In development)
+	General
+		every module now returns the total run time at the end
+		every module now gives the full run command back
 	Conda installation:
 		added R dependancy
 		fixed channel ordering
+		metaWRAP now immediately exits if it cannot find hte config file
 	Read_qc:
 		removed unnecessary large intermediate files
 		added clean-up feature
+		--skip-bmtagger flag now properly works
 	Binning:
 		fixed bug that caused maxbin to fail with absolute path
 		removed unnecessary large intermediate files
-		added clean-up feature
+		added pre- and post-run clean-up feature
+		removed CPU bottleneck from the read alignment stage
+	Bin_refinement
+		added output dir cleanup at start of module if the directory already exists
+		added extra debugging info during run
+		.stats files now contain the proper binner source in the last column
 	Reassemble_bins:
 		changed  plotting color scheme
+		removed last column (useless NA values)
 	Blobology
 		added clean-up feature
 		plotting bugfixes

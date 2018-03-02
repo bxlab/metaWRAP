@@ -1,5 +1,5 @@
 # Paths to custon pipelines and scripts of metaWRAP
-mw_path=$(which metaWRAP)
+mw_path=$(which metawrap)
 bin_path=${mw_path%/*}
 SOFT=${bin_path}/metawrap-scripts
 PIPES=${bin_path}/metawrap-modules

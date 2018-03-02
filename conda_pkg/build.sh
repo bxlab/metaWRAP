@@ -31,11 +31,3 @@ cp bin/config-metawrap $PREFIX/bin/
 cp -r bin/metawrap-modules $PREFIX/bin/
 cp -r bin/metawrap-scripts $PREFIX/bin/
 
-
-
-# adding channels
-conda config --add channels defaults
-conda config --add channels conda-forge
-conda config --add channels bioconda
-conda config --add channels r
-conda config --add channels ursky

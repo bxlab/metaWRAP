@@ -174,7 +174,7 @@ for num in "$@"; do
 			bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2\
 			| tee >( awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
 			>> ${out}/insert_sizes.txt ) \
-			| samtools view -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+			| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
 			-o ${out}/work_files/${sample}.bam -
 			
 			if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
