@@ -145,14 +145,17 @@ else
 fi
 
 comm "there are $(ls ${out}/binsA | wc -l) bins in binsA"
+if [[ $(ls ${out}/binsA | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
 #copy over the other bin folders if they are specified
 if [[ -d $bins2 ]]; then 
 	cp -r $bins2 ${out}/binsB; n_binnings=$((n_binnings +1))
 	comm "there are $(ls ${out}/binsB | wc -l) bins in binsB"
+	if [[ $(ls ${out}/binsB | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
 fi
 if [[ -d $bins3 ]]; then 
 	cp -r $bins3 ${out}/binsC; n_binnings=$((n_binnings +1))
 	comm "there are $(ls ${out}/binsC | wc -l) bins in binsC"
+	if [[ $(ls ${out}/binsC | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
 fi
 
 comm "There are $n_binnings bin sets!"

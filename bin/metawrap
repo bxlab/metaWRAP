@@ -38,6 +38,8 @@ fi
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
 
+comm "MetaWRAP script found in $(which metawrap) and config-metawrap file was found in $(which config-metawrap). Please make sure these paths are consistent."
+
 ########################################################################################################
 ########################     LOADING IN THE PARAMETERS AND RUNNING MODULE       ########################
 ########################################################################################################

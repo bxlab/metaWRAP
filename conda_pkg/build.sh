@@ -1,7 +1,7 @@
 # this script creates the file with configuration paths to the metaWRAP modules.
 echo "# Paths to custon pipelines and scripts of metaWRAP" > bin/config-metawrap
 
-echo 'mw_path=$(which metaWRAP)' >> bin/config-metawrap
+echo 'mw_path=$(which metawrap)' >> bin/config-metawrap
 echo 'bin_path=${mw_path%/*}' >> bin/config-metawrap
 echo 'SOFT=${bin_path}/metawrap-scripts' >> bin/config-metawrap
 echo 'PIPES=${bin_path}/metawrap-modules' >> bin/config-metawrap
