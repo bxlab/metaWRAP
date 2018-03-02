@@ -66,7 +66,7 @@
  
  If everything went well, running the following command should result in a help message
  ``` bash
- metaWRAP read_qc -h
+ metawrap read_qc -h
  ```
  
  As of 2018, metaWRAP is being actively improved and developed, so please check for updates regularly: `conda update -c ursky metawrap-mg` 
@@ -101,7 +101,7 @@ Please look at the [MetaWRAP usage tutorial](https://github.com/bxlab/metaWRAP/b
 Once all the dependencies are in place, running metaWRAP is relatively simple. The main metaWRAP script wraps around all of its individual modules, which you can call independently.
 ```
 metaWRAP -h
-	Usage: metaWRAP [module] --help
+	Usage: metawrap [module] --help
 	Options:
 
 	read_qc		Raw read QC module
@@ -116,9 +116,9 @@ metaWRAP -h
 
 Each module is run separately. For example, to run the assembly module:
 ```
-metaWRAP assembly -h
+metawrap assembly -h
 
-Usage: metaWRAP assembly [options] -1 reads_1.fastq -2 reads_2.fastq -o output_dir
+Usage: metawrap assembly [options] -1 reads_1.fastq -2 reads_2.fastq -o output_dir
 Options:
 
 	-1 STR          forward fastq reads
