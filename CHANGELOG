@@ -2,6 +2,7 @@ metaWRAP v=0.8 (In development)
 	General
 		every module now returns the total run time at the end
 		every module now gives the full run command back
+		added trim-galore dependancy to conda installation
 	Conda installation:
 		added R dependancy
 		fixed channel ordering
