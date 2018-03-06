@@ -1,5 +1,3 @@
-### New: [MetaWRAP usage tutorial](https://github.com/bxlab/metaWRAP/blob/master/Usage_tutorial.md)
-### New: [MetaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
@@ -14,8 +12,6 @@
 
 ![General walkthrough of metaWRAP modules](https://i.imgur.com/6GqRsm3.png)
 
-#### Please read the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md)
-
 #### Metagemonic data pre-processing modules:
 	1) Read_QC: read trimming and human read removal
 	2) Assembly: metagenomic assembly and QC with metaSPAdes or MegaHit
@@ -29,9 +25,11 @@
 	5) Blobology: visualize the community and extracted bins with blobplots
 	6) Classify_bins: conservative but accurate taxonomy prediction for bins
 	7) Annotate_bins: functionally annotate genes in a set of bins
+#### Please read the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md)
+
 
 ##  SYSTEM REQUIREMENTS
- The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems.
+ The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems, but may be manually installed on others.
 
 ## INSTALLATION
 #### Basic installation:
@@ -70,6 +68,10 @@
  ```
  
  As of 2018, metaWRAP is being actively improved and developed, so please check for updates regularly: `conda update -c ursky metawrap-mg` 
+ 
+#### Manual installation
+ You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.txt). When you are ready, download or clone this ripository, carefully configure the metaWRAP/bin/config-metawrap file, and add the metaWRAP/bin/ directory to to the $PATH. Thats it! 
+ 
  
 ## DATABASES
 
