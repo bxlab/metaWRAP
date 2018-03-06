@@ -32,7 +32,7 @@ requirements:
     - java-jdk 8.0.*
     - jellyfish 1.1.11
     - kraken 0.10.*
-    - krona 2.7
+    - krona 2.5
     - matplotlib
     - maxbin2-full 2.2.4
     - megahit 1.1.2

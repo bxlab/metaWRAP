@@ -38,6 +38,7 @@ metaWRAP v=0.8 (In development)
 		improved error handling
 	Kraken
 		added -a option to ktImportText - now kronas do not require internet to view
+		changed krona tools version requirement to 2.5 to allow for -a option
 
 
 metaWRAP v=0.7 (January 2017)
