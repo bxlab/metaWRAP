@@ -1,4 +1,7 @@
-metaWRAP v=0.8 (In development)
+metaWRAP v=0.9 (In development)
+
+
+metaWRAP v=0.8 (March 2018)
 	General
 		every module now returns the total run time at the end
 		every module now gives the full run command back
@@ -20,6 +23,7 @@ metaWRAP v=0.8 (In development)
 		added output dir cleanup at start of module if the directory already exists
 		added extra debugging info during run
 		.stats files now contain the proper binner source in the last column
+		fixed bug caused by "=" characters in contig naming
 	Reassemble_bins:
 		changed  plotting color scheme
 		removed last column (useless NA values)

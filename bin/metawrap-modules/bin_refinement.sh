@@ -140,12 +140,12 @@ n_binnings=0
 if [[ -d $bins1 ]]; then 
 	cp -r $bins1 ${out}/binsA
 	n_binnings=$((n_binnings +1))
+	comm "there are $(ls ${out}/binsA | wc -l) bins in binsA"
+	if [[ $(ls ${out}/binsA | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
 else
 	error "$bins1 is not a valid directory. Exiting."
 fi
 
-comm "there are $(ls ${out}/binsA | wc -l) bins in binsA"
-if [[ $(ls ${out}/binsA | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
 #copy over the other bin folders if they are specified
 if [[ -d $bins2 ]]; then 
 	cp -r $bins2 ${out}/binsB; n_binnings=$((n_binnings +1))
@@ -159,6 +159,14 @@ if [[ -d $bins3 ]]; then
 fi
 
 comm "There are $n_binnings bin sets!"
+
+
+comm "Fix contig naming by removing special characters..."
+for f in ${out}/binsA/*; do echo $f; ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+for f in ${out}/binsB/*; do echo $f; ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+for f in ${out}/binsC/*; do echo $f; ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+
+
 
 # I have to switch directories here - Bin_refiner dumps everything into the current dir"
 home=$(pwd)
