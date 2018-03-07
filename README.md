@@ -1,3 +1,4 @@
+### New: the metaWRAP publication preprint is available at [bioRxiv](https://www.biorxiv.org/content/early/2018/03/06/277442)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
@@ -25,7 +26,7 @@
 	5) Blobology: visualize the community and extracted bins with blobplots
 	6) Classify_bins: conservative but accurate taxonomy prediction for bins
 	7) Annotate_bins: functionally annotate genes in a set of bins
-#### Please read the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md)
+#### For more details, please consult the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md) and the [publication preprint](https://www.biorxiv.org/content/early/2018/03/06/277442).
 
 
 ##  SYSTEM REQUIREMENTS
@@ -69,7 +70,7 @@
  
  As of 2018, metaWRAP is being actively improved and developed, so please check for updates regularly: `conda update -c ursky metawrap-mg` 
  
-#### Manual installation
+#### Manual installation:
  You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.txt). When you are ready, download or clone this ripository, carefully configure the metaWRAP/bin/config-metawrap file, and add the metaWRAP/bin/ directory to to the $PATH. Thats it! 
  
  
@@ -132,6 +133,9 @@ Options:
 	--use-megahit		assemble with megahit (default)
 	--use-metaspades	assemble with metaspades instead of megahit
 ```
+
+### Citing metaWRAP
+While the metaWRAP manuscript is in review, please cite the bioRxiv preprint: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://www.biorxiv.org/content/early/2018/03/06/277442)
 
 ### Acknowledgements
 Author of pipeline: [Gherman Uritskiy](https://github.com/ursky).
