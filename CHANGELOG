@@ -1,5 +1,8 @@
 metaWRAP v=0.9 (In development)
-
+	Bin_refinement
+		fixed bug with plotting refinement iterations
+	Binning
+		fixed perl5 library handling when running maxbin2
 
 metaWRAP v=0.8 (March 2018)
 	General

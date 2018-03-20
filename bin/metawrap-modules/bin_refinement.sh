@@ -346,7 +346,7 @@ fi
 
 if [ "$run_checkm" == "true" ]; then
 	comm "making completion and contamination ranking plots for all refinement iterations"
-	${SOFT}/plot_binning_results.py $(ls | grep ".stats")
+	${SOFT}/plot_binning_results.py $comp $cont $(ls | grep ".stats")
 	mkdir figures
 	mv binning_results.eps figures/intermediate_binning_results.eps
 	mv binning_results.png figures/intermediate_binning_results.png

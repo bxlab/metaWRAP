@@ -237,6 +237,17 @@ if [ $maxbin2 = true ]; then
 			echo $(pwd)/${out}/work_files/mb2_${sample%.*}.txt >> ${out}/work_files/mb2_abund_list.txt
 		fi
 	done
+
+	# manually setting perl5 library directory:
+        conda_path=$(which conda)
+        if [ ${conda_path##*/} != miniconda2 ]; then conda_path=${conda_path%/*}; fi
+	if [ ${conda_path##*/} != miniconda2 ]; then conda_path=${conda_path%/*}; fi
+	if [ ${conda_path##*/} != miniconda2 ]; then conda_path=${conda_path%/*}; fi
+        if [ ${conda_path##*/} != miniconda2 ]; then error "Cannot find conda perl5 libraries for maxbin2!"; fi
+        perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
+        echo "Will use perl5 libraries located in $perl_libs - hopefully they are there..."
+	export PERL5LIB="$perl_libs"
+
 	
 	comm "Starting binning with MaxBin2..."
 	mkdir ${out}/work_files/maxbin2_out
