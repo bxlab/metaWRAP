@@ -37,6 +37,7 @@ requirements:
     - maxbin2-full 2.2.4
     - megahit 1.1.2
     - metabat2 2.12.1
+    - minced
     - numpy
     - pandas
     - perl 5*
