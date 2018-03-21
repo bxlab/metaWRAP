@@ -89,22 +89,18 @@ if [ -d ${out}/prokka_out ]; then rm -r ${out}/prokka_out; fi
 mkdir ${out}/prokka_out
 
 
-manual_perl="false"
-prokka -v 
-if [ $? -ne 0 ] ; then
-	manual_perl="true"
-	comm "Looks like your perl is oddly configured. Will have to run perl manually using your conda perl lib..."
-	prokka_path=$(which prokka)
-	echo "PROKKA path: $prokka_path"
-	conda_path=$(which conda)
-	echo "conda path: $conda_path"
-	conda_path=${conda_path%/*}
-	conda_path=${conda_path%/*}
-	if [ ${conda_path##*/} != miniconda2 ]; then conda_path=${conda_path%/*}; fi
-	if [ ${conda_path##*/} != miniconda2 ]; then error "Cannot find conda perl libraries for prokka!"; fi
-	perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
-	comm "Will use perl libraries located in $perl_libs - hopefully they are there..."
+# manually setting perl5 library directory:
+conda_path=$(which conda)
+conda_path=${conda_path%/*}
+conda_path=${conda_path%/*}
+if [ ! -d ${conda_path}/lib/perl5/site_perl/5.22.0 ]; then
+	error "${conda_path}/lib/perl5/site_perl/5.22.0 does not exixt. Cannot set manual path to perl5 libraries. Exiting..."
 fi
+
+perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
+echo "Will use perl5 libraries located in $perl_libs - hopefully they are there..."
+export PERL5LIB="$perl_libs"
+
 
 
 for i in $(ls ${bins}); do
@@ -115,12 +111,7 @@ for i in $(ls ${bins}); do
 	if [[ $? -ne 0 ]]; then error "Could not process/shorten the contig names of ${bin_file}. Exiting..."; fi
         comm "NOW ANNOTATING ${bin_name}"
 
-        if [ $manual_perl = "true" ]; then
-                cmd="perl -I $perl_libs $prokka_path --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name ${out}/tmp_bin.fa"
-        else
-                cmd="prokka --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name ${out}/tmp_bin.fa"
-        fi
-
+        cmd="prokka --quiet --cpus $threads --outdir ${out}/prokka_out/$bin_name --prefix $bin_name ${out}/tmp_bin.fa"
 	echo $cmd
 	$cmd
 

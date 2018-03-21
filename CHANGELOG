@@ -3,6 +3,11 @@ metaWRAP v=0.9 (In development)
 		fixed bug with plotting refinement iterations
 	Binning
 		fixed perl5 library handling when running maxbin2
+	Kraken
+		removed -a option from ktImportText
+	Annotate_bins
+		fixed perl5 library handling when running prokka
+
 
 metaWRAP v=0.8 (March 2018)
 	General

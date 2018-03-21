@@ -163,7 +163,7 @@ for file in ${out}/*.kraken; do
 done
 
 #use kronatools to make kronagrams of all samples in one html file
-ktImportText -o ${out}/kronagram.html ${out}/*krona -a
+ktImportText -o ${out}/kronagram.html ${out}/*krona
 if [[ ! -s ${out}/kronagram.html ]]; then error "Something went wrong with running KronaTools to make kronagram. Exiting..."; fi
 
 

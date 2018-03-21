@@ -1,6 +1,6 @@
 package:
   name: metawrap-mg
-  version: "0.8.1"
+  version: "0.8.2"
 
 source:
   git_url: https://github.com/bxlab/metaWRAP.git
@@ -32,7 +32,7 @@ requirements:
     - java-jdk 8.0.*
     - jellyfish 1.1.11
     - kraken 0.10.*
-    - krona 2.5
+    - krona
     - matplotlib
     - maxbin2-full 2.2.4
     - megahit 1.1.2
