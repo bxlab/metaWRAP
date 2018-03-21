@@ -135,7 +135,7 @@ Options:
 ```
 
 ### Citing metaWRAP
-While the metaWRAP manuscript is in review, please cite the bioRxiv preprint: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://www.biorxiv.org/content/early/2018/03/06/277442)
+While the metaWRAP manuscript is in review for publication, please cite the bioRxiv preprint: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://www.biorxiv.org/content/early/2018/03/06/277442)
 
 ### Acknowledgements
 Author of pipeline: [Gherman Uritskiy](https://github.com/ursky).
@@ -144,5 +144,5 @@ Principal Investigators: [James Taylor](http://bio.jhu.edu/directory/james-taylo
 
 Institution: Johns Hopkins, [Department of Cell, Molecular, Developmental Biology, and Biophysics](http://cmdb.jhu.edu/) 
 
-All feedback is welcome! For questions, bugs, and suggestions, contact me at guritsk1@jhu.edu, or leave a comment on this github page.
+All feedback is welcome! For errors and bugs, please open an Issue thread on this github page, and I will try to get things patched as quickly as possible. For general questions, suggestions and other feedback, you can contact me at guritsk1@jhu.edu. 
 
