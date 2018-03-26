@@ -144,5 +144,5 @@ Principal Investigators: [James Taylor](http://bio.jhu.edu/directory/james-taylo
 
 Institution: Johns Hopkins, [Department of Cell, Molecular, Developmental Biology, and Biophysics](http://cmdb.jhu.edu/) 
 
-All feedback is welcome! For errors and bugs, please open an Issue thread on this github page, and I will try to get things patched as quickly as possible. For general questions, suggestions and other feedback, you can contact me at guritsk1@jhu.edu. 
+All feedback is welcome! For errors and bugs, please open a new Issue thread on this github page, and I will try to get things patched as quickly as possible. Please include the version of metaWRAP you are using (run `metawrap -v`), For general questions, suggestions and other feedback, you can contact me at guritsk1@jhu.edu. 
 
