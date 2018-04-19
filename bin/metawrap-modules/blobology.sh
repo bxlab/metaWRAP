@@ -256,7 +256,16 @@ if [ ! "$bin_folder" = false ]; then
 
 	${SOFT}/blobology/makeblobplot.R ${out}/${SAMPLE}.binned.blobplot 0.005 taxlevel_superkingdom
 	if [[ $? -ne 0 ]]; then error "Something went wrong with making the binned superkingdom blobplot image. Exiting..."; fi
+	
+
+	mkdir ${out}/blobplot_figures_only_binned_contigs
+	mv ${out}/*.binned.blobplot*png ${out}/blobplot_figures_only_binned_contigs
 fi
+
+
+mkdir ${out}/blobplot_figures
+mv ${out}/*png ${out}/blobplot_figures
+
 
 comm "cleaning up..."
 rm ${out}/*bam

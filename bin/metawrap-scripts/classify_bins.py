@@ -23,7 +23,7 @@ def traverse(tree, taxonomy, weight):
 	if weight!=0: total_score=weight
 
 	if 100*max_score/total_score>50:
-		taxonomy.append(max_class+"_"+str(100*max_score/total_score))
+		taxonomy.append(max_class) #+"_"+str(100*max_score/total_score))
 		taxonomy=traverse(tree[max_class][1], taxonomy, tree[max_class][0])
 	else:
 		return taxonomy

@@ -1,6 +1,6 @@
 package:
   name: metawrap-mg
-  version: "0.8.2"
+  version: "0.8.3"
 
 source:
   git_url: https://github.com/bxlab/metaWRAP.git
@@ -63,6 +63,7 @@ requirements:
     - trim-galore 0.4.5
     - r-recommended 3.3.2
     - r-ggplot2 2.2.1
+    - xorg-libxrender
 
 about:
   home: https://github.com/ursky/metaWRAP

@@ -3,11 +3,18 @@ metaWRAP v=0.9 (In development)
 		fixed bug with plotting refinement iterations
 	Binning
 		fixed perl5 library handling when running maxbin2
+		added diagnostic info for perl libraries
+	Blobology
+		added figure output folders for easier viewing
 	Kraken
 		removed -a option from ktImportText
+		added checkpoint to make sure that fasta or fastq inputs are given
 	Annotate_bins
 		fixed perl5 library handling when running prokka
 		added minced dependancy
+		added diagnostic info for perl libraries
+	Classify_bins
+		removed percent confidance values for each classification
 
 
 metaWRAP v=0.8 (March 2018)

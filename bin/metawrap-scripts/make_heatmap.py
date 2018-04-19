@@ -41,9 +41,9 @@ z=1000000*z
 lut=[]
 for sample in z.columns.values:
 	#skips SG1-N samples:
-	if "-N" in sample:
-		z = z.drop(sample, 1)
-		continue
+	#if "-N" not in sample or "2015-12-4" in sample or "2015-12-5" in sample:
+	#	z = z.drop(sample, 1)
+	#	continue
 
 	if "2013-04" in sample: lut.append('m')
         elif "2014-09" in sample: lut.append('r')

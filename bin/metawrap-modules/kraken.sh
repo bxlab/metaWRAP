@@ -135,6 +135,11 @@ for num in "$@"; do
 	fi
 done
 
+# check if any files were processed
+if [[ $( ls $out | grep ".krak" ) -eq 0 ]]; then 
+	comm "No fasta or fastq files detected! (must be in .fastq .fa .fastq or .fq format)"
+	help_message; exit 1
+fi
 
 
 ########################################################################################################

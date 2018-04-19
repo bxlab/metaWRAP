@@ -239,8 +239,10 @@ if [ $maxbin2 = true ]; then
 	done
 
 	# manually setting perl5 library directory:
-        conda_path=$(which conda)
+        conda_path=$(which metawrap)
+	echo "metawrap path: $conda_path"
 	conda_path=${conda_path%/*}
+	if [ $(echo -n $conda_path | tail -c 1) = "/" ]; then conda_path=${conda_path%/*}; fi
 	conda_path=${conda_path%/*}
 	if [ ! -d ${conda_path}/lib/perl5/site_perl/5.22.0 ]; then 
 		error "${conda_path}/lib/perl5/site_perl/5.22.0 does not exixt. Cannot set manual path to perl5 libraries. Exiting..."
