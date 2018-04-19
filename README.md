@@ -71,7 +71,7 @@
  As of 2018, metaWRAP is being actively improved and developed, so please check for updates regularly: `conda update -c ursky metawrap-mg` 
  
 #### Manual installation:
- You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.txt). When you are ready, download or clone this ripository, carefully configure the metaWRAP/bin/config-metawrap file, and add the metaWRAP/bin/ directory to to the $PATH. Thats it! 
+ You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.txt). When you are ready, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH`. Thats it! 
  
  
 ## DATABASES
@@ -144,5 +144,5 @@ Principal Investigators: [James Taylor](http://bio.jhu.edu/directory/james-taylo
 
 Institution: Johns Hopkins, [Department of Cell, Molecular, Developmental Biology, and Biophysics](http://cmdb.jhu.edu/) 
 
-All feedback is welcome! For errors and bugs, please open an Issue thread on this github page, and I will try to get things patched as quickly as possible. For general questions, suggestions and other feedback, you can contact me at guritsk1@jhu.edu. 
+All feedback is welcome! For errors and bugs, please open a new Issue thread on this github page, and I will try to get things patched as quickly as possible. Please include the version of metaWRAP you are using (run `metawrap -v`), For general questions, suggestions and other feedback, you can contact me at guritsk1@jhu.edu. 
 
