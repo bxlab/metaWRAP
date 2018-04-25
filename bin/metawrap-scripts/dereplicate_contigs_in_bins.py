@@ -34,10 +34,17 @@ os.system("mkdir "+sys.argv[3])
 for bin_file in os.listdir(sys.argv[2]):
         bin_name=".".join(bin_file.split("/")[-1].split(".")[:-1])
 	out = open(sys.argv[3]+"/"+bin_file,'w')
+	at_least_one=False
         for line in open(sys.argv[2]+"/"+bin_file):
 		if line[0]==">":
 			contig=line[1:-1]
-			if contig_mapping[contig]==bin_name: store=True
+			if contig_mapping[contig]==bin_name: 
+				at_least_one=True
+				store=True
 			else: store=False
 		if store==True: out.write(line)
 	out.close()	
+	if at_least_one==False:
+		os.system("rm sys.argv[3]+"/"+bin_file")
+
+

@@ -1,6 +1,7 @@
 metaWRAP v=0.9 (In development)
 	Bin_refinement
 		fixed bug with plotting refinement iterations
+		delete bins that have a size 0 after dereplication
 	Binning
 		fixed perl5 library handling when running maxbin2
 		added diagnostic info for perl libraries
@@ -15,6 +16,8 @@ metaWRAP v=0.9 (In development)
 		added diagnostic info for perl libraries
 	Classify_bins
 		removed percent confidance values for each classification
+	Reassemble_bins
+		added --parallel option to allow choice of run mode
 
 
 metaWRAP v=0.8 (March 2018)

@@ -26,6 +26,7 @@ help_message () {
 	echo "	-x INT		maximum desired bin contamination %"
 	echo ""
 	echo "	--skip-checkm		dont run CheckM to assess bins"
+	echo "	--parallel		run spades reassembly in parallel, but only using 1 thread per bin"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
@@ -65,7 +66,7 @@ threads=1; mem=4; comp=70; cont=10;
 bins=None; f_reads=None; r_reads=None; out=None
 # long options defaults
 run_checkm=true
-
+run_parallel=false
 # load in params
 OPTS=`getopt -o ht:m:o:x:c:b:1:2: --long help,skip-checkm -- "$@"`
 # make sure the params are entered correctly
@@ -84,6 +85,7 @@ while true; do
 		-2) r_reads=$2; shift 2;;
                 -h | --help) help_message; exit 0; shift 1;;
 		--skip-checkm) run_checkm=false; shift 1;;
+		--parallel) run_parallel=true; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -141,14 +143,14 @@ bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads\
 ########################             REASSEMBLING BINS WITH SPADES              ########################
 ########################################################################################################
 announcement "REASSEMBLING BINS WITH SPADES"
-
 mkdir ${out}/reassemblies
+
 assemble () {
 	bin_name=${1%_*}
 	tmp_dir=${out}/reassemblies/${bin_name}.tmp
 	mkdir $tmp_dir
 	comm "NOW REASSEMBLING ${bin_name}"
-	spades.py -t 1 -m $mem --tmp $tmp_dir --careful \
+	spades.py -t $2 -m $mem --tmp $tmp_dir --careful \
 	--untrusted-contigs ${out}/original_bins/${bin_name%.*}.fa \
 	-1 ${out}/reads_for_reassembly/${1%_*}_1.fastq \
 	-2 ${out}/reads_for_reassembly/${1%_*}_2.fastq \
@@ -162,14 +164,26 @@ assemble () {
 	fi
 }
 
-open_sem $threads
-for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do 
-	run_with_lock assemble $i
-done
 
-wait
-sleep 1
-comm "all assemblies complete"
+if [ "$run_parallel" = true ]; then
+	open_sem $threads
+	for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do 
+		run_with_lock assemble $i 1
+	done
+
+	wait
+	sleep 1
+	comm "all assemblies complete"
+fi
+
+if [ "$run_parallel" = false ]; then
+	for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do
+		assemble $i $threads
+	done
+
+	comm "all assemblies complete"
+fi
+
 
 
 # removing short contigs and placing reassemblies in the final folder
