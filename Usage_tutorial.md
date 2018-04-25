@@ -202,6 +202,9 @@ By inspecting the other files, we find that metaBAT2, MaxBin2, CONCOCT, and meta
 
 To closer compare the bin sets in terms of completion and contamination, we can look at the plots in `BIN_REFINEMENT/figures/`:
 ![Bin_refinement](https://i.imgur.com/m6RRJxi.jpg)
+
+Note: This graph no longer has `Binning_refiner` in it, to reduce confusion. If you want to see Binning_refiner's performance, look at binsABC (or binsAB if you have two bin sets) in the other figure.
+
 As you can see, the refinment process signifficantly produced the best bin set in terms of both compleiton and contamination. Keep in mind that these improvements are even more dramatic in more complex samples.
 
 
