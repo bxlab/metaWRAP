@@ -1,4 +1,12 @@
 #!/bin/bash -l
+echo $PATH
+which metawrap
+which samtools
+samtools
+exit 1
+
+
+
 
 ##############################################################################################################################################################
 #
@@ -56,7 +64,13 @@ run_checkm () {
 
 
 # setting scripts and databases from config file (should be in same folder as main script)
-source config-metawrap
+a=$(which config-metawrap)
+#source $a
+
+which samtools
+samtools 
+exit 1
+
 
 # default params
 threads=1; out=false; ASSEMBLY=false

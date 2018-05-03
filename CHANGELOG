@@ -1,7 +1,10 @@
 metaWRAP v=0.9 (In development)
+	General
+		fixed bug caused by multiple metawrap installations
 	Bin_refinement
 		fixed bug with plotting refinement iterations
 		delete bins that have a size 0 after dereplication
+		fixed shebang in summarize_checkm.py
 	Binning
 		fixed perl5 library handling when running maxbin2
 		added diagnostic info for perl libraries

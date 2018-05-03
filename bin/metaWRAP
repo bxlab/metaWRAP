@@ -28,9 +28,11 @@ help_message () {
 	echo "	annotate_bins	Functional annotation of draft genomes"
 	echo "	blobology	Blobology module"
 	echo "	kraken		KRAKEN module"
+	echo "	-v		show metaWRAP version"
         echo "";}
 
-source config-metawrap
+config_file=$(which config-metawrap)
+source $config_file
 if [[ $? -ne 0 ]]; then 
 	echo "cannot find config-metawrap file - something went wrong with the installation!"
 	exit 1
@@ -99,7 +101,7 @@ elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
         echo ""
-	echo "metaWRAP v=0.8.4"
+	echo "metaWRAP v=0.8.5"
 	echo ""
         exit 0
 else

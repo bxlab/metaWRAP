@@ -1,4 +1,4 @@
-#!/home-2/guritsk1@jhu.edu/scratch/miniconda2/bin/python
+#!/usr/bin/env python
 import sys
 # This script summarizes the statistics of each bin by parsing 
 # the checkm_folder/storage/bin_stats_ext.tsv file of the CheckM output
