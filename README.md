@@ -33,30 +33,32 @@
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I would advise against attempting to run it on anything less than 10 cores and 100GB RAM. MetaWRAP officially supports only Linux x64 systems, but may be manually installed on others.
 
 ## INSTALLATION
- To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Then add channels to your conda environment:
+
+#### Basic installation:
+ To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Then add channels to your conda environment, and install metaWRAP (supports Linux64):
  ``` bash
  # ORDER IS IMPORTANT!!!
  conda config --add channels defaults
  conda config --add channels conda-forge
  conda config --add channels bioconda
  conda config --add channels ursky
-```
 
- Once you have conda installed and configured, you can install metawrap and all its dependancies with the following command (only supports Linux x64 - your laptop would not have the power anyways):
- ``` bash
  conda install -c ursky metawrap-mg
  ```
-  
- If everything went well, running the following command should result in a help message
- ``` bash
- metawrap -v
- metawrap read_qc -h
- ```
  
- If you are already a conda user and having conflicts with your current environment, you can install metaWRAP only in a conda environemnt, but this may cause issues because the root conda installation will still have priority when running dependancies. 
-```
+ #### Better installation
+ The conda installation of metaWRAP will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is strongly recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
+``` bash
 conda create -n metawrap-env python=2.7
 source activate metawrap-env
+
+# ORDER IS IMPORTANT!!!
+conda config --add channels defaults
+conda config --add channels conda-forge
+conda config --add channels bioconda
+conda config --add channels ursky
+
+conda install -c ursky metawrap-mg
 ```
 
 #### Manual installation:
