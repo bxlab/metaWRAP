@@ -57,13 +57,7 @@ run_checkm () {
 
 
 # setting scripts and databases from config file (should be in same folder as main script)
-a=$(which config-metawrap)
-#source $a
-
-which samtools
-samtools 
-exit 1
-
+source config-metawrap
 
 # default params
 threads=1; out=false; ASSEMBLY=false
