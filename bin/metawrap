@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/usr/bin/env bash
 #SBATCH
 #SBATCH --job-name=metaWRAP
 #SBATCH --partition=lrgmem
@@ -103,7 +103,7 @@ elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
         echo ""
-	echo "metaWRAP v=0.8.5"
+	echo "metaWRAP v=0.8.6"
 	echo ""
         exit 0
 else

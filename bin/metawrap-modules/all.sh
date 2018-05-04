@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/usr/bin/env bash
 
 ##############################################################################################################################################################
 # Master metaWRAP script that calls the read_qc, assembly, blobology, binning, and kraken modules

@@ -1,12 +1,4 @@
-#!/bin/bash -l
-echo $PATH
-which metawrap
-which samtools
-samtools
-exit 1
-
-
-
+#!/usr/bin/env bash
 
 ##############################################################################################################################################################
 #
@@ -35,6 +27,7 @@ help_message () {
 	echo "	-t INT          number of threads (default=1)"
 	echo ""
         echo "	--metabat2      bin contigs with metaBAT2"
+	echo "	--metabat1	bin contigs with the original metaBAT"
 	echo "	--maxbin2	bin contigs with MaxBin2"
 	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
 	echo "	--run-checkm	immediately run CheckM on the bin results"
@@ -75,10 +68,10 @@ exit 1
 # default params
 threads=1; out=false; ASSEMBLY=false
 # long options defaults
-metabat2=false; maxbin2=false; concoct=false; checkm=false
+metabat1=false; metabat2=false; maxbin2=false; concoct=false; checkm=false
 
 # load in params
-OPTS=`getopt -o ht:o:a: --long help,metabat2,maxbin2,concoct,run-checkm -- "$@"`
+OPTS=`getopt -o ht:o:a: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -90,6 +83,7 @@ while true; do
                 -a) ASSEMBLY=$2; shift 2;;
                 -h | --help) help_message; exit 1; shift 1;;
 		--metabat2) metabat2=true; shift 1;;
+		--metabat1) metabat1=true; shift 1;;
 		--maxbin2) maxbin2=true; shift 1;;
 		--concoct) concoct=true; shift 1;;
 		--run-checkm) checkm=true; shift 1;;
@@ -132,8 +126,8 @@ if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F a
 
 
 # Make sure at least one binning method was chosen
-if [ $metabat2 = false ] && [ $maxbin2 = false ] && [ $concoct = false ]; then
-	error "You must select at least one binning method: --metabat2, --maxbin2, --concoct"
+if [ $metabat2 = false ] && [ $metabat1 = false ] &&[ $maxbin2 = false ] && [ $concoct = false ]; then
+	error "You must select at least one binning method: --metabat2, --metabat1, --maxbin2, --concoct"
 fi
 
 # Checks for correctly configures meta-scripts folder
@@ -208,18 +202,41 @@ if [ $metabat2 = true ]; then
 	announcement "RUNNING METABAT2"
 
 	comm "making contig depth file..."	
-	jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/metabat2_depth.txt ${out}/work_files/*.bam
+	jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/metabat_depth.txt ${out}/work_files/*.bam
 	if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
 
 	comm "Starting binning with metaBAT2..."
-	metabat2 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat2_depth.txt\
+	metabat2 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
 	 -o ${out}/metabat2_bins/bin -m 1500 -t $threads --unbinned
-	if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT. Exiting"; fi
+	if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT2. Exiting"; fi
 	comm "metaBAT2 finished successfully, and found $(ls -l ${out}/metabat2_bins | grep .fa | wc -l) bins!"
 
 	if [ $checkm = true ]; then
 		run_checkm ${out}/metabat2_bins
 	fi
+fi
+
+
+
+if [ $metabat1 = true ]; then
+        ########################################################################################################
+        ########################                   RUNNING METABAT1                     ########################
+        ########################################################################################################
+        announcement "RUNNING METABAT1"
+
+        comm "making contig depth file..."
+        jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/metabat_depth.txt ${out}/work_files/*.bam
+        if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
+
+        comm "Starting binning with metaBAT2..."
+        metabat1 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
+         -o ${out}/metabat1_bins/bin -m 1500 -t $threads --unbinned --superspecific
+        if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT1. Exiting"; fi
+        comm "metaBAT1 finished successfully, and found $(ls -l ${out}/metabat1_bins | grep .fa | wc -l) bins!"
+
+        if [ $checkm = true ]; then
+                run_checkm ${out}/metabat1_bins
+        fi
 fi
 
 
