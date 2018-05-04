@@ -3,7 +3,8 @@
 ##############################################################################################################################################################
 # Master metaWRAP script that calls the read_qc, assembly, blobology, binning, and kraken modules
 ##############################################################################################################################################################
-source config-metawrap
+config_file=$(which config-metawrap)
+source $config_file
 
 help_message () {
 	echo "";

@@ -59,7 +59,9 @@ run_with_lock(){
 
 
 # setting scripts and databases from config file (should be in same folder as main script)
-source config-metawrap
+config_file=$(which config-metawrap)
+source $config_file
+
 
 # default params
 threads=1; mem=4; comp=70; cont=10; 

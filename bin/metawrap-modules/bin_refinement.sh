@@ -73,7 +73,8 @@ plot_checkm () {
 
 
 # setting scripts and databases from config file (should be in same folder as main script)
-source config-metawrap
+config_file=$(which config-metawrap)
+source $config_file
 
 # default params
 threads=1; out="false"; comp=70; cont=10; x=10; c=70; 

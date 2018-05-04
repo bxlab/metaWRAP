@@ -42,7 +42,8 @@ announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 
 
 # setting scripts and databases from config file (should be in same folder as main script)
-source config-metawrap
+config_file=$(which config-metawrap)
+source $config_file
 
 # default params
 mem=10; threads=1; out="false"; reads_1="false"; reads_2="false"; min_len=1000
