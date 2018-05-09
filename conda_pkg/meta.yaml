@@ -34,7 +34,7 @@ requirements:
     - kraken 0.10.*
     - krona
     - matplotlib
-    - maxbin2-full 2.2.4
+    - maxbin2-full 2.2.5
     - megahit 1.1.2
     - metabat2 2.12.1
     - minced

@@ -10,6 +10,7 @@ metaWRAP v=0.9 (In development)
 		added metabat1 binning option
 		fixed perl5 library handling when running maxbin2
 		added diagnostic info for perl libraries
+		added use of MaxBin v2.2.5 - this fixes some issues with newer gcc
 	Blobology
 		added figure output folders for easier viewing
 	Kraken
