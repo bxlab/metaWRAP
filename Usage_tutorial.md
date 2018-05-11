@@ -2,7 +2,7 @@
 
 Note: This pipeline is only a guide. None of metaWRAP's modules are dependant of each other, so if you want to do certain steps with another software, you are free to do so. For example, if you want to try the Reassemble_bins module on your own bins, you do not need to run the other modules just to get to that point. Or if you want to use a different assembler that metaSPAdes of MegaHit, you can do so, and then proceed to the rest of the pipeline with your own assembly.
 
-## Step 0: Download sample metagenomic data from the metaHIT gut survey (or use your own unzipped, demultiplex, paired-end Illumina reads). 
+## Step 0: Download sample metagenomic data from the metaHIT gut survey (or use your own unzipped, demultiplexed, paired-end Illumina reads). 
 
 Download data from 3 samples:
 ```
