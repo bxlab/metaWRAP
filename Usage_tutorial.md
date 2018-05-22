@@ -2,7 +2,7 @@
 
 Note: This pipeline is only a guide. None of metaWRAP's modules are dependant of each other, so if you want to do certain steps with another software, you are free to do so. For example, if you want to try the Reassemble_bins module on your own bins, you do not need to run the other modules just to get to that point. Or if you want to use a different assembler that metaSPAdes of MegaHit, you can do so, and then proceed to the rest of the pipeline with your own assembly.
 
-## Step 0: Download sample metagenomic data from the metaHIT gut survey (or use your own unzipped, demultiplex, paired-end Illumina reads). 
+## Step 0: Download sample metagenomic data from the metaHIT gut survey (or use your own unzipped, demultiplexed, paired-end Illumina reads). 
 
 Download data from 3 samples:
 ```
@@ -38,7 +38,7 @@ ERR011349_2.fastq
 
 
 ## Step 1: Run metaWRAP-Read_qc to trim the reads and remove human contamination
-Note: you will need the bmtagger hg38 index to remove the human reads - see the metaWRAP database installation instructions. Alternatively, use the --skip-bmtagger flag of of the ReadQC module to only do the read trimming.
+Note: you will need the bmtagger hg38 index to remove the human reads - see the metaWRAP database installation instructions. Alternatively, use the `--skip-bmtagger` flag of of the ReadQC module to only do the read trimming.
 
 Individually process each sample
 ```
@@ -93,7 +93,7 @@ Assemble the reads with the metaSPAdes option flag (usually prefered over MegaHI
 metawrap assembly -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -m 200 -t 96 --use-metaspades -o ASSEMBLY
 ```
 
-You will find the assembly file in ASSEMBLY/final_assembly.fasta, and the QUAST assembly report html in ASSEMBLY/assembly_report.html!
+You will find the assembly file in `ASSEMBLY/final_assembly.fasta`, and the QUAST assembly report html in `ASSEMBLY/assembly_report.html`!
 
 Assembly statistics:
 ![Assembly stats](https://i.imgur.com/RbDldGU.png)
@@ -129,7 +129,7 @@ ERR011347.kraken  ERR011348.kraken  ERR011349.kraken  final_assembly.kraken  kro
 ERR011347.krona   ERR011348.krona   ERR011349.krona   final_assembly.krona
 ```
 
-The .kraken files contain the KRAKEN-estimated taxonomy of each read or contig, while the .krona files summarize taxonomy statistics to be fed into KronaTools, which makes the kronagram.html file. The kronagram.html contains all the taxonomy information from all the samples and the co-assembly. Inspecting the kronas in a web browser will show you what the community composition is like.
+The .kraken files contain the KRAKEN-estimated taxonomy of each read or contig, while the `.krona` files summarize taxonomy statistics to be fed into KronaTools, which makes the kronagram.html file. The `kronagram.html` file contains all the taxonomy information from all the samples and the co-assembly. Inspecting the kronas in a web browser will show you what the community composition is like.
 
 For example, here is the taxonomic composition of our first sample:
 ![Krona](https://i.imgur.com/jZiFPUV.png)
@@ -151,7 +151,7 @@ In the output folder, we see folders with the 3 final bin sets, and a file conta
 ```
 insert_sizes.txt  concoct_bins	maxbin2_bins  metabat2_bins  work_files
 ```
-Looking inside these folders reveals that we found 47, 29, and 20 bins with concoct, metabat2, and maxbin2, respectively. But we do not know how good these bins are yet (inless you used the `--run-checkm` flag).
+Looking inside these folders reveals that we found 47, 29, and 20 bins with concoct, metabat2, and maxbin2, respectively. But we do not know how good these bins are yet (unless you used the `--run-checkm` flag). We will find out the quality of the bins in the next step!
 
 
 ## Step 5: Consolidate bin sets with the Bin_refinement module
@@ -159,9 +159,9 @@ Note: make sure you downloaded the CheckM database (see metaWRAP database instru
 
 Now what you have metabat2, maxbin2, and concoct bins, lets consolidate them into a single, stronger bin set! If you used your own binning software, feel free to use any 3 bin sets. If you have more than 3, you can run them in groups. For example if you have 5 bin sets, try consolidating 1+2+3 and 4+5, and then consolidate again between the outputs.
 
-When you do your refinement, make sure to put some thought into the minimum compleiton (-c) and maximum contamination (-x) parameters that you enter. During refinement, metaWRAP will have to chose the best version of each bin between 7 different versions of each bin. It will dynamically adjust to prioritize the bin quality that you desire. Consider this example: bin_123 comes in four versions in terms of completion/contamination: 95/15, 90/10, 80/5, 70/5. Which one is the best version? The high completion but high contamination, or the less complete but pure bin? This is subjective and depends on what you value in a bin and on what your purposes for bin extraction are. 
+When you do your refinement, make sure to put some thought into the minimum compleiton (-c) and maximum contamination (-x) parameters that you enter. During refinement, metaWRAP will have to chose the best version of each bin between 7 different versions of each bin. It will dynamically adjust to prioritize the bin quality that you desire. Consider this example: bin_123 comes in four versions in terms of completion/contamination: 95/15, 90/10, 80/5, 70/5. Which one is the best version? The high completion but high contamination, or the less complete but more pure bin? This is subjective and depends on what you value in a bin and on what your purposes for bin extraction are. 
 
-By default, the minimum completion if 70%, and maximum contamination is 5%. However, because of the relatively poor depth of these demonstration samples, we will set minimum completion to 50% and maximum contamination to 10%, but feel free to be much more picky. Parameters like -c 90 -x 5 are not unreasonable in some data (but you will get fewer bins, of course).
+By default, the minimum completion if 70%, and maximum contamination is 5%. However, because of the relatively poor depth of these demonstration samples, we will set minimum completion to 50% and maximum contamination to 10%, but feel free to be much more picky. Parameters like `-c 90 -x 5` are not unreasonable in some data (but you will get fewer bins, of course).
 
 Run metaWRAP's Bin_refinement module:
 ```
