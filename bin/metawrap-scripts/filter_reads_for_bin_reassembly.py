@@ -2,8 +2,8 @@
 #usage: 
 # bwa mem -a assembly.fa reads_1.fastq reads_2.fastq | ./filter_reads_for_bin_reassembly.py original_bin_folder reads_1.fastq reads_2.fastq output_dir
 import sys, os
+cache = 100
 
-print "Loading contigs in each bin into memory"
 # load bin contigs
 contig_bins={}
 for bin_file in os.listdir(sys.argv[1]):
@@ -18,7 +18,7 @@ for bin_file in os.listdir(sys.argv[1]):
 mapping={}
 
 
-print "Parsing sam file from bwa mem -a alignment. Warning: the IDs of all the reads mapped to the bins will be stored in memory (might take up quite a bit of RAM)"
+print "\nParsing sam file from bwa mem -a alignment. Warning: the IDs of all the reads mapped to the bins will be stored in memory (might take up quite a bit of RAM)"
 for line in sys.stdin:
         if "NM:i:" not in line: continue
 	read=line.split("\t")[0]
@@ -30,7 +30,7 @@ for line in sys.stdin:
 
 
 print "Going through forward and reverse reads and splitting them according to which bin they aligned to."
-print "\n\nParsing forward reads and splitting them into files..."
+print "\nParsing forward reads and splitting them into files..."
 ct=3
 line1=""
 line2=""
@@ -50,27 +50,34 @@ for line in open(sys.argv[2]):
 		line3=line
 		if read in mapping:
 			for bin_name in mapping[read][0]:
-				if bin_name+"_strict" not in opened_files:
-					print "Opening file "+sys.argv[4]+'/'+bin_name+".strict_1.fastq"
-					opened_files[bin_name+"_strict"] = open(sys.argv[4]+"/"+bin_name+".strict_1.fastq", 'w')
-				opened_files[bin_name+"_strict"].write(line0)
-				opened_files[bin_name+"_strict"].write(line1)
-				opened_files[bin_name+"_strict"].write(line2)
-				opened_files[bin_name+"_strict"].write(line3)
+				if bin_name+".strict" not in opened_files:
+					opened_files[bin_name+".strict"] = {"ct": 0, "string": ""}
+				opened_files[bin_name+".strict"]["string"]+=line0+line1+line2+line3
+				opened_files[bin_name+".strict"]["ct"]+=1
+				if opened_files[bin_name+".strict"]["ct"]==cache:
+					f = open(sys.argv[4]+"/"+bin_name+".strict_1.fastq", 'a')
+					f.write(opened_files[bin_name+".strict"]["string"])
+					f.close()
+					opened_files[bin_name+".strict"] = {"ct": 0, "string": ""}
 
 			for bin_name in mapping[read][1]:
-                                if bin_name+"permissive" not in opened_files:
-                                        print "Opening file "+sys.argv[4]+'/'+bin_name+".permissive_1.fastq"
-                                        opened_files[bin_name+"permissive"] = open(sys.argv[4]+"/"+bin_name+".permissive_1.fastq", 'w')
-                                opened_files[bin_name+"permissive"].write(line0)
-                                opened_files[bin_name+"permissive"].write(line1)
-                                opened_files[bin_name+"permissive"].write(line2)
-                                opened_files[bin_name+"permissive"].write(line3)
-print "Closing bin fastq files"
-for f in opened_files: opened_files[f].close()
+                                if bin_name+".permissive" not in opened_files:
+                                        opened_files[bin_name+".permissive"] = {"ct": 0, "string": ""}
+                                opened_files[bin_name+".permissive"]["string"]+=line0+line1+line2+line3
+				opened_files[bin_name+".permissive"]["ct"]+=1
+				if opened_files[bin_name+".permissive"]["ct"]==cache:
+					f = open(sys.argv[4]+"/"+bin_name+".permissive_1.fastq", 'a')
+					f.write(opened_files[bin_name+".permissive"]["string"])
+					f.close()
+					opened_files[bin_name+".permissive"] = {"ct": 0, "string": ""}
+
+for bin_name in opened_files:
+	f = open(sys.argv[4]+"/"+bin_name+"_1.fastq", 'a')
+	f.write(opened_files[bin_name]["string"])
+	f.close()
 
 
-print "\n\nParsing reverse reads and splitting them into files..."
+print "\nParsing reverse reads and splitting them into files..."
 ct=3
 line1=""
 line2=""
@@ -89,26 +96,31 @@ for line in open(sys.argv[3]):
         elif ct==3:
                 line3=line
                 if read in mapping:
-                        for bin_name in mapping[read][0]:
-                                if bin_name+"_strict" not in opened_files:
-                                        print "Opening file "+sys.argv[4]+'/'+bin_name+".strict_2.fastq"
-                                        opened_files[bin_name+"_strict"] = open(sys.argv[4]+"/"+bin_name+".strict_2.fastq", 'w')
-                                opened_files[bin_name+"_strict"].write(line0)
-                                opened_files[bin_name+"_strict"].write(line1)
-                                opened_files[bin_name+"_strict"].write(line2)
-                                opened_files[bin_name+"_strict"].write(line3)
+	        	for bin_name in mapping[read][0]:
+                                if bin_name+".strict" not in opened_files:
+                                        opened_files[bin_name+".strict"] = {"ct": 0, "string": ""}
+                                opened_files[bin_name+".strict"]["string"]+=line0+line1+line2+line3
+                                opened_files[bin_name+".strict"]["ct"]+=1
+                                if opened_files[bin_name+".strict"]["ct"]==cache:
+                                        f = open(sys.argv[4]+"/"+bin_name+".strict_2.fastq", 'a')
+                                        f.write(opened_files[bin_name+".strict"]["string"])
+                                        f.close()
+                                        opened_files[bin_name+".strict"] = {"ct": 0, "string": ""}
 
                         for bin_name in mapping[read][1]:
-                                if bin_name+"permissive" not in opened_files:
-                                        print "Opening file "+sys.argv[4]+'/'+bin_name+".permissive_2.fastq"
-                                        opened_files[bin_name+"permissive"] = open(sys.argv[4]+"/"+bin_name+".permissive_2.fastq", 'w')
-                                opened_files[bin_name+"permissive"].write(line0)
-                                opened_files[bin_name+"permissive"].write(line1)
-                                opened_files[bin_name+"permissive"].write(line2)
-                                opened_files[bin_name+"permissive"].write(line3)
+                                if bin_name+".permissive" not in opened_files:
+                                        opened_files[bin_name+".permissive"] = {"ct": 0, "string": ""}
+                                opened_files[bin_name+".permissive"]["string"]+=line0+line1+line2+line3
+                                opened_files[bin_name+".permissive"]["ct"]+=1
+                                if opened_files[bin_name+".permissive"]["ct"]==cache:
+                                        f = open(sys.argv[4]+"/"+bin_name+".permissive_2.fastq", 'a')
+                                        f.write(opened_files[bin_name+".permissive"]["string"])
+                                        f.close()
+                                        opened_files[bin_name+".permissive"] = {"ct": 0, "string": ""}
 
-print "Closing bin fastq files"
-for f in opened_files: 
-	print "closing " + f
-	opened_files[f].close()
+for bin_name in opened_files:
+        f = open(sys.argv[4]+"/"+bin_name+"_2.fastq", 'a')
+        f.write(opened_files[bin_name]["string"])
+        f.close()
 
+print "\nFinished splitting reads\n"
