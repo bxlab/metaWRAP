@@ -124,3 +124,5 @@ for bin_name in opened_files:
         f.close()
 
 print "\nFinished splitting reads\n"
+quit()
+
