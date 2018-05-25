@@ -24,6 +24,7 @@ metaWRAP v=0.9 (In development)
 		removed percent confidance values for each classification
 	Reassemble_bins
 		added --parallel option to allow choice of run mode
+		split up the read alignment and read splitting steps
 		signifficantly sped up the read-splitting function and prevented freezes
 		fixed --parallel option bug
 
