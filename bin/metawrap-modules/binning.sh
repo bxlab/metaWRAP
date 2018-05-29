@@ -264,19 +264,22 @@ if [ $maxbin2 = true ]; then
 		fi
 	done
 
-	# manually setting perl5 library directory:
-        conda_path=$(which metawrap)
-	echo "metawrap path: $conda_path"
-	conda_path=${conda_path%/*}
-	if [ $(echo -n $conda_path | tail -c 1) = "/" ]; then conda_path=${conda_path%/*}; fi
-	conda_path=${conda_path%/*}
-	if [ ! -d ${conda_path}/lib/perl5/site_perl/5.22.0 ]; then 
-		error "${conda_path}/lib/perl5/site_perl/5.22.0 does not exixt. Cannot set manual path to perl5 libraries. Exiting..."
+	run_MaxBin.pl
+	if [[ $? -ne 0 ]]; then
+		comm "looks like our default perl libraries are not the conda ones. Manually setting perl5 library directory"
+        	conda_path=$(which metawrap)
+		echo "metawrap path: $conda_path"
+		conda_path=${conda_path%/*}
+		if [ $(echo -n $conda_path | tail -c 1) = "/" ]; then conda_path=${conda_path%/*}; fi
+		conda_path=${conda_path%/*}
+		if [ ! -d ${conda_path}/lib/perl5/site_perl/5.22.0 ]; then 
+			error "${conda_path}/lib/perl5/site_perl/5.22.0 does not exixt. Cannot set manual path to perl5 libraries. Exiting..."
+		fi
+	
+	        perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
+	        echo "Will use perl5 libraries located in $perl_libs - hopefully they are there..."
+		export PERL5LIB="$perl_libs"
 	fi
-
-        perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
-        echo "Will use perl5 libraries located in $perl_libs - hopefully they are there..."
-	export PERL5LIB="$perl_libs"
 
 	
 	comm "Starting binning with MaxBin2..."
