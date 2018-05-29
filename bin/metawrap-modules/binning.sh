@@ -39,10 +39,10 @@ warning () { ${SOFT}/print_comment.py "$1" "*"; }
 announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 run_checkm () {
 	comm "Running CheckM on ${1} bins"
-	mkdir ${i}.tmp
-	checkm lineage_wf -x fa ${1} ${1}.checkm -t $threads --tmpdir ${i}.tmp
+	mkdir ${1}.tmp
+	checkm lineage_wf -x fa ${1} ${1}.checkm -t $threads --tmpdir ${1}.tmp
 	if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
-	rm -r ${i}.tmp
+	rm -r ${1}.tmp
 	${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv ${1##*/}\
 	| (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > ${1}.stats
 	if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
