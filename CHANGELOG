@@ -6,6 +6,7 @@ metaWRAP v=0.9 (In development)
 		fixed bug with plotting refinement iterations
 		delete bins that have a size 0 after dereplication
 		fixed shebang in summarize_checkm.py
+		allowed pplacer to use multiple threads, drastically speeding up the module
 	Binning
 		added metabat1 binning option
 		fixed checkm tmp directory handling when using the --run-checkm option
@@ -24,10 +25,9 @@ metaWRAP v=0.9 (In development)
 	Classify_bins
 		removed percent confidance values for each classification
 	Reassemble_bins
-		added --parallel option to allow choice of run mode
 		split up the read alignment and read splitting steps
 		signifficantly sped up the read-splitting function and prevented freezes
-		fixed --parallel option bug
+		added and fixed --parallel option bug
 
 
 metaWRAP v=0.8 (March 2018)

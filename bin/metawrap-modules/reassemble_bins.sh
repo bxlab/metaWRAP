@@ -139,15 +139,13 @@ if [[ $? -ne 0 ]]; then error "BWA failed to index $i"; fi
 if [ -d ${out}/reads_for_reassembly ]; then rm -r ${out}/reads_for_reassembly; fi
 mkdir ${out}/reads_for_reassembly
 
-comm "Aligning all reads back to entire assembly"
-bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads > ${out}/binned_assembly/assembly.alignments.sam
-if [[ $? -ne 0 ]]; then error "Something went wrong with aligning reads to the assembly with bwa"; fi
+comm "Aligning all reads back to entire assembly and splitting reads into individual fastq files based on their bin membership"
+bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads > ${out}/binned_assembly/alignment.sam
 
-comm "Splitting reads into individual fastq files based on their bin membership"
-cat ${out}/binned_assembly/assembly.alignments.sam | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins $f_reads $r_reads ${out}/reads_for_reassembly
+cat ${out}/binned_assembly/alignment.sam | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly
+
 if [[ $? -ne 0 ]]; then error "Something went wrong with pulling out reads for reassembly..."; fi
-rm ${out}/binned_assembly/assembly.alignments.sam
-
+#rm ${out}/binned_assembly/alignment.sam
 
 ########################################################################################################
 ########################             REASSEMBLING BINS WITH SPADES              ########################

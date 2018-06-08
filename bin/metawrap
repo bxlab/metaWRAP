@@ -2,7 +2,7 @@
 #SBATCH
 #SBATCH --job-name=metaWRAP
 #SBATCH --partition=lrgmem
-#SBATCH --time=80:0:0
+#SBATCH --time=48:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=48
 #SBATCH --cpus-per-task=1
@@ -49,53 +49,53 @@ comm "MetaWRAP script found in $(which metawrap) and config-metawrap file was fo
 # setting scripts, pipelines, and databases locations from config file (should be in same folder as main script)
 
 if [ "$1" = assembly ]; then
-	echo metawrap ${PIPES}/assembly ${@:2}
+	echo metawrap assembly ${@:2}
 	time ${PIPES}/assembly.sh ${@:2}
 	exit 0
 elif [ "$1" = phylosift ]; then
-        #echo ${PIPES}/phylosift.sh ${@:2}
+        #echo phylosift.sh ${@:2}
         #${PIPES}/phylosift.sh ${@:2}
 	echo "The PHYLOSIFT module of metaWRAP is disabled in this version of metaWRAP"
         exit 0
 elif [ "$1" = read_qc ]; then
-	echo metawrap ${PIPES}/read_qc ${@:2}
+	echo metawrap read_qc ${@:2}
 	time ${PIPES}/read_qc.sh ${@:2}
 	exit 0
 elif [ "$1" = binning ]; then
-        echo metawrap ${PIPES}/binning ${@:2}
+        echo metawrap binning ${@:2}
         time ${PIPES}/binning.sh ${@:2}
 	exit 0
 elif [ "$1" = blobology ]; then
-        echo metawrap ${PIPES}/blobology ${@:2}
+        echo metawrap blobology ${@:2}
 	time ${PIPES}/blobology.sh ${@:2}
         exit 0
 elif [ "$1" = kraken ]; then
-        echo metawrap ${PIPES}/kraken ${@:2}
+        echo metawrap kraken ${@:2}
 	time ${PIPES}/kraken.sh ${@:2}
         exit 0
 elif [ "$1" = all ]; then
-	#echo ${PIPES}/all.sh ${@:2}
+	#echo all.sh ${@:2}
         #${PIPES}/all.sh ${@:2}
 	echo "ALL module of metaWRAP is disabled in this version of metaWRAP"
 	exit 0
 elif [ "$1" = bin_refinement ]; then
-        echo metawrap ${PIPES}/bin_refinement ${@:2}
+        echo metawrap bin_refinement ${@:2}
         time ${PIPES}/bin_refinement.sh ${@:2}
         exit 0
 elif [ "$1" = reassemble_bins ]; then
-	echo metawrap ${PIPES}/reassemble_bins ${@:2}
+	echo metawrap reassemble_bins ${@:2}
 	time ${PIPES}/reassemble_bins.sh ${@:2}
 	exit 0
 elif [ "$1" = quant_bins ]; then 
-	echo metawrap ${PIPES}/quant_bins ${@:2}
+	echo metawrap quant_bins ${@:2}
 	time ${PIPES}/quant_bins.sh ${@:2}
 	exit 0
 elif [ "$1" = classify_bins ]; then
-	echo metawrap ${PIPES}/classify_bins ${@:2}
+	echo metawrap classify_bins ${@:2}
 	time ${PIPES}/classify_bins.sh ${@:2}
 	exit 0
 elif [ "$1" = annotate_bins ]; then
-        echo metawrap ${PIPES}/annotate_bins ${@:2}
+        echo metawrap annotate_bins ${@:2}
         time ${PIPES}/annotate_bins.sh ${@:2}
         exit 0
 elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -103,7 +103,7 @@ elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
         echo ""
-	echo "metaWRAP v=0.8.8"
+	echo "metaWRAP v=0.8.9"
 	echo ""
         exit 0
 else

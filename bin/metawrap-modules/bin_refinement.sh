@@ -27,6 +27,8 @@ help_message () {
 	echo ""
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
+	echo "	-m INT		memory available (default=4)"
+	echo ""
 	echo "	-A STR		folder with metagenomic bins"
 	echo "	-B STR		another folder with metagenomic bins"
 	echo "	-C STR		another folder with metagenomic bins" 
@@ -50,7 +52,7 @@ announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 run_checkm () {
 	if [[ -d ${1}.checkm ]]; then rm -r ${1}.checkm; fi
         comm "Running CheckM on $1 bins"
-        checkm lineage_wf -x fa $1 ${1}.checkm -t $threads
+        checkm lineage_wf -x fa $1 ${1}.checkm -t $threads --pplacer_threads $p_threads
         if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
         comm "Finalizing CheckM stats and plots..."
         ${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > ${1}.stats
@@ -77,13 +79,13 @@ config_file=$(which config-metawrap)
 source $config_file
 
 # default params
-threads=1; out="false"; comp=70; cont=10; x=10; c=70; 
+threads=1; mem=4; out="false"; comp=70; cont=10; x=10; c=70; 
 bins1=None; bins2=None; bins3=None
 # long options defaults
 run_checkm=true; refine=true; cherry_pick=true; dereplicate=partial
 
 # load in params
-OPTS=`getopt -o ht:o:x:c:A:B:C: --long help,skip-checkm,skip-refinement,skip-consolidation,keep-ambiguous,remove-ambiguous -- "$@"`
+OPTS=`getopt -o ht:m:o:x:c:A:B:C: --long help,skip-checkm,skip-refinement,skip-consolidation,keep-ambiguous,remove-ambiguous -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -91,6 +93,7 @@ if [ $? -ne 0 ]; then help_message; exit 1; fi
 while true; do
         case "$1" in
                 -t) threads=$2; shift 2;;
+		-m) mem=$2; shift 2;;
                 -o) out=$2; shift 2;;
 		-x) cont=$2; shift 2;;
 		-c) comp=$2; shift 2;;
@@ -123,6 +126,15 @@ if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure config.sh is in the same filder as the mains scripts and all the paths in the config.sh file are correct"
 fi
 
+# determine --pplacer_threads count. It is either the max thread count or RAM/4, whichever is higher
+ram_max=$(($mem / 4))
+if (( $ram_max > $threads )); then
+	p_threads=$ram_max
+else
+	p_threads=$threads
+fi
+
+echo "will use $p_threads threads for pplacer due to RAM restrictions..."
 
 ########################################################################################################
 ########################               BEGIN REFINEMENT PIPELINE!               ########################
@@ -234,7 +246,7 @@ if [ "$run_checkm" == "true" ]; then
 	for bin_set in $(ls | grep -v tmp); do 
 		comm "Running CheckM on $bin_set bins"
 		mkdir ${bin_set}.tmp
-		checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp
+		checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads
 		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 		${SOFT}/summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
 		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
@@ -323,7 +335,7 @@ announcement "FINALIZING THE REFINED BINS"
 if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
 	comm "Re-running CheckM on binsO bins"
 	mkdir binsO.tmp
-	checkm lineage_wf -x fa binsO binsO.checkm -t $threads --tmpdir binsO.tmp
+	checkm lineage_wf -x fa binsO binsO.checkm -t $threads --tmpdir binsO.tmp --pplacer_threads $p_threads
 	if [[ ! -s binsO.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r binsO.tmp
 	${SOFT}/summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv manual binsM.stats | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats
