@@ -24,10 +24,13 @@ metaWRAP v=0.9 (In development)
 		added diagnostic info for perl libraries
 	Classify_bins
 		removed percent confidance values for each classification
+	Assembly
+		use metaSPAdes v3.12.0
 	Reassemble_bins
 		split up the read alignment and read splitting steps
 		signifficantly sped up the read-splitting function and prevented freezes
 		added and fixed --parallel option bug
+		use SPAdes v3.12.0
 
 
 metaWRAP v=0.8 (March 2018)

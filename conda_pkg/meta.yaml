@@ -55,7 +55,7 @@ requirements:
     - scikit-learn
     - scipy
     - seaborn 0.8.1
-    - spades 3.11.1
+    - spades 3.12.0
     - srprism 2.4.24
     - subprocess32 3.2.7
     - taxator-tk 1.3.3e
