@@ -134,7 +134,7 @@ else
 	p_threads=$threads
 fi
 
-echo "will use $p_threads threads for pplacer due to RAM restrictions..."
+comm "There is $mem RAM and $threads available, and each pplacer thread uses ~4GB, so I will allocate $p_threads threads for pplacer"
 
 ########################################################################################################
 ########################               BEGIN REFINEMENT PIPELINE!               ########################
