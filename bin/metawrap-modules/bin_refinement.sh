@@ -134,7 +134,7 @@ else
 	p_threads=$threads
 fi
 
-comm "There is $mem RAM and $threads available, and each pplacer thread uses ~4GB, so I will allocate $p_threads threads for pplacer"
+comm "There is $mem RAM and $threads threads available, and each pplacer thread uses ~4GB, so I will use $p_threads threads for pplacer"
 
 ########################################################################################################
 ########################               BEGIN REFINEMENT PIPELINE!               ########################
@@ -145,8 +145,8 @@ if [ ! -d $out ]; then
         mkdir $out
 	if [ ! -d $out ]; then error "cannot make $out"; fi
 else
-        echo "Warning: $out already exists. Cleaning..."
-	rm -r ${out}/*
+        warning "Warning: $out already exists. It is HIGHLY recommended that you clear this directory to prevent any conflicts... Attempting to clean"
+	#rm -r ${out}/*
 fi
 
 n_binnings=0

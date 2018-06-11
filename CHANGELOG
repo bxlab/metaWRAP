@@ -7,12 +7,14 @@ metaWRAP v=0.9 (In development)
 		delete bins that have a size 0 after dereplication
 		fixed shebang in summarize_checkm.py
 		allowed pplacer to use multiple threads, drastically speeding up the module
+		module no longer clears output DIR before starting. safer this way
 	Binning
 		added metabat1 binning option
 		fixed checkm tmp directory handling when using the --run-checkm option
 		fixed perl5 library handling when running maxbin2
 		added diagnostic info for perl libraries
 		added use of MaxBin v2.2.5 - this fixes some issues with newer gcc
+		checkm now uses pplacer multi-threading
 	Blobology
 		added figure output folders for easier viewing
 	Kraken
@@ -27,10 +29,12 @@ metaWRAP v=0.9 (In development)
 	Assembly
 		use metaSPAdes v3.12.0
 	Reassemble_bins
-		split up the read alignment and read splitting steps
+		read alignemnt and splitting is now  done simultaneously, and no longer requires a lot of RAM
 		signifficantly sped up the read-splitting function and prevented freezes
 		added and fixed --parallel option bug
 		use SPAdes v3.12.0
+		checkm now uses multi-threading for pplacer
+		the user can now change the strict/permissive read mapping SNP cut off parameters
 
 
 metaWRAP v=0.8 (March 2018)

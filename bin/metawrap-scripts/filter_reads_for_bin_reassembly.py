@@ -2,7 +2,15 @@
 #usage: 
 # bwa mem -a assembly.fa reads_1.fastq reads_2.fastq | ./filter_reads_for_bin_reassembly.py original_bin_folder reads_1.fastq reads_2.fastq output_dir
 import sys, os
-cache = 100
+strict_snp_cutoff = int(sys.argv[3])
+permissive_snp_cutoff = int(sys.argv[4])
+
+complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a':'t', 't':'a', 'c':'g', 'g':'c', 'N':'N', 'n':'n'} 
+def rev_comp(seq):
+	rev_comp=""
+	for n in seq:
+		rev_comp+=complement[n]
+	return rev_comp[::-1]
 
 # load bin contigs
 print "loading contig to bin mappings..."
@@ -20,17 +28,17 @@ for bin_file in os.listdir(sys.argv[1]):
 print "Parsing sam file and writing reads to appropriate files depending what bin they alligned to..."
 files={}
 opened_bins={}
-read_type="F"
 for line in sys.stdin:
 	if line[0]=="@": continue
-	if read_type=="F":
-		read_type="R"
+	cut = line.strip().split("\t")
+	binary_flag = bin(int(cut[1]))
+
+	if binary_flag[-7]=="1":
 		F_line=line
 		continue
-	else:
-		read_type="F"
+	elif binary_flag[-8]=="1":
 		R_line=line
-	
+
 	# get fields for forward and reverse reads	
 	F_cut = F_line.strip().split("\t")
 	R_cut = R_line.strip().split("\t")
@@ -73,16 +81,29 @@ for line in sys.stdin:
 		if field.startswith("NM:i:"):
 			cumulative_mismatches += int(field.split(":")[-1])
 			break
-	
+
+	# determine alignment type from bitwise FLAG
+	F_binary_flag = bin(int(F_cut[1]))
+	R_binary_flag = bin(int(R_cut[1]))
+
+
+	# if the reads are reversed, fix them
+	if F_binary_flag[-5]=='1':
+		F_cut[9] = rev_comp(F_cut[9])
+		F_cut[10] = F_cut[10][::-1]
+	if R_binary_flag[-5]=='1':
+		R_cut[9] = rev_comp(R_cut[9])
+		R_cut[10] = R_cut[10][::-1]
+
 	# strict assembly
-	if cumulative_mismatches<2:
+	if cumulative_mismatches<strict_snp_cutoff:
 		files[sys.argv[2]+"/"+bin_name+".strict_1.fastq"].write('@' + F_cut[0] + "/1" + "\n" + F_cut[9] + "\n+\n" + F_cut[10] + "\n")
-		files[sys.argv[2]+"/"+bin_name+".strict_2.fastq"].write('@' + R_cut[0] + "/1" + "\n" + R_cut[9] + "\n+\n" + R_cut[10] + "\n")
+		files[sys.argv[2]+"/"+bin_name+".strict_2.fastq"].write('@' + R_cut[0] + "/2" + "\n" + R_cut[9] + "\n+\n" + R_cut[10] + "\n")
 
 	# permissive assembly
-	if cumulative_mismatches<4:
+	if cumulative_mismatches<permissive_snp_cutoff:
 		files[sys.argv[2]+"/"+bin_name+".permissive_1.fastq"].write('@' + F_cut[0] + "/1" + "\n" + F_cut[9] + "\n+\n" + F_cut[10] + "\n")
-		files[sys.argv[2]+"/"+bin_name+".permissive_2.fastq"].write('@' + F_cut[0] + "/1" + "\n" + F_cut[9] + "\n+\n" + F_cut[10] + "\n")
+		files[sys.argv[2]+"/"+bin_name+".permissive_2.fastq"].write('@' + R_cut[0] + "/2" + "\n" + R_cut[9] + "\n+\n" + R_cut[10] + "\n")
 
 
 print "closing files"
@@ -91,3 +112,5 @@ for f in files:
 
 
 print "Finished splitting reads!"
+
+

@@ -25,6 +25,7 @@ help_message () {
 	echo "	-a STR          metagenomic assembly file"
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
+	echo "	-m INT		amount of RAM available (default=4)"
 	echo ""
         echo "	--metabat2      bin contigs with metaBAT2"
 	echo "	--metabat1	bin contigs with the original metaBAT"
@@ -39,8 +40,18 @@ warning () { ${SOFT}/print_comment.py "$1" "*"; }
 announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 run_checkm () {
 	comm "Running CheckM on ${1} bins"
+
+	# determine --pplacer_threads count. It is either the max thread count or RAM/4, whichever is higher
+	ram_max=$(($mem / 4))
+	if (( $ram_max < $threads )); then
+		p_threads=$ram_max
+	else
+		p_threads=$threads
+	fi
+	comm "There is $mem RAM and $threads threads available, and each pplacer thread uses ~4GB, so I will use $p_threads threads for pplacer"
+
 	mkdir ${1}.tmp
-	checkm lineage_wf -x fa ${1} ${1}.checkm -t $threads --tmpdir ${1}.tmp
+	checkm lineage_wf -x fa ${1} ${1}.checkm -t $threads --tmpdir ${1}.tmp --pplacer_threads $p_threads
 	if [[ ! -s ${1}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r ${1}.tmp
 	${SOFT}/summarize_checkm.py ${1}.checkm/storage/bin_stats_ext.tsv ${1##*/}\
@@ -61,12 +72,12 @@ config_file=$(which config-metawrap)
 source $config_file
 
 # default params
-threads=1; out=false; ASSEMBLY=false
+threads=1; mem=4; out=false; ASSEMBLY=false
 # long options defaults
 metabat1=false; metabat2=false; maxbin2=false; concoct=false; checkm=false
 
 # load in params
-OPTS=`getopt -o ht:o:a: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm -- "$@"`
+OPTS=`getopt -o ht:m:o:a: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -74,6 +85,7 @@ if [ $? -ne 0 ]; then help_message; exit 1; fi
 while true; do
         case "$1" in
                 -t) threads=$2; shift 2;;
+		-m) mem=$2; shift 2;;
                 -o) out=$2; shift 2;;
                 -a) ASSEMBLY=$2; shift 2;;
                 -h | --help) help_message; exit 1; shift 1;;
