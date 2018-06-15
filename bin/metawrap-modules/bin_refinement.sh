@@ -405,6 +405,12 @@ if [ "$run_checkm" == "true" ]; then
         ${SOFT}/plot_binning_results.py $comp $cont $(ls | grep ".stats")
 	mv binning_results.eps figures/binning_results.eps
 	mv binning_results.png figures/binning_results.png
+	
+	comm "making contig membership files (for Anvio and other applications)"
+	for dir in *_bins; do
+		echo "summarizing $dir ..."
+		for i in ${dir}/*.fa; do f=${i##*/}; for c in $(cat $i | grep ">"); do echo -e "${c##*>}\t${f%.*}"; done; done > ${dir}.contigs
+	done
 fi
 
 cd $home

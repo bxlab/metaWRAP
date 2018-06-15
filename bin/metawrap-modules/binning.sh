@@ -179,8 +179,6 @@ cp $ASSEMBLY ${out}/work_files/assembly.fa
 tmp=${ASSEMBLY##*/}
 sample=${tmp%.*}
 
-
-
 # Index the assembly
 comm "Indexing assembly file"
 bwa index ${out}/work_files/assembly.fa
@@ -192,6 +190,7 @@ fi
 
 # If there are several pairs of reads passed, they are processed sepperately
 for num in "$@"; do
+	# paired end reads
 	if [ $single_end = false ]; then
 		if [[ $num == *"_1.fastq"* ]]; then 
 			reads_1=$num
@@ -218,6 +217,8 @@ for num in "$@"; do
 		fi
 	fi
 
+
+	# single end reads
 	if [ $single_end = true ]; then
 		if [[ $num == *".fastq"* ]]; then
 			reads=$num
@@ -260,7 +261,6 @@ if [ $metabat2 = true ]; then
 fi
 
 
-
 if [ $metabat1 = true ]; then
         ########################################################################################################
         ########################                   RUNNING METABAT1                     ########################
@@ -271,24 +271,7 @@ if [ $metabat1 = true ]; then
         jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/metabat_depth.txt ${out}/work_files/*.bam
         if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
 
-        comm "Starting binning with metaBAT2..."
-        metabat1 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
-         -o ${out}/metabat1_bins/bin -m 1500 -t $threads --unbinned --superspecific
-        if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT1. Exiting"; fi
-
-
-
-if [ $metabat1 = true ]; then
-        ########################################################################################################
-        ########################                   RUNNING METABAT1                     ########################
-        ########################################################################################################
-        announcement "RUNNING METABAT1"
-
-        comm "making contig depth file..."
-        jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/metabat_depth.txt ${out}/work_files/*.bam
-        if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
-
-        comm "Starting binning with metaBAT2..."
+        comm "Starting binning with metaBAT1..."
         metabat1 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
          -o ${out}/metabat1_bins/bin -m 1500 -t $threads --unbinned --superspecific
         if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT1. Exiting"; fi
@@ -356,7 +339,23 @@ if [ $maxbin2 = true ]; then
 	if [[ $? -ne 0 ]]; then error "Something went wrong with running MaxBin2. Exiting."; fi
 	if [[ $(ls ${out}/work_files/maxbin2_out/ | grep bin | grep .fasta | wc -l) -lt 1 ]]; then error "MaxBin2 did not pruduce a single bin. Something went wrong. Exiting."; fi
 
-        ########################################################################################################
+	mkdir ${out}/maxbin2_bins
+	N=0
+	for i in $(ls ${out}/work_files/maxbin2_out/ | grep bin | grep .fasta); do
+		cp ${out}/work_files/maxbin2_out/$i ${out}/maxbin2_bins/bin.${N}.fa
+		N=$((N + 1))
+	done
+	comm "MaxBin2 finished successfully, and found $(ls -l ${out}/maxbin2_bins | grep .fa | wc -l) bins!"
+
+	if [ $checkm = true ]; then
+		run_checkm ${out}/maxbin2_bins
+	fi
+fi
+
+if [ $concoct = true ]; then
+	########################################################################################################
+	########################                    RUNNING CONCOCT                     ########################
+	########################################################################################################
         announcement "RUNNING CONCOCT"
 
         comm "making contig depth file..."
@@ -390,6 +389,7 @@ if [ $maxbin2 = true ]; then
 	fi
 fi
 
+comm "cleaning up *.bam to save space..."
 rm ${out}/work_files/*bam
 
 ########################################################################################################
