@@ -136,7 +136,7 @@ for i in $(ls ${out}/original_bins); do cat ${out}/original_bins/$i >> ${out}/bi
 ########################        RECRUITING READS TO BINS FOR REASSEMBLY         ########################
 ########################################################################################################
 announcement "RECRUITING READS TO BINS FOR REASSEMBLY"
-
+if false; then
 comm "Indexing the assembly"
 bwa index ${out}/binned_assembly/assembly.fa
 if [[ $? -ne 0 ]]; then error "BWA failed to index $i"; fi
@@ -148,7 +148,7 @@ comm "Aligning all reads back to entire assembly and splitting reads into indivi
 bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads \
  | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly $strict_max $permissive_max
 if [[ $? -ne 0 ]]; then error "Something went wrong with pulling out reads for reassembly..."; fi
-
+fi
 
 ########################################################################################################
 ########################             REASSEMBLING BINS WITH SPADES              ########################
@@ -158,20 +158,24 @@ mkdir ${out}/reassemblies
 
 assemble () {
 	bin_name=${1%_*}
-	tmp_dir=${out}/reassemblies/${bin_name}.tmp
-	mkdir $tmp_dir
-	comm "NOW REASSEMBLING ${bin_name}"
-	spades.py -t $2 -m $mem --tmp $tmp_dir --careful \
-	--untrusted-contigs ${out}/original_bins/${bin_name%.*}.fa \
-	-1 ${out}/reads_for_reassembly/${1%_*}_1.fastq \
-	-2 ${out}/reads_for_reassembly/${1%_*}_2.fastq \
-	-o ${out}/reassemblies/${bin_name}
-	
-	if [[ ! -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]]; then
-                warning "Something went wrong with reassembling ${bin_name}"
-	else 
-		comm "${bin_name} was reassembled successfully!"
-		rm -r $tmp_dir
+	if i[[ -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]]; then
+		comm "Looks like $bin_name was already re-assembled. Skipping..."
+	else
+		tmp_dir=${out}/reassemblies/${bin_name}.tmp
+		mkdir $tmp_dir
+		comm "NOW REASSEMBLING ${bin_name}"
+		spades.py -t $2 -m $mem --tmp $tmp_dir --careful \
+		--untrusted-contigs ${out}/original_bins/${bin_name%.*}.fa \
+		-1 ${out}/reads_for_reassembly/${1%_*}_1.fastq \
+		-2 ${out}/reads_for_reassembly/${1%_*}_2.fastq \
+		-o ${out}/reassemblies/${bin_name}
+		
+		if [[ ! -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]]; then
+	                warning "Something went wrong with reassembling ${bin_name}"
+		else 
+			comm "${bin_name} was reassembled successfully!"
+			rm -r $tmp_dir
+		fi
 	fi
 }
 

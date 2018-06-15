@@ -2,7 +2,7 @@
 #SBATCH
 #SBATCH --job-name=metaWRAP
 #SBATCH --partition=lrgmem
-#SBATCH --time=48:0:0
+#SBATCH --time=72:0:0
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=48
 #SBATCH --cpus-per-task=1
@@ -103,7 +103,7 @@ elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
         echo ""
-	echo "metaWRAP v=0.8.9"
+	echo "metaWRAP v=0.9"
 	echo ""
         exit 0
 else

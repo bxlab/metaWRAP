@@ -32,6 +32,7 @@ help_message () {
 	echo "	--maxbin2	bin contigs with MaxBin2"
 	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
 	echo "	--run-checkm	immediately run CheckM on the bin results"
+	echo "	--single-end	non-paired reads mode (provide *.fastq files)"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
@@ -74,10 +75,11 @@ source $config_file
 # default params
 threads=1; mem=4; out=false; ASSEMBLY=false
 # long options defaults
-metabat1=false; metabat2=false; maxbin2=false; concoct=false; checkm=false
+metabat1=false; metabat2=false; maxbin2=false; concoct=false
+checkm=false; single_end=false
 
 # load in params
-OPTS=`getopt -o ht:m:o:a: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm -- "$@"`
+OPTS=`getopt -o ht:m:o:a: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm,single-end -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -94,11 +96,11 @@ while true; do
 		--maxbin2) maxbin2=true; shift 1;;
 		--concoct) concoct=true; shift 1;;
 		--run-checkm) checkm=true; shift 1;;
+		--single-end) single_end=true; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
 done
-
 
 ########################################################################################################
 ########################           MAKING SURE EVERYTHING IS SET UP             ########################
@@ -113,24 +115,37 @@ fi
 #check if the assembly file exists
 if [ ! -s $ASSEMBLY ]; then error "$ASSEMBLY does not exist. Exiting..."; fi
 
-# check for at least one pair of read fastq files:
-F="no"; R="no"
-for num in "$@"; do
-	if [[ $num == *"_1.fastq" ]]; then F="yes"; fi
-	if [[ $num == *"_2.fastq" ]]; then R="yes"; fi
-done
-if [ $F = "no" ] || [ $R = "no" ]; then
-	comm "Unable to find proper fastq read pair in the format *_1.fastq and *_2.fastq"
-	help_message; exit 1
+if [ $single_end = false ]; then
+	# check for at least one pair of read fastq files:
+	F="no"; R="no"
+	for num in "$@"; do
+		if [[ $num == *"_1.fastq" ]]; then F="yes"; fi
+		if [[ $num == *"_2.fastq" ]]; then R="yes"; fi
+	done
+	if [ $F = "no" ] || [ $R = "no" ]; then
+		comm "Unable to find proper fastq read pair in the format *_1.fastq and *_2.fastq"
+		help_message; exit 1
+	fi
+else
+	# check for at least one fastq read
+	F="no"
+	for num in "$@"; do
+		if [[ $num == *".fastq" ]]; then F="yes"; fi
+	done
+	if [ $F = "no" ]; then
+		comm "Unable to find read files in format *.fastq (for single-end reads)"
+		help_message; exit 1
+	fi
 fi
 
-#determine number of fastq read files provided:
-num_of_F_read_files=$(for I in "$@"; do echo $I | grep _1.fastq; done | wc -l)
-num_of_R_read_files=$(for I in "$@"; do echo $I | grep _2.fastq; done | wc -l)
+if [ $single_end = false ]; then
+	#determine number of fastq read files provided:
+	num_of_F_read_files=$(for I in "$@"; do echo $I | grep _1.fastq; done | wc -l)
+	num_of_R_read_files=$(for I in "$@"; do echo $I | grep _2.fastq; done | wc -l)
 
-comm "$num_of_F_read_files forward and $num_of_R_read_files reverse read files detected"
-if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F and R reads must be the same!"; fi
-
+	comm "$num_of_F_read_files forward and $num_of_R_read_files reverse read files detected"
+	if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F and R reads must be the same!"; fi
+fi
 
 # Make sure at least one binning method was chosen
 if [ $metabat2 = false ] && [ $metabat1 = false ] &&[ $maxbin2 = false ] && [ $concoct = false ]; then
@@ -171,35 +186,56 @@ comm "Indexing assembly file"
 bwa index ${out}/work_files/assembly.fa
 if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
 
-echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
+if [ $single_end = false ]; then
+	echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
+fi
+
 # If there are several pairs of reads passed, they are processed sepperately
 for num in "$@"; do
-	if [[ $num == *"_1.fastq"* ]]; then 
-		reads_1=$num
-		reads_2=${num%_*}_2.fastq
-		if [ ! -s $reads_1 ]; then error "$reads_1 does not exist. Exiting..."; fi
-		if [ ! -s $reads_2 ]; then error "$reads_2 does not exist. Exiting..."; fi
-
-		tmp=${reads_1##*/}
-		sample=${tmp%_*}
-		
-		if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
-			comm "Aligning $reads_1 and $reads_2 back to assembly, sorting the alignment, and gathering statistics on insert lengths"
-			echo -n -e "${sample}\t" >> ${out}/insert_sizes.txt
-			bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2\
-			| tee >( awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
-			>> ${out}/insert_sizes.txt ) \
-			| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
-			-o ${out}/work_files/${sample}.bam -
+	if [ $single_end = false ]; then
+		if [[ $num == *"_1.fastq"* ]]; then 
+			reads_1=$num
+			reads_2=${num%_*}_2.fastq
+			if [ ! -s $reads_1 ]; then error "$reads_1 does not exist. Exiting..."; fi
+			if [ ! -s $reads_2 ]; then error "$reads_2 does not exist. Exiting..."; fi
+	
+			tmp=${reads_1##*/}
+			sample=${tmp%_*}
 			
-			if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
-		else
-			comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
+			if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
+				comm "Aligning $reads_1 and $reads_2 back to assembly, sorting the alignment, and gathering statistics on insert lengths"
+				echo -n -e "${sample}\t" >> ${out}/insert_sizes.txt
+				bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2\
+				| tee >( awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
+				>> ${out}/insert_sizes.txt ) \
+				| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+				-o ${out}/work_files/${sample}.bam -
+				
+				if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
+			else
+				comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
+			fi
 		fi
 	fi
+
+	if [ $single_end = true ]; then
+		if [[ $num == *".fastq"* ]]; then
+			reads=$num
+			if [ ! -s $reads ]; then error "$reads does not exist. Exiting..."; fi
+			tmp=${reads##*/}
+			sample=${tmp%.*}
+			if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
+				comm "Aligning $reads back to assembly, and sorting the alignment"
+				bwa mem -t $threads ${out}/work_files/assembly.fa $reads \
+				| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+				-o ${out}/work_files/${sample}.bam -
+				if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
+			else
+				comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
+			fi
+		fi
+	fi	
 done
-
-
 
 
 if [ $metabat2 = true ]; then
@@ -222,6 +258,23 @@ if [ $metabat2 = true ]; then
 		run_checkm ${out}/metabat2_bins
 	fi
 fi
+
+
+
+if [ $metabat1 = true ]; then
+        ########################################################################################################
+        ########################                   RUNNING METABAT1                     ########################
+        ########################################################################################################
+        announcement "RUNNING METABAT1"
+
+        comm "making contig depth file..."
+        jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/metabat_depth.txt ${out}/work_files/*.bam
+        if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
+
+        comm "Starting binning with metaBAT2..."
+        metabat1 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
+         -o ${out}/metabat1_bins/bin -m 1500 -t $threads --unbinned --superspecific
+        if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT1. Exiting"; fi
 
 
 
@@ -303,23 +356,6 @@ if [ $maxbin2 = true ]; then
 	if [[ $? -ne 0 ]]; then error "Something went wrong with running MaxBin2. Exiting."; fi
 	if [[ $(ls ${out}/work_files/maxbin2_out/ | grep bin | grep .fasta | wc -l) -lt 1 ]]; then error "MaxBin2 did not pruduce a single bin. Something went wrong. Exiting."; fi
 
-	mkdir ${out}/maxbin2_bins
-	N=0
-	for i in $(ls ${out}/work_files/maxbin2_out/ | grep bin | grep .fasta); do
-		cp ${out}/work_files/maxbin2_out/$i ${out}/maxbin2_bins/bin.${N}.fa
-		N=$((N + 1))
-	done
-	comm "MaxBin2 finished successfully, and found $(ls -l ${out}/maxbin2_bins | grep .fa | wc -l) bins!"
-
-	if [ $checkm = true ]; then
-		run_checkm ${out}/maxbin2_bins
-	fi
-fi
-
-
-if [ $concoct = true ]; then
-        ########################################################################################################
-        ########################                   RUNNING CONCOCT                      ########################
         ########################################################################################################
         announcement "RUNNING CONCOCT"
 
