@@ -136,7 +136,6 @@ for i in $(ls ${out}/original_bins); do cat ${out}/original_bins/$i >> ${out}/bi
 ########################        RECRUITING READS TO BINS FOR REASSEMBLY         ########################
 ########################################################################################################
 announcement "RECRUITING READS TO BINS FOR REASSEMBLY"
-if false; then
 comm "Indexing the assembly"
 bwa index ${out}/binned_assembly/assembly.fa
 if [[ $? -ne 0 ]]; then error "BWA failed to index $i"; fi
@@ -148,7 +147,6 @@ comm "Aligning all reads back to entire assembly and splitting reads into indivi
 bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads \
  | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly $strict_max $permissive_max
 if [[ $? -ne 0 ]]; then error "Something went wrong with pulling out reads for reassembly..."; fi
-fi
 
 ########################################################################################################
 ########################             REASSEMBLING BINS WITH SPADES              ########################
@@ -158,7 +156,7 @@ mkdir ${out}/reassemblies
 
 assemble () {
 	bin_name=${1%_*}
-	if i[[ -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]]; then
+	if [[ -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]]; then
 		comm "Looks like $bin_name was already re-assembled. Skipping..."
 	else
 		tmp_dir=${out}/reassemblies/${bin_name}.tmp
