@@ -1,4 +1,5 @@
-### New: the metaWRAP publication preprint is available at [bioRxiv](https://www.biorxiv.org/content/early/2018/03/06/277442)
+### New: metaWRAP v=0.9 is now available, feturing many performance improvements and bug fixes.
+### The metaWRAP publication preprint is available at [bioRxiv](https://www.biorxiv.org/content/early/2018/03/06/277442)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
