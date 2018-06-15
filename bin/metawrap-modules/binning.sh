@@ -43,13 +43,13 @@ run_checkm () {
 	comm "Running CheckM on ${1} bins"
 
 	# determine --pplacer_threads count. It is either the max thread count or RAM/4, whichever is higher
-	ram_max=$(($mem / 4))
+	ram_max=$(($mem / 40))
 	if (( $ram_max < $threads )); then
 		p_threads=$ram_max
 	else
 		p_threads=$threads
 	fi
-	comm "There is $mem RAM and $threads threads available, and each pplacer thread uses ~4GB, so I will use $p_threads threads for pplacer"
+	comm "There is $mem RAM and $threads threads available, and each pplacer thread uses <40GB, so I will use $p_threads threads for pplacer"
 
 	mkdir ${1}.tmp
 	checkm lineage_wf -x fa ${1} ${1}.checkm -t $threads --tmpdir ${1}.tmp --pplacer_threads $p_threads

@@ -240,13 +240,13 @@ if [ "$run_checkm" = true ]; then
 	announcement "RUN CHECKM ON REASSEMBLED BINS"
 
 	# determine --pplacer_threads count. It is either the max thread count or RAM/4, whichever is higher
-	ram_max=$(($mem / 4))
+	ram_max=$(($mem / 40))
 	if (( $ram_max < $threads )); then
 		p_threads=$ram_max
 	else
 		p_threads=$threads
 	fi
-	comm "There is $mem RAM and $threads threads available, and each pplacer thread uses ~4GB, so I will use $p_threads threads for pplacer"
+	comm "There is $mem RAM and $threads threads available, and each pplacer thread uses ~40GB, so I will use $p_threads threads for pplacer"
 
 	# copy over original bins
 	for base in $( ls ${out}/original_bins/ | grep "\.fa$" ); do 
