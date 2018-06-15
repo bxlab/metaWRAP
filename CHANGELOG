@@ -1,4 +1,6 @@
-metaWRAP v=0.9 (In development)
+metaWRAP v=1.0 (in development)
+
+metaWRAP v=0.9 (June 2018)
 	General
 		fixed major bug with running metawrap in a custom conda environments
 		fixed bug caused by multiple metawrap installations
