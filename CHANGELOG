@@ -1,4 +1,6 @@
 metaWRAP v=1.0 (in development)
+	General
+		removed gcc dependancy to prevent library errors with concoct
 
 metaWRAP v=0.9 (June 2018)
 	General
