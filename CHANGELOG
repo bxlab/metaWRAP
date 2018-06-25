@@ -1,6 +1,8 @@
 metaWRAP v=1.0 (in development)
 	General
 		removed gcc dependancy to prevent library errors with concoct
+		cleaned up some help messages
+		added --show-config option to metawrap to display program configuration details
 	Quant_bins
 		the -a option is now optional, but strongly recommended
 	Reassemble_bins

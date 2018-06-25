@@ -15,7 +15,7 @@
 
 help_message () {
         echo""
-	echo "Usage: metaWRAP [module] --help"
+	echo "Usage: metaWRAP [module]"
         echo "Options:"
         echo ""
 	echo "	read_qc		Raw read QC module (read trimming and contamination removal)"
@@ -30,6 +30,7 @@ help_message () {
 	echo "	classify_bins	Assign taxonomy to genomic bins"
 	echo "	annotate_bins	Functional annotation of draft genomes"
 	echo ""
+	echo "	--help | -h		show this help message"
 	echo "	--version | -v	show metaWRAP version"
 	echo "	--show-config	show where the metawrap configuration files are stored"
         echo "";}
