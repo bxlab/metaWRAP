@@ -25,6 +25,7 @@ help_message () {
 	echo "	-m INT		memory in GB (default=4)"
 	echo "	-c INT		minimum desired bin completion %"
 	echo "	-x INT		maximum desired bin contamination %"
+	echo "	-l INT		minimum contig length to be included in reassembly (default=500)"
 	echo ""
 	echo "	--strict-cut-off	maximum allowed SNPs for strict read mapping (default=2)"
 	echo "	--permissive-cut-off	maximum allowed SNPs for permissive read mapping (default=5)"
@@ -67,14 +68,14 @@ source $config_file
 
 
 # default params
-threads=1; mem=4; comp=70; cont=10; 
+threads=1; mem=4; comp=70; cont=10; len=500
 bins=None; f_reads=None; r_reads=None; out=None
 # long options defaults
 strict_max=2; permissive_max=5
 run_checkm=true
 run_parallel=false
 # load in params
-OPTS=`getopt -o ht:m:o:x:c:b:1:2: --long help,parallel,skip-checkm,strict-cut-off,permissive-cut-off -- "$@"`
+OPTS=`getopt -o ht:m:o:x:c:l:b:1:2: --long help,parallel,skip-checkm,strict-cut-off,permissive-cut-off -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -87,6 +88,7 @@ while true; do
 		-x) cont=$2; shift 2;;
 		-c) comp=$2; shift 2;;
 		-b) bins=$2; shift 2;;
+		-l) len=$2; shift 2;;
 		-1) f_reads=$2; shift 2;;
 		-2) r_reads=$2; shift 2;;
                 -h | --help) help_message; exit 0; shift 1;;
@@ -128,6 +130,8 @@ fi
 if [ -d ${out}/original_bins ]; then rm -r ${out}/original_bins; fi
 cp -r $bins ${out}/original_bins
 if [ ! -d ${out}/binned_assembly ]; then mkdir ${out}/binned_assembly; fi
+
+# combinde the bins into one big assembly file
 if [ -s ${out}/binned_assembly/assembly.fa ]; then rm ${out}/binned_assembly/assembly.fa; fi
 for i in $(ls ${out}/original_bins); do cat ${out}/original_bins/$i >> ${out}/binned_assembly/assembly.fa; done
 
@@ -136,17 +140,21 @@ for i in $(ls ${out}/original_bins); do cat ${out}/original_bins/$i >> ${out}/bi
 ########################        RECRUITING READS TO BINS FOR REASSEMBLY         ########################
 ########################################################################################################
 announcement "RECRUITING READS TO BINS FOR REASSEMBLY"
-comm "Indexing the assembly"
-bwa index ${out}/binned_assembly/assembly.fa
-if [[ $? -ne 0 ]]; then error "BWA failed to index $i"; fi
+if [[ ! -s ${out}/binned_assembly/assembly.fa.amb ]]; then
+	comm "Indexing the assembly"
+	bwa index ${out}/binned_assembly/assembly.fa
+	if [[ $? -ne 0 ]]; then error "BWA failed to index $i"; fi
 
-if [ -d ${out}/reads_for_reassembly ]; then rm -r ${out}/reads_for_reassembly; fi
-mkdir ${out}/reads_for_reassembly
+	if [ -d ${out}/reads_for_reassembly ]; then rm -r ${out}/reads_for_reassembly; fi
+	mkdir ${out}/reads_for_reassembly
 
-comm "Aligning all reads back to entire assembly and splitting reads into individual fastq files based on their bin membership"
-bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads \
- | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly $strict_max $permissive_max
-if [[ $? -ne 0 ]]; then error "Something went wrong with pulling out reads for reassembly..."; fi
+	comm "Aligning all reads back to entire assembly and splitting reads into individual fastq files based on their bin membership"
+	bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads \
+	 | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly $strict_max $permissive_max
+	if [[ $? -ne 0 ]]; then error "Something went wrong with pulling out reads for reassembly..."; fi
+else
+	comm "WARNING: Looks like the assembly was already indexed. Skipping indexing, and also skipping splitting the reads, because it is assumed you already got to this stage. Will proceed directly to assembly. This is because your output folder $out already has outputs from previous runs. If this is not what you intended, re-run the module with a new output folder, or clear $out."
+fi
 
 ########################################################################################################
 ########################             REASSEMBLING BINS WITH SPADES              ########################
@@ -208,7 +216,7 @@ for i in $( ls ${out}/reassemblies/ ); do
 	
 	#remove shortest contigs (probably artifacts...)
 	if [ -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]; then
-		${SOFT}/rm_short_contigs.py 500\
+		${SOFT}/rm_short_contigs.py $len\
 		 ${out}/reassemblies/${bin_name}/scaffolds.fasta\
 		 > ${out}/reassemblies/${bin_name}/long_scaffolds.fasta
 
@@ -217,7 +225,7 @@ for i in $( ls ${out}/reassemblies/ ); do
 			mv ${out}/reassemblies/${bin_name}/long_scaffolds.fasta\
 			${out}/reassembled_bins/${bin_name}.fa
 		else
-			comm "$bin_name was reassembled, but did not yeild contigs >500bp. It is possible there were not enough reads."
+			comm "$bin_name was reassembled, but did not yeild contigs $len bp. It is possible there were not enough reads."
 		fi
 	else
 		comm "$bin_name was not successfully reassembled. It is possible there were not enough reads."
@@ -255,6 +263,7 @@ if [ "$run_checkm" = true ]; then
 	done
 
 	comm "Running CheckM on best bins (reassembled and original)"
+	if [[ -d ${out}/reassembled_bins.checkm ]]; then rm -r ${out}/reassembled_bins.checkm; fi
 	mkdir ${out}/tmp
 	checkm lineage_wf -x fa ${out}/reassembled_bins ${out}/reassembled_bins.checkm -t $threads --tmpdir ${out}/tmp --pplacer_threads $p_threads
 	if [[ ! -s ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
@@ -297,6 +306,7 @@ if [ "$run_checkm" = true ]; then
 
 
 	comm "Re-running CheckM on the best reasembled bins."
+	if [[ -d ${out}/reassembled_bins.checkm ]]; then rm -r ${out}/reassembled_bins.checkm; fi
 	mkdir ${out}/tmp
         checkm lineage_wf -x fa ${out}/reassembled_bins ${out}/reassembled_bins.checkm -t $threads --tmpdir ${out}/tmp --pplacer_threads $p_threads
         if [[ ! -s ${out}/reassembled_bins.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi

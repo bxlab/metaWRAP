@@ -18,7 +18,7 @@ help_message () {
 	echo ""
 	echo "	-b STR          folder containing draft genomes (bins) in fasta format"
 	echo "	-o STR          output directory"
-	echo "	-a STR		fasta file with entire metagenomic assembly"
+	echo "	-a STR		fasta file with entire metagenomic assembly (strongly recommended!)"
 	echo "	-t INT		number of threads"
 	echo ""
 	echo "";}
@@ -68,8 +68,8 @@ done
 ########################################################################################################
 
 # check if all parameters are entered
-if [ $out = false ] || [ $bin_folder = false ] || [ $assembly = false ]; then 
-	comm "Non-optional parameters -b -a -o were not entered"
+if [ $out = false ] || [ $bin_folder = false ]; then 
+	comm "Non-optional parameters -b -o were not entered"
 	help_message; exit 1
 fi
 
@@ -92,7 +92,6 @@ comm "$num_of_F_read_files forward and $num_of_R_read_files reverse read files d
 if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F and R reads must be the same!"; fi
 
 
-
 # Checks for correctly configures meta-scripts folder
 if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure config.sh is in the same filder as the mains scripts and all the paths in the config.sh file are correct"
@@ -112,11 +111,17 @@ announcement "SETTING UP OUTPUT AND INDEXING ASSEMBLY"
 if [ ! -d ${out}/all_bin_contigs ]; then
         mkdir $out
 else
-        echo "Warning: $out already exists."
+        warning "Warning: $out already exists."
 fi
 
-if [ ! -f $assembly ]; then error "Assembly file $assembly does not exist. Exiting..."; fi
-
+if [ $assembly = false ]; then
+	comm "Concatinating bins into a metagenomic assembly file."
+	if [[ -s ${out}/assembly.fa ]]; then rm ${out}/assembly.fa; fi
+	cat $bin_folder/* >> ${out}/assembly.fa
+	assembly=${out}/assembly.fa
+else
+	if [ ! -f $assembly ]; then error "Assembly file $assembly does not exist. Exiting..."; fi
+fi
 
 # Index the assembly
 comm "Indexing assembly file with salmon. Ignore any warnings"

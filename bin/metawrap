@@ -18,17 +18,20 @@ help_message () {
 	echo "Usage: metaWRAP [module] --help"
         echo "Options:"
         echo ""
-	echo "	read_qc		Raw read QC module"
-        echo "	assembly	Assembly module"
-	echo "	binning		Binning module"
+	echo "	read_qc		Raw read QC module (read trimming and contamination removal)"
+        echo "	assembly	Assembly module (metagenomic assembly)"
+	echo "	kraken		KRAKEN module (taxonomy annotation of reads and assemblies)"
+	echo "	blobology	Blobology module (GC vs Abund plots of contigs and bins)"
+	echo ""
+	echo "	binning		Binning module (metabat, maxbin, or concoct)"
 	echo "	bin_refinement	Refinement of bins from binning module"
 	echo "	reassemble_bins Reassemble bins using metagenomic reads"
 	echo "	quant_bins	Quantify the abundance of each bin across samples"
 	echo "	classify_bins	Assign taxonomy to genomic bins"
 	echo "	annotate_bins	Functional annotation of draft genomes"
-	echo "	blobology	Blobology module"
-	echo "	kraken		KRAKEN module"
-	echo "	-v		show metaWRAP version"
+	echo ""
+	echo "	--version | -v	show metaWRAP version"
+	echo "	--show-config	show where the metawrap configuration files are stored"
         echo "";}
 
 config_file=$(which config-metawrap)
@@ -39,8 +42,6 @@ if [[ $? -ne 0 ]]; then
 fi
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
-
-comm "MetaWRAP script found in $(which metawrap) and config-metawrap file was found in $(which config-metawrap). Please make sure these paths are consistent."
 
 ########################################################################################################
 ########################     LOADING IN THE PARAMETERS AND RUNNING MODULE       ########################
@@ -103,9 +104,14 @@ elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
         echo ""
-	echo "metaWRAP v=0.9.1"
+	echo "metaWRAP v=0.9.2"
 	echo ""
         exit 0
+elif [ "$1" = "--show-config" ]; then
+	comm "MetaWRAP script found in $(which metawrap) and config-metawrap file was found in $(which config-metawrap). Please make sure these paths are consistent with each other."
+	comm "Here are the contents of config-metawrap:"
+	cat $(which config-metawrap)
+	exit 0
 else
         comm "Please select a proper module of metaWRAP."
         help_message

@@ -1,6 +1,10 @@
 metaWRAP v=1.0 (in development)
 	General
 		removed gcc dependancy to prevent library errors with concoct
+	Quant_bins
+		the -a option is now optional, but strongly recommended
+	Reassemble_bins
+		added -l option to specify minimum contig length
 
 metaWRAP v=0.9 (June 2018)
 	General
@@ -133,7 +137,6 @@ metaWRAP v=0.5 (Mid December 2017)
 		Uses MEGABLAST to align the contigs in bins to RefSeq
 		Taxator-tx asigns taxonomy to each contig
 		Use weighted tree algorythm to find consensus taxonomy of each bin
-	
 
 
 metaWRAP v=0.4 (Early December 2017)
@@ -154,7 +157,6 @@ metaWRAP v=0.4 (Early December 2017)
 		removed spades parallelization due to strange signmentation fault errors...
 		majob bug fix of bug preventing recruiting of reads for reassembly if the read names had spaces in them
 		major bug fit to prevent HMMER to run out of space in /tmp/ by providing a new tmp folder
-
 
 
 metaWRAP v=0.3 (November 2017)
@@ -192,7 +194,6 @@ metaWRAP v=0.3 (November 2017)
 		Changed annotations to blobplot file when the --bins option is selected - added additional columns
 		Now makes multiple bin annotation plots, annotating bins and their taxonomy
 		Blastn does not re-run if there is an output file with the same name already in the output folder
-
 
 
 metaWRAP v=0.2 (August 2017)
