@@ -20,7 +20,7 @@ Note: this will download the entire RefSeq database and index it, which takes a 
 kraken-build --standard --threads 24 --db MY_KRAKEN_DATABASE
 kraken-build --db MY_KRAKEN_DATABASE --clean
 ```
-Do not forget to set the KRAKEN_DB variable in the contig-metawrap file! Run `which config-metawrap` to find it.
+Do not forget to set the KRAKEN_DB variable in the config-metawrap file! Run `which config-metawrap` to find it.
 ``` bash
 KRAKEN_DB=/path/to/my/database/MY_KRAKEN_DATABASE
 ```
@@ -33,7 +33,7 @@ cd  NCBI_nt
 wget "ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.*.tar.gz"
 for a in nt.*.tar.gz; do tar xzf $a; done
 ```
-Do not forget to set the BLASTDB variable in the contig-metawrap file!
+Do not forget to set the BLASTDB variable in the config-metawrap file!
 ``` bash
 BLASTDB=/your/location/of/database/NCBI_nt
 ```
@@ -46,7 +46,7 @@ cd NCBI_tax
 wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
 tar -xvf taxdump.tar.gz
 ```
-Do not forget to set the TAXDUMP variable in the contig-metawrap file! Run `which config-metawrap` to find it.
+Do not forget to set the TAXDUMP variable in the config-metawrap file! Run `which config-metawrap` to find it.
 ``` bash
 TAXDUMP=/your/location/of/database/NCBI_tax
 ```
