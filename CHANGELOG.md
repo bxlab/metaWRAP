@@ -234,4 +234,4 @@ metaWRAP v=0.2 (August 2017)
 
 
 metaWRAP v=0.1 (July 2017)
-	First user-firendly version of metaWRAP!
+	First user-friendly version of metaWRAP!
