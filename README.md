@@ -1,6 +1,5 @@
 **Current metaWRAP version = 0.9.2** (to update, run `conda install metawrap-mg=0.9.2`)
 
-### The metaWRAP publication preprint is available at [bioRxiv](https://www.biorxiv.org/content/early/2018/03/06/277442)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
