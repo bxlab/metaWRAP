@@ -3,10 +3,19 @@ metaWRAP v=1.0 (in development)
 		removed gcc dependancy to prevent library errors with concoct
 		cleaned up some help messages
 		added --show-config option to metawrap to display program configuration details
+	Assembly
+		changed option name --use-metaspades to --metaspades
+		changed option name --use-megahit to --megahit
+		default memory allowance is now 24GB
 	Quant_bins
 		the -a option is now optional, but strongly recommended
 	Reassemble_bins
 		added -l option to specify minimum contig length
+		default memory allowance is now 24GB
+	Classify_bins
+		fixed bug that caused crashes when a contig was classified as "subfamily"
+	Bin_refinement
+		default memory allowance is now 24GB
 
 metaWRAP v=0.9 (June 2018)
 	General
@@ -57,7 +66,7 @@ metaWRAP v=0.8 (March 2018)
 	Conda installation:
 		added R dependancy
 		fixed channel ordering
-		metaWRAP now immediately exits if it cannot find hte config file
+		metaWRAP now immediately exits if it cannot find the config file
 	Read_qc:
 		removed unnecessary large intermediate files
 		added clean-up feature

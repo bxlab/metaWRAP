@@ -7,7 +7,7 @@ for line in open(sys.argv[1]):
 	cut=line.split('\t')
 	ranks[cut[0]]=cut[4]
 
-exclude=["no rank", "subspecies", "varietas", "forma"]
+exclude=["no rank", "subspecies", "varietas", "forma", "subfamily"]
 
 #prune blast output to remove mappings without a rank and remove taxid columnn
 for  line in open(sys.argv[2]):

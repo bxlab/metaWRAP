@@ -22,12 +22,12 @@ help_message () {
 	echo "	-1 STR          forward fastq reads"
 	echo "	-2 STR          reverse fastq reads" 
 	echo "	-o STR          output directory"
-	echo "	-m INT          memory in GB (default=10)"
+	echo "	-m INT          memory in GB (default=24)"
 	echo "	-t INT          number of threads (defualt=1)"
 	echo "	-l INT		minimum length of assembled contigs (default=1000)"
 	echo ""
-	echo "	--use-megahit		assemble with megahit (default)"
-	echo "	--use-metaspades	assemble with metaspades instead of megahit (better results, but slower and required a lot of RAM)"
+	echo "	--megahit	assemble with megahit (default)"
+	echo "	--metaspades	assemble with metaspades instead of megahit (better results, but slower and required a lot of RAM)"
 	echo "";}
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
 error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
@@ -46,13 +46,13 @@ config_file=$(which config-metawrap)
 source $config_file
 
 # default params
-mem=10; threads=1; out="false"; reads_1="false"; reads_2="false"; min_len=1000
+mem=24; threads=1; out="false"; reads_1="false"; reads_2="false"; min_len=1000
 # long options defaults
 metaspades_assemble=false; megahit_assemble=true
 
 
 # load in params
-OPTS=`getopt -o ht:m:o:1:2:l: --long help,use-metaspades,use-megahit -- "$@"`
+OPTS=`getopt -o ht:m:o:1:2:l: --long help,metaspades,megahit -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -66,8 +66,8 @@ while true; do
 		-2) reads_2=$2; shift 2;;
 		-l) min_len=$2; shift 2;;
 		-h | --help) help_message; exit 1; shift 1;;
-		--use-megahit) megahit_assemble=true; metaspades_assemble=false; shift 1;;
-		--use-metaspades) megahit_assemble=false; metaspades_assemble=true; shift 1;;
+		--megahit) megahit_assemble=true; metaspades_assemble=false; shift 1;;
+		--metaspades) megahit_assemble=false; metaspades_assemble=true; shift 1;;
 		--) help_message; exit 1; shift; break ;;
 		*) break;;
 	esac

@@ -27,7 +27,7 @@ help_message () {
 	echo ""
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
-	echo "	-m INT		memory available (default=4)"
+	echo "	-m INT		memory available (default=24)"
 	echo ""
 	echo "	-A STR		folder with metagenomic bins"
 	echo "	-B STR		another folder with metagenomic bins"
@@ -79,7 +79,7 @@ config_file=$(which config-metawrap)
 source $config_file
 
 # default params
-threads=1; mem=4; out="false"; comp=70; cont=10; x=10; c=70; 
+threads=1; mem=24; out="false"; comp=70; cont=10; x=10; c=70; 
 bins1=None; bins2=None; bins3=None
 # long options defaults
 run_checkm=true; refine=true; cherry_pick=true; dereplicate=partial
