@@ -181,7 +181,7 @@ for f in ${out}/binsC/*; do echo $f; ${SOFT}/fix_config_naming.py $f > ${out}/tm
 
 
 
-# I have to switch directories here - Bin_refiner dumps everything into the current dir"
+# I have to switch directories here - Binning_refiner dumps everything into the current dir"
 home=$(pwd)
 cd $out
 

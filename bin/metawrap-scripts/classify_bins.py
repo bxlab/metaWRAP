@@ -33,8 +33,9 @@ def traverse(tree, taxonomy, weight):
 # load in classifications of each contig
 taxonomy={}
 for line in open (sys.argv[1]):
-	if len(line.strip().split('\t'))<2: continue
-	taxonomy[line.strip().split('\t')[0]] = line.strip().split('\t')[1]
+	cut=line.strip().split("\t")
+	if len(cut)<2: continue
+	taxonomy[cut[0]] = cut[1]
 
 
 # loop over bins
@@ -45,16 +46,19 @@ for filename in os.listdir(sys.argv[2]):
 		if line[0]=='>' and length==0:
 			contig=line[1:-1]
 		elif line[0]=='>' and length>0:
-			contig=line[1:-1]
 			if contig in taxonomy: 
-				#print taxonomy[contig], length
+				#print "\t".join([contig, str(length), taxonomy[contig]])
 				taxcut=taxonomy[contig].split(';')
 				tax_tree = add_to_tree(tax_tree, taxcut, length)
 			contig=line[1:-1]
 			length=0
 		else:
 			length+=len(line.strip())
+	if contig in taxonomy:
+		taxcut=taxonomy[contig].split(';')
+		tax_tree = add_to_tree(tax_tree, taxcut, length)
 
+	#print tax_tree
 	consensus=traverse(tax_tree, [], 0)
 	print filename + "\t" + ";".join(consensus)
 

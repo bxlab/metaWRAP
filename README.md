@@ -1,4 +1,4 @@
-**Current metaWRAP version = 0.9.3**. To update, run `conda install metawrap-mg=0.9.3` (you may want to backup your `config-metawrap` file so you dont have to re-do your database configurations)
+**Current metaWRAP version = 0.9.4**. To update, run `conda install metawrap-mg=0.9.4` (consider backing up your `bin/config-metawrap` file so you dont have to re-do your database configurations)
 
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis

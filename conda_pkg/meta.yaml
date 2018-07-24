@@ -1,6 +1,6 @@
 package:
   name: metawrap-mg
-  version: "0.9.3"
+  version: "0.9.4"
 
 source:
   git_url: https://github.com/bxlab/metaWRAP.git

@@ -13,6 +13,8 @@ metaWRAP v=1.0 (in development)
 		added -l option to specify minimum contig length
 		default memory allowance is now 24GB
 	Classify_bins
+		fixed major bug that resulted inacurate classification due to mis-calculating contig lengths
+		Fixed major bug that caused the module to ignore the last contig in each bin
 		fixed bug that caused crashes when a contig was classified as "subfamily"
 	Bin_refinement
 		default memory allowance is now 24GB
