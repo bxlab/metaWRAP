@@ -235,7 +235,7 @@ NOTE: In order to run this module, you **MUST use the non-reassembled bins**! In
 
 Lets run the Quant_bins module:
 ```
-metawrap quant_bins -b BIN_REFINEMENT/metaWRAP_bins -o QUANT_BINS -a ASSEMBLY/final_assemN_READS/ERR*fastq
+metawrap quant_bins -b BIN_REFINEMENT/metaWRAP_bins -o QUANT_BINS -a ASSEMBLY/final_assembly.fasta CLEAN_READS/ERR*fastq
 ```
 
 The output contains several usefull files. First, there is the `genome_abundance_heatmap.png` - a quick heatmap made to visualize the bin abundances across the samples. 
