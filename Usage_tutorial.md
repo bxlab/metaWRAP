@@ -231,7 +231,7 @@ Bin membership of all the contigs:
 ## Step 7: Find the abundaces of the draft genomes (bins) across the samples
 We would like to know how the extracted genomes are distributed across the samples, and in what abundances each bin is present in each sample. The Quant_bin module can give us this information. It used Salmon - a tool conventionally used for transcript quantitation - to estimate the abundance of each scaffold in each sample, and then computes the average bin abundances.
 
-NOTE: In order to run this module, you **MUST use the non-reassembled bins**! In other words, use the bins produced by the Bin_Refinment module, not the Reassemble_bins module. 
+NOTE: In order to run this module, it is **highly** recomended to use the non-reassembled bins (the bins produced by the Bin_Refinment module, not the Reassemble_bins module) and provide the entire non-binned assembly with the `-a` option. This will give more accurate bin abundances that are in context of the entire community. 
 
 Lets run the Quant_bins module:
 ```
