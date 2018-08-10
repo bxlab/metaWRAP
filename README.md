@@ -41,7 +41,13 @@
 ## INSTALLATION
 
 #### Basic installation:
- To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it. Then add channels to your conda environment, and install metaWRAP (supports Linux64):
+ To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it:
+ ``` bash
+ wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+ bash Miniconda2-latest-Linux-x86_64.sh
+ ```
+ 
+ Then add channels to your conda environment, and install metaWRAP (supports Linux64):
  ``` bash
  # ORDER IS IMPORTANT!!!
  conda config --add channels defaults
