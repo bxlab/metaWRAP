@@ -22,7 +22,7 @@ help_message () {
 	echo "	-2 STR          reverse reads to use for reassembly"
 	echo ""
 	echo "	-t INT		number of threads (default=1)"
-	echo "	-m INT		memory in GB (default=24)"
+	echo "	-m INT		memory in GB (default=40)"
 	echo "	-c INT		minimum desired bin completion %"
 	echo "	-x INT		maximum desired bin contamination %"
 	echo "	-l INT		minimum contig length to be included in reassembly (default=500)"
@@ -68,7 +68,7 @@ source $config_file
 
 
 # default params
-threads=1; mem=24; comp=70; cont=10; len=500
+threads=1; mem=40; comp=70; cont=10; len=500
 bins=None; f_reads=None; r_reads=None; out=None
 # long options defaults
 strict_max=2; permissive_max=5

@@ -3,21 +3,23 @@ metaWRAP v=1.0 (in development)
 		removed gcc dependancy to prevent library errors with concoct
 		cleaned up some help messages
 		added --show-config option to metawrap to display program configuration details
+		improved installation documentation
 	Assembly
 		changed option name --use-metaspades to --metaspades
 		changed option name --use-megahit to --megahit
 		default memory allowance is now 24GB
 	Quant_bins
 		the -a option is now optional, but strongly recommended
+		the bin abundance heatmap is now standardized to the total abundance of the bins, not the reads
 	Reassemble_bins
 		added -l option to specify minimum contig length
-		default memory allowance is now 24GB
+		default memory allowance is now 40GB
 	Classify_bins
 		fixed major bug that resulted inacurate classification due to mis-calculating contig lengths
 		Fixed major bug that caused the module to ignore the last contig in each bin
 		fixed bug that caused crashes when a contig was classified as "subfamily"
 	Bin_refinement
-		default memory allowance is now 24GB
+		default memory allowance is now 40GB
 
 metaWRAP v=0.9 (June 2018)
 	General

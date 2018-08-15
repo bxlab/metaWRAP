@@ -31,7 +31,7 @@ help_message () {
 	echo "	--metabat1	bin contigs with the original metaBAT"
 	echo "	--maxbin2	bin contigs with MaxBin2"
 	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
-	echo "	--run-checkm	immediately run CheckM on the bin results"
+	echo "	--run-checkm	immediately run CheckM on the bin results (required 40GB+ of memory)"
 	echo "	--single-end	non-paired reads mode (provide *.fastq files)"
 	echo "";}
 

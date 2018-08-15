@@ -4,14 +4,6 @@
 #
 # This script is meant to be run on the outputs of binning.sh pipeline to analyze the metagenomic bins and arrive at the best possible putative genomes.
 # 
-# 1) Use binning_refiner.py to refine bins between 2 or 3 binning folders. Because this script takes in a maximum of 3 bin folders, there are 4 possible
-# refinement permutaitons possible (1+2, 2+3, 1+3, and 1+2+3). 
-# 2) CheckM is run on all the possible bin folders (1-3 original folders plus 1-4 refinement folders). This gives us completion and contamination estimates
-# for every bin. Many bins will be present in varying completions and contaminations in different folders.
-# 3) Consolidate all the binning folders by finding the best version of each bin, and saving it into a final "best_bins" folder.
-# 4) bwa is used to recruit reads back to the bins and SPAdes ressembles them with. CheckM is again used to find the best version of each bin.
-# 5) KRAKEN is used to show the taxonomic distribuion of each bin.
-#
 # Author of pipeline: German Uritskiy. I do not clain any authorship of the many programs this pipeline uses.
 # For questions, bugs, and suggestions, contact me at guritsk1@jhu.edu.
 # 
@@ -27,7 +19,7 @@ help_message () {
 	echo ""
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
-	echo "	-m INT		memory available (default=24)"
+	echo "	-m INT		memory available (default=40)"
 	echo ""
 	echo "	-A STR		folder with metagenomic bins"
 	echo "	-B STR		another folder with metagenomic bins"
@@ -79,7 +71,7 @@ config_file=$(which config-metawrap)
 source $config_file
 
 # default params
-threads=1; mem=24; out="false"; comp=70; cont=10; x=10; c=70; 
+threads=1; mem=40; out="false"; comp=70; cont=10; x=10; c=70; 
 bins1=None; bins2=None; bins3=None
 # long options defaults
 run_checkm=true; refine=true; cherry_pick=true; dereplicate=partial

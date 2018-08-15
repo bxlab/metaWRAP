@@ -180,7 +180,7 @@ comm "Average bin abundance table stored in ${out}/abundance_table.tab"
 
 
 ########################################################################################################
-########################      MAKING GENOME ABUNDANCE HEATMAP WITH SEABORN      ########################
+########################            MAKING GENOME ABUNDANCE HEATMAP             ########################
 ########################################################################################################
 announcement "MAKING GENOME ABUNDANCE HEATMAP WITH SEABORN"
 
@@ -200,8 +200,8 @@ wait
 sleep 1
 
 
-comm "make heatmap"
-${SOFT}/make_heatmap.py ${out}/sample_read_count.tab ${out}/abundance_table.tab ${out}/genome_abundance_heatmap.png
+comm "making heatmap with Seaborn"
+${SOFT}/make_heatmap.py ${out}/abundance_table.tab ${out}/genome_abundance_heatmap.png
 if [[ $? -ne 0 ]]; then error "something went wrong with making the heatmap. Exiting..."; fi
 
 
