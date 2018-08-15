@@ -1,4 +1,4 @@
-### ALL DEPENDANCIES:
+## ALL DEPENDANCIES:
 -BLAST 2.6.0+
 -bmtagger 3.101
 -Bowtie2 2.3.2
@@ -25,7 +25,7 @@
 -taxator-tk
 -prokka
 
-### DATABASES:
+## DATABASES:
 1.4GB	Checkm_DB (past of CheckM installation)
 161GB	-KRAKEN standard database
 71GB	RefSeq NCBI_nt
@@ -33,25 +33,25 @@
 20GB	Indexed hg38 (for bmtagger)
 
 
-### More detailed dependancies:
+## More detailed dependancies:
 
-#### general:
+### general:
 -python2.7
 
-#### assembly
+### assembly
 -SPAdes v3.10.1
 -bwa 0.7.15-r1140
 -megahit v1.1.1-2-g02102e1
 -quast v4.5
 
-#### binning
+### binning
 -bwa 0.7.15-r1140
 -samtools 1.3.1
 -metabat2 2.9.1
 -concoct 0.4.0
 -MaxBin2 2.2.4
 
-##### bin_refinement
+#### bin_refinement
 -bwa 0.7.15-r1140
 -samtools 1.3.1
 -kraken 0.10.6
@@ -61,11 +61,11 @@
 -checkm_DB (standard)
 -SPAdes v3.10.1
 
-#### quant_bins
+### quant_bins
 -salmon
 -seaborn 0.8.1
 
-#### blobology
+### blobology
 -refseq_db NCBI_nt
 -refseq_db NCBI_tax
 -blast 2.6.0+
@@ -74,22 +74,22 @@
 -R 3.3.2
 -ggplot2
 
-#### kraken
+### kraken
 -kraken 0.10.6
 -kraken_db STANDARD_DATABASE
 -kronatools 2.7
 
-#### read_qc
+### read_qc
 -fastqc v0.11.5
 -trim_galore 0.4.3
 -bmtagger 3.101
 -human_db hg38
 
-#### classify_bins
+### classify_bins
 -taxator-kt
 -blastn
 -NCBI_nt database
 -NCBI_tax database
 
-#### annotate_bins
+### annotate_bins
 -prokka
