@@ -49,10 +49,10 @@ def set_colors_to_timeline(df):
 	return lut
 
 
-def draw_clustermap(df, lut=None):
+def draw_clustermap(df, lut):
 	print "drawing clustermap..."
 	sns.set(font_scale=1)
-	if lut==None:
+	if lut==False:
 		g = sns.clustermap(df, figsize=(14,8), col_colors=lut, col_cluster=True, yticklabels=True, cmap="magma")
 	else:
 		g = sns.clustermap(df, figsize=(14,8), col_cluster=True, yticklabels=True, cmap="magma")
@@ -67,11 +67,15 @@ df = load_data(sys.argv[1])
 # log standardize:
 df+=0.01; df=np.log(df)
 
+# standardize rows by maximum value in each row
+#df = df.div(df.max(axis=1), axis=0)
+
+
 
 if "2016-02" in df: lut = set_colors_to_timeline(df)
-else: lut=None
+else: lut=False
 
-draw_clustermap(df)
+draw_clustermap(df, lut)
 	
 
 if len(sys.argv)<3: out=".".join(sys.argv[1].split(".")[:-1])+".png"

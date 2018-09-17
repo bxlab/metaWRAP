@@ -1,5 +1,6 @@
-**Current metaWRAP version = 0.9.5**. To update, run `conda install metawrap-mg=0.9.5` (consider backing up your `bin/config-metawrap` file so you dont have to re-do your database configurations)
+**New: The metaWRAP manuscript has been published in [Microbiome](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).**
 
+**Current metaWRAP version = 1.0**. To update, run `conda install metawrap-mg=1.0` (consider backing up your `bin/config-metawrap` file so you dont have to re-do your database configurations)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
@@ -138,7 +139,7 @@ Options:
 ```
 
 ### Citing metaWRAP
-While the metaWRAP manuscript is in review for publication, please cite the bioRxiv preprint: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://www.biorxiv.org/content/early/2018/03/06/277442)
+If you found metaWRAP usefull in your research, please cite the publication: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).
 
 ### Acknowledgements
 Author of pipeline: [Gherman Uritskiy](https://github.com/ursky).
