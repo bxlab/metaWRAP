@@ -8,7 +8,7 @@
  
  ![General walkthrough of metaWRAP modules](https://i.imgur.com/6GqRsm3.png)
 
-# Metagenomic bin recovery improvements
+## Metagenomic bin recovery improvements
 
  In addition to being a tool wrapper, MetaWRAP offers a **powerful hybrid approach** for extracting high-quality draft genomes (bins) from metagenomic data by using a variety of software (metaBAT2, CONCOCT, and MaxBin2, for example, since they are already wrapped into the Binning module) and utilizing their individual strengths and minimizing their weaknesses. MetaWRAP's [bin refinement module](https://i.imgur.com/JL665Qo.png) outperforms not only individual binning approaches, but also other bin consolidation programs (Binning_refiner, DAS_Tool) in both synthetic and real datasets. I emphasize that because this module is a standalone component, I encourage you to use your favorite binning softwares for the 3 intitial predictions (they do not have to come from metaBAT2, CONCOCT and MaxBin2). These predictions can also come from different parameters of the same software.
 
