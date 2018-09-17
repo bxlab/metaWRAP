@@ -260,9 +260,9 @@ bin.8	98.4767064505	38.0691238971	22.8857472565
 bin.3	349.730007621	0.0911113402849	0.196554603409
 ```
 
-When analyzing these abundances, however, remember that these are raw depth estimates of each bin. You will likely need to standardize these values to the read depth of each sample. The read counts of the samples can be found in `sample_read_count.tab`:
+Remember that these are raw depth estimates of each bin. You will likely need to standardize these values to the total bin abundance (like in the default heatmap), or the read depth of each sample. The read counts of the samples can be found in `sample_read_count.tab`:
 ```
-#samples	n_lines
+#samples	reads
 ERR011349	11442938
 ERR011347	12044408
 ERR011348	10438629
