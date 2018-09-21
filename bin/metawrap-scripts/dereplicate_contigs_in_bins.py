@@ -45,6 +45,6 @@ for bin_file in os.listdir(sys.argv[2]):
 		if store==True: out.write(line)
 	out.close()	
 	if at_least_one==False:
-		os.system("rm sys.argv[3]+"/"+bin_file")
+		os.system("rm " + sys.argv[3] + "/" + bin_file)
 
 

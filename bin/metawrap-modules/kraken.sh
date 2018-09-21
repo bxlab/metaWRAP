@@ -23,6 +23,9 @@ help_message () {
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads"
 	echo "	-s INT		read subsampling number (default=all)"
+	echo ""
+	echo "	Note: you may pass any number of sequence files with the following extensions:"
+	echo "	*.fa *.fasta (assumed to be assembly files) or *_1.fastq and *_2.fastq (assumed to be paired)"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
