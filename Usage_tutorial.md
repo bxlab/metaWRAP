@@ -238,11 +238,11 @@ Lets run the Quant_bins module:
 metawrap quant_bins -b BIN_REFINEMENT/metaWRAP_bins -o QUANT_BINS -a ASSEMBLY/final_assembly.fasta CLEAN_READS/ERR*fastq
 ```
 
-The output contains several usefull files. First, there is the `genome_abundance_heatmap.png` - a quick heatmap made to visualize the bin abundances across the samples. 
+The output contains several usefull files. First, there is the `bin_abundance_heatmap.png` - a quick heatmap made to visualize the bin abundances across the samples. 
 ![heatmap](https://i.imgur.com/K1RaPUT.png)
 
 
-The raw data for this plot (as you will most likely want to make your own heatmaps to analyze) is in `abundance_table.tab`:
+The raw data for this plot (as you will most likely want to make your own heatmaps to analyze) is in `bin_abundance_table.tab`:
 ```
 Genomic bins	ERR011349	ERR011348	ERR011347
 bin.9	0.113912116828	35.851964987	39.8440491514
@@ -258,14 +258,6 @@ bin.14	5.49635966692	14.631433905	32.98399834
 bin.13	0.230760165209	56.0018529273	91.6502833521
 bin.8	98.4767064505	38.0691238971	22.8857472565
 bin.3	349.730007621	0.0911113402849	0.196554603409
-```
-
-Remember that these are raw depth estimates of each bin. You will likely need to standardize these values to the total bin abundance (like in the default heatmap), or the read depth of each sample. The read counts of the samples can be found in `sample_read_count.tab`:
-```
-#samples	reads
-ERR011349	11442938
-ERR011347	12044408
-ERR011348	10438629
 ```
 
 Finally, you can view the abundances of all the individual contigs in all the samples in the `quant_files` folder.
