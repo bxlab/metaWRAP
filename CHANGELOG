@@ -3,6 +3,10 @@ metaWRAP v=1.0 (In development)
 		major big fix that caused the module to sometimes needlessly throw away good bins, especially at lower completion thresholds (-c)
 	Kraken
 		added help message details
+	Quant_bins
+		added exception that skips making the heatmap when the sample count is only 1
+		fixed error causing the heatmap funciton to fail due to bool error
+		added failsafes to make sure that the bin and total assembly contig naming is the same
 
 
 metaWRAP v=1.0 (September 2018)

@@ -69,7 +69,7 @@ done
 
 # check if all parameters are entered
 if [ $out = false ] || [ $bin_folder = false ]; then 
-	comm "Non-optional parameters -b -o were not entered"
+	comm "Non-optional parameters -b and -o were not entered"
 	help_message; exit 1
 fi
 
@@ -182,31 +182,18 @@ comm "Average bin abundance table stored in ${out}/abundance_table.tab"
 ########################################################################################################
 ########################            MAKING GENOME ABUNDANCE HEATMAP             ########################
 ########################################################################################################
-announcement "MAKING GENOME ABUNDANCE HEATMAP WITH SEABORN"
+if [[ $n -gt 1 ]]; then
+	announcement "MAKING GENOME ABUNDANCE HEATMAP WITH SEABORN"
 
-comm "counting reads in each sample for standardization, and storing in ${out}/sample_read_count.tab"
-echo -e "#samples\treads" > ${out}/sample_read_count.tab
+	comm "making heatmap with Seaborn"
+	${SOFT}/make_heatmap.py ${out}/abundance_table.tab ${out}/genome_abundance_heatmap.png
+	if [[ $? -ne 0 ]]; then error "something went wrong with making the heatmap. Exiting..."; fi
 
-count_lines () {
-	if [[ $1 == *"_1.fastq"* ]]; then
-		base=${1##*/}; 
-		echo -ne "${base%_*}\t$(($(cat $1 | wc -l) / 4))\n" >> ${out}/sample_read_count.tab
-		comm "finished counting reads in $base"
-	fi
-}
-
-for arg in "$@"; do count_lines $arg & done
-wait
-sleep 1
-
-
-comm "making heatmap with Seaborn"
-${SOFT}/make_heatmap.py ${out}/abundance_table.tab ${out}/genome_abundance_heatmap.png
-if [[ $? -ne 0 ]]; then error "something went wrong with making the heatmap. Exiting..."; fi
-
-
-comm "cleaning up..."
-rm -r ${out}/alignment_files/ 
+	comm "cleaning up..."
+	rm -r ${out}/alignment_files/ 
+else
+	warning "Cannot make clustered heatmap with just one sample... Skipping heatmap"
+fi
 
 ########################################################################################################
 ########################     QUANT_BINS PIPELINE SUCCESSFULLY FINISHED!!!       ########################

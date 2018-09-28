@@ -52,7 +52,7 @@ def set_colors_to_timeline(df):
 def draw_clustermap(df, lut):
 	print "drawing clustermap..."
 	sns.set(font_scale=1)
-	if lut==False:
+	if lut!=False:
 		g = sns.clustermap(df, figsize=(14,8), col_colors=lut, col_cluster=True, yticklabels=True, cmap="magma")
 	else:
 		g = sns.clustermap(df, figsize=(14,8), col_cluster=True, yticklabels=True, cmap="magma")
