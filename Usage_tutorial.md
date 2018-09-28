@@ -242,7 +242,8 @@ The output contains several usefull files. First, there is the `bin_abundance_he
 ![heatmap](https://i.imgur.com/K1RaPUT.png)
 
 
-The raw data for this plot (as you will most likely want to make your own heatmaps to analyze) is in `bin_abundance_table.tab`:
+The raw data for this plot (as you will most likely want to make your own heatmaps to analyze) is in `bin_abundance_table.tab`. Note that the abundances are expressed as "genome copies per million reads", and are calculated with Salmon in a simmilar way like TPM (transcripts per million) is calculated in RNAseq analysis. As such, they should be already standardized to the individual sample size. 
+
 ```
 Genomic bins	ERR011349	ERR011348	ERR011347
 bin.9	0.113912116828	35.851964987	39.8440491514
