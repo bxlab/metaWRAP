@@ -310,21 +310,21 @@ metawrap classify_bins -b BIN_REASSEMBLY/reassembled_bins -o BIN_CLASSIFICATION 
 
 We can view the final estimated taxonomy in `BIN_CLASSIFICATION/bin_taxonomy.tab`:
 ```
-bin.1.orig.fa	Bacteria_85;Firmicutes_79;Clostridia_86;Clostridiales_100
-bin.5.orig.fa	Archaea_100;Euryarchaeota_100;Methanobacteria_100;Methanobacteriales_100;Methanobacteriaceae_100;Methanobrevibacter_97;Methanobrevibacter smithii_100
-bin.11.orig.fa	Bacteria_95;Bacteroidetes_87;Bacteroidia_99;Bacteroidales_100;Bacteroidaceae_98;Bacteroides_98
-bin.2.permissive.fa	uncultured organism_67
-bin.10.orig.fa	Bacteria_85;Firmicutes_74;Clostridia_74;Clostridiales_95;Clostridiaceae_54
-bin.14.strict.fa	Bacteria_94;Firmicutes_66
-bin.8.strict.fa	Bacteria_97
-bin.9.permissive.fa	Bacteria_92
-bin.6.permissive.fa	Bacteria_94;Firmicutes_69;Clostridia_78;Clostridiales_95
-bin.3.permissive.fa	Bacteria_99;Firmicutes_77;Clostridia_56;Clostridiales_100;Clostridiaceae_79
-bin.4.permissive.fa	Bacteria_100
-bin.13.permissive.fa	Bacteria_95;Bacteroidetes_67;Bacteroidia_95;Bacteroidales_98;Bacteroidaceae_93
-bin.7.strict.fa	Bacteria_94
+bin.1.orig.fa	Bacteria;Firmicutes;Clostridia;Clostridiales
+bin.5.orig.fa	Archaea;Euryarchaeota;Methanobacteria;Methanobacteriales;Methanobacteriaceae;Methanobrevibacter;Methanobrevibacter smithii
+bin.11.orig.fa	Bacteria;Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides
+bin.2.permissive.fa	uncultured organism
+bin.10.orig.fa	Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae
+bin.14.strict.fa	Bacteria;Firmicutes
+bin.8.strict.fa	Bacteria
+bin.9.permissive.fa	Bacteria
+bin.6.permissive.fa	Bacteria;Firmicutes;Clostridia;Clostridiales
+bin.3.permissive.fa	Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae
+bin.4.permissive.fa	Bacteria
+bin.13.permissive.fa	Bacteria;Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae
+bin.7.strict.fa	Bacteria
 ```
-The number next to each classification is the confidance (in percent) of that taxonomy rank classification. As you can see some of the bins are annotated very deeply and others can only be classified as "Bacteria".
+As you can see some of the bins are annotated very deeply and others can only be classified as "Bacteria". This method is relatively trustworthy, however it often fails to annotate organisms that are very distant from anything in the NCBI database. For these triky bins, manually looking at marker genes is the way to go.
 
 
 ## Step 10: Functionally annotate bins with the Annotate_bins module
