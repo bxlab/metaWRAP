@@ -11,6 +11,7 @@
 help_message () {
 	echo ""
 	echo "Usage: metaWRAP read_qc [options] -1 reads_1.fastq -2 reads_2.fastq -o output_dir"
+	echo "Note: the read files have to be named in the name_1.fastq/name_2.fastq convention."
 	echo "Options:"
 	echo ""
 	echo "	-1 STR          forward fastq reads"

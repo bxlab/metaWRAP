@@ -19,7 +19,10 @@
 help_message () {
 	echo ""
 	echo "Usage: metaWRAP binning [options] -a assembly.fa -o output_dir readsA_1.fastq readsA_2.fastq ... [readsX_1.fastq readsX_2.fastq]"
-	echo "Note: you must chose at least one binning method. Or all at once!"
+	echo "Note1: Make sure to provide all your separately replicate read files, not the joined file."
+	echo "Note2: You may provide single end or interleaved reads as well with the use of the correct option"
+	echo "Note3: If the output already has the .bam alignments files from previous runs, the module will skip re-aligning the reads"
+	echo ""
 	echo "Options:"
 	echo ""
 	echo "	-a STR          metagenomic assembly file"
@@ -31,8 +34,10 @@ help_message () {
 	echo "	--metabat1	bin contigs with the original metaBAT"
 	echo "	--maxbin2	bin contigs with MaxBin2"
 	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
+	echo ""
 	echo "	--run-checkm	immediately run CheckM on the bin results (required 40GB+ of memory)"
 	echo "	--single-end	non-paired reads mode (provide *.fastq files)"
+	echo "	--interleaved	the input read files contain interleaved paired-end reads"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
@@ -76,7 +81,7 @@ source $config_file
 threads=1; mem=4; out=false; ASSEMBLY=false
 # long options defaults
 metabat1=false; metabat2=false; maxbin2=false; concoct=false
-checkm=false; single_end=false
+checkm=false; read_type=paired
 
 # load in params
 OPTS=`getopt -o ht:m:o:a: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm,single-end -- "$@"`
@@ -96,7 +101,8 @@ while true; do
 		--maxbin2) maxbin2=true; shift 1;;
 		--concoct) concoct=true; shift 1;;
 		--run-checkm) checkm=true; shift 1;;
-		--single-end) single_end=true; shift 1;;
+		--single-end) read_type=single; shift 1;;
+		--interleaved) read_type=interleaved; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -115,7 +121,9 @@ fi
 #check if the assembly file exists
 if [ ! -s $ASSEMBLY ]; then error "$ASSEMBLY does not exist. Exiting..."; fi
 
-if [ $single_end = false ]; then
+comm "Entered read type: $read_type"
+
+if [ $read_type = paired ]; then
 	# check for at least one pair of read fastq files:
 	F="no"; R="no"
 	for num in "$@"; do
@@ -133,12 +141,12 @@ else
 		if [[ $num == *".fastq" ]]; then F="yes"; fi
 	done
 	if [ $F = "no" ]; then
-		comm "Unable to find read files in format *.fastq (for single-end reads)"
+		comm "Unable to find read files in format *.fastq (for single-end or interleaved reads)"
 		help_message; exit 1
 	fi
 fi
 
-if [ $single_end = false ]; then
+if [ $read_type = paired ]; then
 	#determine number of fastq read files provided:
 	num_of_F_read_files=$(for I in "$@"; do echo $I | grep _1.fastq; done | wc -l)
 	num_of_R_read_files=$(for I in "$@"; do echo $I | grep _2.fastq; done | wc -l)
@@ -184,14 +192,14 @@ comm "Indexing assembly file"
 bwa index ${out}/work_files/assembly.fa
 if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
 
-if [ $single_end = false ]; then
+if [ $read_type = paired ]; then
 	echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
 fi
 
 # If there are several pairs of reads passed, they are processed sepperately
 for num in "$@"; do
 	# paired end reads
-	if [ $single_end = false ]; then
+	if [ $read_type = paired ]; then
 		if [[ $num == *"_1.fastq"* ]]; then 
 			reads_1=$num
 			reads_2=${num%_*}_2.fastq
@@ -215,11 +223,9 @@ for num in "$@"; do
 				comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
 			fi
 		fi
-	fi
 
-
-	# single end reads
-	if [ $single_end = true ]; then
+	# single end or interleaved reads
+	else
 		if [[ $num == *".fastq"* ]]; then
 			reads=$num
 			if [ ! -s $reads ]; then error "$reads does not exist. Exiting..."; fi
@@ -227,15 +233,24 @@ for num in "$@"; do
 			sample=${tmp%.*}
 			if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
 				comm "Aligning $reads back to assembly, and sorting the alignment"
-				bwa mem -t $threads ${out}/work_files/assembly.fa $reads \
-				| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
-				-o ${out}/work_files/${sample}.bam -
-				if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
+				if [ $read_type = single ]; then
+					bwa mem -t $threads ${out}/work_files/assembly.fa $reads \
+					| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+					-o ${out}/work_files/${sample}.bam -
+					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
+				fi
+
+				if [ $read_type = interleaved ]; then
+					bwa mem -p -t $threads ${out}/work_files/assembly.fa $reads \
+					| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+					-o ${out}/work_files/${sample}.bam -
+					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
+				fi
 			else
 				comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
 			fi
 		fi
-	fi	
+	fi
 done
 
 

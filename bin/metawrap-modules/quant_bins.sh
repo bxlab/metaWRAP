@@ -172,7 +172,7 @@ n=$(ls ${out}/quant_files/ | grep counts | wc -l)
 if [[ $n -lt 1 ]]; then error "There were no files found in ${out}/quant_files/"; fi
 comm "There were $n samples detected. Making abundance table!"
 
-${SOFT}/split_salmon_out_into_bins.py ${out}/quant_files/ $bin_folder $assembly > ${out}/abundance_table.tab
+${SOFT}/split_salmon_out_into_bins.py ${out}/quant_files/ $bin_folder $assembly > ${out}/bin_abundance_table.tab
 if [[ $? -ne 0 ]]; then error "something went wrong with making summary abundance table. Exiting..."; fi
 comm "Average bin abundance table stored in ${out}/abundance_table.tab"
 
@@ -186,7 +186,7 @@ if [[ $n -gt 1 ]]; then
 	announcement "MAKING GENOME ABUNDANCE HEATMAP WITH SEABORN"
 
 	comm "making heatmap with Seaborn"
-	${SOFT}/make_heatmap.py ${out}/abundance_table.tab ${out}/genome_abundance_heatmap.png
+	${SOFT}/make_heatmap.py ${out}/bin_abundance_table.tab ${out}/bin_abundance_heatmap.png
 	if [[ $? -ne 0 ]]; then error "something went wrong with making the heatmap. Exiting..."; fi
 
 	comm "cleaning up..."

@@ -12,7 +12,7 @@ echo "# path to kraken standard database" >> bin/config-metawrap
 echo "KRAKEN_DB=/path/to/database" >> bin/config-metawrap
 echo "" >> bin/config-metawrap
 
-echo "# path to indexed human genome (see metaWRAP website for guide). This insludes files hg38.bitmask and hg38.srprism.*"  >> bin/config-metawrap
+echo "# path to indexed human genome (see metaWRAP website for guide). This includes files hg38.bitmask and hg38.srprism.*"  >> bin/config-metawrap
 echo "BMTAGGER_DB=/path/to/database" >> bin/config-metawrap
 echo "" >> bin/config-metawrap
 

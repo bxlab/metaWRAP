@@ -1,4 +1,8 @@
-metaWRAP v=1.0 (In development)
+metaWRAP v=1.1 (In development)
+	General
+		clarifying notes in many help messages
+	Binning
+		added proper scikit dependancy to avoid GMM errors when running CONCOCT
 	Bin_refinement
 		major big fix that caused the module to sometimes needlessly throw away good bins, especially at lower completion thresholds (-c)
 	Kraken
