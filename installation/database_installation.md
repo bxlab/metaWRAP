@@ -2,7 +2,7 @@
 ``` bash
 mkdir MY_CHECKM_FOLDER
 checkm data setRoot
-# CheckM will prompt to to chose your storage location...
+# CheckM will prompt to to chose your storage location... Give it the path to the folder you just made.
 
 # Now manually download the database:
 cd MY_CHECKM_FOLDER
