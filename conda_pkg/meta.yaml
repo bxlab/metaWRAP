@@ -35,7 +35,7 @@ requirements:
     - krona
     - libopenblas
     - matplotlib
-    - maxbin2 2.2.5.1
+    - maxbin2 2.2.5
     - megahit 1.*
     - metabat2 2.*
     - minced
