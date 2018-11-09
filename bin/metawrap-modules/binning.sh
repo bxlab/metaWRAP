@@ -29,7 +29,7 @@ help_message () {
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
 	echo "	-m INT		amount of RAM available (default=4)"
-	echo "	-l INT		minimum contig length to bin (default=1000bp)"
+	echo "	-l INT		minimum contig length to bin (default=1000bp). Note: metaBAT will default to 1500bp minimum"
 	echo ""
         echo "	--metabat2      bin contigs with metaBAT2"
 	echo "	--metabat1	bin contigs with the original metaBAT"
@@ -37,7 +37,7 @@ help_message () {
 	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
 	echo ""
 	echo "	--universal	use universal marker genes instead of bacterial markers in MaxBin2 (improves Archaea binning)"
-	echo "	--run-checkm	immediately run CheckM on the bin results (required 40GB+ of memory)"
+	echo "	--run-checkm	immediately run CheckM on the bin results (requires 40GB+ of memory)"
 	echo "	--single-end	non-paired reads mode (provide *.fastq files)"
 	echo "	--interleaved	the input read files contain interleaved paired-end reads"
 	echo "";}
@@ -165,10 +165,18 @@ if [ $metabat2 = false ] && [ $metabat1 = false ] &&[ $maxbin2 = false ] && [ $c
 	error "You must select at least one binning method: --metabat2, --metabat1, --maxbin2, --concoct"
 fi
 
+if [ $len -lt 1500 ]; then
+	metabat_len=1500
+else
+	metabat_len=$len
+fi
+
+
 # Checks for correctly configures meta-scripts folder
 if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure config.sh is in the same filder as the mains scripts and all the paths in the config.sh file are correct"
 fi
+
 
 ########################################################################################################
 ########################                    BEGIN PIPELINE!                     ########################
@@ -189,15 +197,24 @@ fi
 
 if [ ! -d ${out}/work_files ]; then mkdir ${out}/work_files; fi
 
-comm "making copy of assembly file $ASSEMBLY"
-cp $ASSEMBLY ${out}/work_files/assembly.fa
+if [ -f ${out}/work_files/assembly.fa ]; then
+	comm "Looks like the assembly file is already coppied. Skipping..."
+else
+	comm "making copy of assembly file $ASSEMBLY"
+	cp $ASSEMBLY ${out}/work_files/assembly.fa
+fi
+
 tmp=${ASSEMBLY##*/}
 sample=${tmp%.*}
 
 # Index the assembly
-comm "Indexing assembly file"
-bwa index ${out}/work_files/assembly.fa
-if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
+if [ -f ${out}/work_files/assembly.fa.bwt ]; then
+	comm "Looks like there is a index of the assembly already. Skipping..."
+else
+	comm "Indexing assembly file"
+	bwa index ${out}/work_files/assembly.fa
+	if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
+fi
 
 if [ $read_type = paired ]; then
 	echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
@@ -273,7 +290,7 @@ if [ $metabat2 = true ]; then
 
 	comm "Starting binning with metaBAT2..."
 	metabat2 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
-	 -o ${out}/metabat2_bins/bin -m $len -t $threads --unbinned
+	 -o ${out}/metabat2_bins/bin -m $metabat_len -t $threads --unbinned
 	if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT2. Exiting"; fi
 	comm "metaBAT2 finished successfully, and found $(ls -l ${out}/metabat2_bins | grep .fa | wc -l) bins!"
 
@@ -295,7 +312,7 @@ if [ $metabat1 = true ]; then
 
         comm "Starting binning with metaBAT1..."
         metabat1 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
-         -o ${out}/metabat1_bins/bin -m $len -t $threads --unbinned --superspecific
+         -o ${out}/metabat1_bins/bin -m $metabat_len -t $threads --unbinned --superspecific
         if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT1. Exiting"; fi
         comm "metaBAT1 finished successfully, and found $(ls -l ${out}/metabat1_bins | grep .fa | wc -l) bins!"
 
@@ -411,8 +428,8 @@ if [ $concoct = true ]; then
 	fi
 fi
 
-comm "cleaning up *.bam to save space..."
-rm ${out}/work_files/*bam
+#comm "cleaning up *.bam to save space..."
+#rm ${out}/work_files/*bam
 
 ########################################################################################################
 ########################      BINNING PIPELINE SUCCESSFULLY FINISHED!!!         ########################

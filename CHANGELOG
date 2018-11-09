@@ -12,6 +12,7 @@ metaWRAP v=1.1 (In development)
 		changed default MaxBin2 marker set to the Bacterial marker set
 		added --universal option to set MaxBin2 to use the universal marker genes for improved Archaea binning 
 		added -l option that sets the minimum contig length to bin for all four binners
+		removed cleanup feature so re-running the module with a new binner is possible
 	Bin_refinement
 		major big fix that caused the module to sometimes needlessly throw away good bins, especially at lower completion thresholds (-c)
 		advanced cleanup if using an existing output directory
