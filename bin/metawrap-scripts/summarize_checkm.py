@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 import sys
 # This script summarizes the statistics of each bin by parsing 
 # the checkm_folder/storage/bin_stats_ext.tsv file of the CheckM output

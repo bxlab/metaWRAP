@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 # USAGE:
 # ./script file1.stats file2.stats file3.stats
 

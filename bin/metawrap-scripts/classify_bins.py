@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 import sys,os
 
 def add_to_tree( tree, tax_list, length ):

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 import sys
 
 # this script takes in a list of fastq read names and picks them out of a .fastq file.

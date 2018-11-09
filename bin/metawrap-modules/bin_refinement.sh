@@ -20,12 +20,12 @@ help_message () {
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
 	echo "	-m INT		memory available (default=40)"
+	echo "  -c INT          minimum % completion of bins [should be >50%] (default=70)"
+	echo "  -x INT          maximum % contamination of bins that is acceptable (default=10)"
 	echo ""
-	echo "	-A STR		folder with metagenomic bins"
+	echo "	-A STR		folder with metagenomic bins (files must have .fa or .fasta extension)"
 	echo "	-B STR		another folder with metagenomic bins"
 	echo "	-C STR		another folder with metagenomic bins" 
-	echo "	-c INT		minimum % completion of bins [should be >50%] (default=70)"
-	echo "	-x INT		maximum % contamination of bins that is acceptable (default=10)"
 	echo ""
 	echo "	--skip-refinement	dont use binning_refiner to come up with refined bins based on combinations of binner outputs"
 	echo "	--skip-checkm		dont run CheckM to assess bins"
@@ -118,7 +118,7 @@ if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure config.sh is in the same filder as the mains scripts and all the paths in the config.sh file are correct"
 fi
 
-# determine --pplacer_threads count. It is either the max thread count or RAM/4, whichever is higher
+# determine --pplacer_threads count. It is either the max thread count or RAM/40, whichever is higher
 ram_max=$(($mem / 40))
 if (( $ram_max < $threads )); then
 	p_threads=$ram_max
@@ -137,9 +137,16 @@ if [ ! -d $out ]; then
         mkdir $out
 	if [ ! -d $out ]; then error "cannot make $out"; fi
 else
-        warning "Warning: $out already exists. It is HIGHLY recommended that you clear this directory to prevent any conflicts... Attempting to clean"
-	#rm -r ${out}/*
+        warning "Warning: $out already exists. It is HIGHLY recommended that you clear this directory to prevent any conflicts... Attempting to clean."
+	rm -r ${out}/binsA
+	rm -r ${out}/binsB
+	rm -r ${out}/binsC
+	rm -r ${out}/binsAB
+	rm -r ${out}/binsBC
+	rm -r ${out}/binsAC
+	rm -r ${out}/binsABC
 fi
+
 
 n_binnings=0
 if [[ -d $bins1 ]]; then 
@@ -151,12 +158,12 @@ else
 	error "$bins1 is not a valid directory. Exiting."
 fi
 
-#copy over the other bin folders if they are specified
 if [[ -d $bins2 ]]; then 
 	cp -r $bins2 ${out}/binsB; n_binnings=$((n_binnings +1))
 	comm "there are $(ls ${out}/binsB | wc -l) bins in binsB"
 	if [[ $(ls ${out}/binsB | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
 fi
+
 if [[ -d $bins3 ]]; then 
 	cp -r $bins3 ${out}/binsC; n_binnings=$((n_binnings +1))
 	comm "there are $(ls ${out}/binsC | wc -l) bins in binsC"
@@ -167,9 +174,11 @@ comm "There are $n_binnings bin sets!"
 
 
 comm "Fix contig naming by removing special characters..."
-for f in ${out}/binsA/*; do echo $f; ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
-for f in ${out}/binsB/*; do echo $f; ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
-for f in ${out}/binsC/*; do echo $f; ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+for f in ${out}/binsA/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+for f in ${out}/binsB/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+if [[ -d $bins3 ]]; then
+	for f in ${out}/binsC/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+fi
 
 
 
@@ -184,6 +193,7 @@ if [ "$refine" == "true" ]; then
 	elif [[ $n_binnings -eq 2 ]]; then
 		comm "There are two bin folders, so we can consolidate them into a third, more refined bin set."
 		${SOFT}/binning_refiner.py -1 binsA -2 binsB -o Refined_AB
+		comm "there are $(ls Refined_AB/Refined | grep ".fa" | wc -l) refined bins in binsAB"
 		mv Refined_AB/Refined binsAB
 		if [[ $? -ne 0 ]]; then error "Bin_refiner did not finish correctly. Exiting..."; fi
 		rm -r Refined_AB
@@ -197,10 +207,10 @@ if [ "$refine" == "true" ]; then
 		
 		wait
 	
-		comm "there are $(ls Refined_AB/Refined | wc -l) refined bins in binsAB"
-		comm "there are $(ls Refined_BC/Refined | wc -l) refined bins in binsBC"
-		comm "there are $(ls Refined_AC/Refined | wc -l) refined bins in binsAC"
-		comm "there are $(ls Refined_ABC/Refined | wc -l) refined bins in binsABC"
+		comm "there are $(ls Refined_AB/Refined | grep ".fa" | wc -l) refined bins in binsAB"
+		comm "there are $(ls Refined_BC/Refined | grep ".fa" | wc -l) refined bins in binsBC"
+		comm "there are $(ls Refined_AC/Refined | grep ".fa" | wc -l) refined bins in binsAC"
+		comm "there are $(ls Refined_ABC/Refined | grep ".fa" | wc -l) refined bins in binsABC"
 
 
 		mv Refined_ABC/Refined binsABC
@@ -373,21 +383,21 @@ if [ "${bins3:$((${#bins3}-1)):1}" = "/" ]; then bins3=${bins3%/*}; fi
 if [[ $n_binnings -eq 2 ]]; then
 	cp -r work_files/binsA ${bins1##*/}
 	cp -r work_files/binsB ${bins2##*/}
-	cp -r work_files/binsO metaWRAP_bins
+	cp -r work_files/binsO metawrap_bins
 
 	cp work_files/binsA.stats ${bins1##*/}.stats	
 	cp work_files/binsB.stats ${bins2##*/}.stats
-	cp work_files/binsO.stats metaWRAP_bins.stats
+	cp work_files/binsO.stats metawrap_bins.stats
 elif [[ $n_binnings -eq 3 ]]; then
 	cp -r work_files/binsA ${bins1##*/}
 	cp -r work_files/binsB ${bins2##*/}
 	cp -r work_files/binsC ${bins3##*/}
-	cp -r work_files/binsO metaWRAP_bins
+	cp -r work_files/binsO metawrap_bins
 
 	cp work_files/binsA.stats ${bins1##*/}.stats
 	cp work_files/binsB.stats ${bins2##*/}.stats
 	cp work_files/binsC.stats ${bins3##*/}.stats
-	cp work_files/binsO.stats metaWRAP_bins.stats
+	cp work_files/binsO.stats metawrap_bins.stats
 else
 	error "something went wrong with determining the number of input bin sets when finalizing output names..."
 fi

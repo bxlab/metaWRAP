@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 print "loading libs..."
 import sys
 import numpy as np

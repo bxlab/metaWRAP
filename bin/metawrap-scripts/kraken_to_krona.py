@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 import sys
 # This script takes in a translated kraken file of either contigs (from SPAdes) or reads, and parses it into a format for ktImportText to produce a kronachart.
 data={}

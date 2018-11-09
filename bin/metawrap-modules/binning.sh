@@ -29,12 +29,14 @@ help_message () {
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
 	echo "	-m INT		amount of RAM available (default=4)"
+	echo "	-l INT		minimum contig length to bin (default=1000bp)"
 	echo ""
         echo "	--metabat2      bin contigs with metaBAT2"
 	echo "	--metabat1	bin contigs with the original metaBAT"
 	echo "	--maxbin2	bin contigs with MaxBin2"
 	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
 	echo ""
+	echo "	--universal	use universal marker genes instead of bacterial markers in MaxBin2 (improves Archaea binning)"
 	echo "	--run-checkm	immediately run CheckM on the bin results (required 40GB+ of memory)"
 	echo "	--single-end	non-paired reads mode (provide *.fastq files)"
 	echo "	--interleaved	the input read files contain interleaved paired-end reads"
@@ -78,13 +80,14 @@ config_file=$(which config-metawrap)
 source $config_file
 
 # default params
-threads=1; mem=4; out=false; ASSEMBLY=false
+threads=1; mem=4; len=1000; out=false; ASSEMBLY=false
 # long options defaults
 metabat1=false; metabat2=false; maxbin2=false; concoct=false
 checkm=false; read_type=paired
+markers=107
 
 # load in params
-OPTS=`getopt -o ht:m:o:a: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm,single-end -- "$@"`
+OPTS=`getopt -o ht:m:o:a:l: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm,single-end,universal -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -95,6 +98,7 @@ while true; do
 		-m) mem=$2; shift 2;;
                 -o) out=$2; shift 2;;
                 -a) ASSEMBLY=$2; shift 2;;
+		-l) len=$2; shift 2;;
                 -h | --help) help_message; exit 1; shift 1;;
 		--metabat2) metabat2=true; shift 1;;
 		--metabat1) metabat1=true; shift 1;;
@@ -103,6 +107,7 @@ while true; do
 		--run-checkm) checkm=true; shift 1;;
 		--single-end) read_type=single; shift 1;;
 		--interleaved) read_type=interleaved; shift 1;;
+		--universal) markers=40; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -177,7 +182,9 @@ announcement "ALIGNING READS TO MAKE COVERAGE FILES"
 
 # setting up the output folder
 if [ ! -d $out ]; then mkdir $out;
-else echo "Warning: $out already exists."
+else 
+	echo "Warning: $out already exists."
+	rm -r ${out}/*checkm
 fi
 
 if [ ! -d ${out}/work_files ]; then mkdir ${out}/work_files; fi
@@ -266,7 +273,7 @@ if [ $metabat2 = true ]; then
 
 	comm "Starting binning with metaBAT2..."
 	metabat2 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
-	 -o ${out}/metabat2_bins/bin -m 1500 -t $threads --unbinned
+	 -o ${out}/metabat2_bins/bin -m $len -t $threads --unbinned
 	if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT2. Exiting"; fi
 	comm "metaBAT2 finished successfully, and found $(ls -l ${out}/metabat2_bins | grep .fa | wc -l) bins!"
 
@@ -288,7 +295,7 @@ if [ $metabat1 = true ]; then
 
         comm "Starting binning with metaBAT1..."
         metabat1 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
-         -o ${out}/metabat1_bins/bin -m 1500 -t $threads --unbinned --superspecific
+         -o ${out}/metabat1_bins/bin -m $len -t $threads --unbinned --superspecific
         if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT1. Exiting"; fi
         comm "metaBAT1 finished successfully, and found $(ls -l ${out}/metabat1_bins | grep .fa | wc -l) bins!"
 
@@ -347,7 +354,7 @@ if [ $maxbin2 = true ]; then
 	
 	comm "Starting binning with MaxBin2..."
 	mkdir ${out}/work_files/maxbin2_out
-	run_MaxBin.pl -contig ${out}/work_files/assembly.fa -markerset 40 -thread $threads\
+	run_MaxBin.pl -contig ${out}/work_files/assembly.fa -markerset $markers -thread $threads -min_contig_length $len\
 	-out ${out}/work_files/maxbin2_out/bin \
 	-abund_list ${out}/work_files/mb2_abund_list.txt
 
@@ -386,9 +393,9 @@ if [ $concoct = true ]; then
         cd ${out}/work_files/concoct_out
 
 	if [[ $out == /* ]]; then
-		concoct --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly.fa
+		concoct --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly.fa -l $len
 	else
-	        concoct --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly.fa
+	        concoct --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly.fa -l $len
         fi
 
 	if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting."; fi
