@@ -420,7 +420,7 @@ if [ $concoct = true ]; then
 
         comm "splitting contigs into bins"
         mkdir ${out}/concoct_bins
-        ${SOFT}/split_concoct_bins.py ${out}/work_files/concoct_out/clustering_gt1000.csv ${out}/work_files/assembly.fa ${out}/concoct_bins
+        ${SOFT}/split_concoct_bins.py ${out}/work_files/concoct_out/clustering_gt${len}.csv ${out}/work_files/assembly.fa ${out}/concoct_bins
         comm "CONCOCT finished successfully, and found $(ls -l ${out}/concoct_bins | grep .fa | wc -l) bins!"
 
 	if [ $checkm = true ]; then
