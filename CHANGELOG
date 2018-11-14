@@ -1,6 +1,6 @@
 metaWRAP v=1.1 (In development)
 	General
-		made conda requirements more ambiguous to accomodate software incompatibilities
+		modified conda requirements for software version (multiple)
 		added perl-lwp-simple as a dependancy for MaxBin2
 		clarifying notes in many help messages
 		changed python script shebangs to force use python2.7
