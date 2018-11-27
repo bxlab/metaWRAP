@@ -50,13 +50,14 @@
  
  Then add channels to your conda environment, and install metaWRAP (supports Linux64):
  ``` bash
- # ORDER IS IMPORTANT!!!
+ # Note: ordering is important
  conda config --add channels defaults
  conda config --add channels conda-forge
  conda config --add channels bioconda
  conda config --add channels ursky
 
  conda install -c ursky metawrap-mg
+ # Note: may take a couple hours
  ```
  
  #### Better installation
@@ -65,20 +66,21 @@
 conda create -n metawrap-env python=2.7
 source activate metawrap-env
 
-# ORDER IS IMPORTANT!!!
+# Note: ordering is important
 conda config --add channels defaults
 conda config --add channels conda-forge
 conda config --add channels bioconda
 conda config --add channels ursky
 
 conda install -c ursky metawrap-mg
+# Note: may take a couple hours
 ```
 
 #### Manual installation:
  You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.md). When you are ready, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH`. Thats it! 
  
 #### Bioconda installation:
-MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended as I will only push major releases to this source. This source is meant for specific applications that require a Bioconda distribution. To get the latest patches and bug fixes, please install metaWRAP through the `-c ursky` channel, as seen above. 
+MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended for most users, as I will only push major releases to Bioconda. This source is meant for specific applications that require a Bioconda distribution. To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. 
 
 ```
 # Bioconda installation (not recommended):
