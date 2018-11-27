@@ -1,4 +1,4 @@
-**New: The metaWRAP manuscript has been published in [Microbiome](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).**
+ **See the metaWRAP publication in [Microbiome](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).**
 
 **Current metaWRAP version = 1.0.5**. To update, run `conda install metawrap-mg=1.0.5` (consider backing up your `bin/config-metawrap`file before you update)
 
@@ -77,6 +77,13 @@ conda install -c ursky metawrap-mg
 #### Manual installation:
  You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.md). When you are ready, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH`. Thats it! 
  
+#### Bioconda installation:
+MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended as I will only push major releases to this source. This source is meant for specific applications that require a Bioconda distribution. To get the latest patches and bug fixes, please install metaWRAP through the `-c ursky` channel, as seen above. 
+
+```
+# Bioconda installation (not recommended):
+conda install -c bioconda metawrap
+```
  
 ## DATABASES
 
@@ -89,11 +96,11 @@ This is very important if you want to use any functions requiring databases, but
 
 |    Database     | Size  |  Used in module |
 |:---------------:|:---------------:|:-----:| 
-|Checkm_DB	 |1.4GB| binning, bin_refinement, reassemble_bins |
-|KRAKEN standard database|161GB |  kraken |
+| Checkm_DB |1.4GB| binning, bin_refinement, reassemble_bins |
+| KRAKEN standard database|161GB |  kraken |
 | NCBI_nt |71GB |  blobology, classify_bins |
 | NCBI_tax |283MB |  blobology, classify_bins |
-|Indexed hg38  	|  20GB |  read_qc |
+| Indexed hg38  	|  20GB |  read_qc |
 
 
 ## DETAILED PIPELINE WALKTHROUGH
