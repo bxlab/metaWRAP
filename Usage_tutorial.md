@@ -170,11 +170,11 @@ metawrap bin_refinement -o BIN_REFINEMENT -t 96 -A INITIAL_BINNING/metabat2_bins
 
 In the output directory, you will see the three original bin folders we fed in, as well as `metaWRAP` directory, which contains the final, consilidated bins. You will also see a `Binning_refiner` bin set - this is an internal benchmark for the bins produced by using another consolidation software (Binning_refiner). You can ignore this set - it will likely have low contamination and completion. You will also see .stats files for each one of the bin directories. 
 ```
-concoct_bins.stats	maxbin2_bins.stats	metabat2_bins.stats	metaWRAP.stats	Binning_refiner.stats
-concoct_bins		maxbin2_bins		metabat2_bins		metaWRAP	Binning_refiner
+concoct_bins.stats	maxbin2_bins.stats	metabat2_bins.stats	metawrap.stats	Binning_refiner.stats
+concoct_bins		maxbin2_bins		metabat2_bins		metawrap	Binning_refiner
 ```
 
-The .stat files contain usefull information about each bin, inscuding its completeness and contamination. For example, `cat BIN_REFINEMENT/metaWRAP.stats`:
+The .stat files contain usefull information about each bin, inscuding its completeness and contamination. For example, `cat BIN_REFINEMENT/metawrap.stats`:
 ```
 bin	completeness	contamination	GC	lineage	N50	size	binner
 bin.5	100.0	1.6	0.311	Euryarchaeota	12686	1705532	binsO.checkm
@@ -194,7 +194,7 @@ bin.7	52.94	1.724	0.501	Bacteria	3614	1465011	binsO.checkm
 
 To evaluate how many "good bins" (based on out >50% comp., <10% cont. metric) metaWRAP produced, we can run
 ```
-cat BIN_REFINEMENT/metaWRAP_bins.stats | awk '$2>50 && $3<10' | wc -l
+cat BIN_REFINEMENT/metawrap_bins.stats | awk '$2>50 && $3<10' | wc -l
 13
 ```
 
@@ -216,7 +216,7 @@ NOTE: In order to annotate the blobplot with bins with the `--bins` flag, you **
 Note2: You will need R for this module.
 
 ```
-metawrap blobology -a ASSEMBLY/final_assembly.fasta -t 96 -o BLOBOLOGY --bins BIN_REFINEMENT/metaWRAP_bins CLEAN_READS/ERR*fastq
+metawrap blobology -a ASSEMBLY/final_assembly.fasta -t 96 -o BLOBOLOGY --bins BIN_REFINEMENT/metawrap_bins CLEAN_READS/ERR*fastq
 ```
 
 You will find that the output has a number of blob plots of our communities, annotated with different levels of taxonomy or their bin membership. Note that to help with visualizing the bins, some of the plots only contain the contigs that were successfully binned (these files have `.binned.blobplot.` in their names). 
@@ -235,7 +235,7 @@ NOTE: In order to run this module, it is **highly** recomended to use the non-re
 
 Lets run the Quant_bins module:
 ```
-metawrap quant_bins -b BIN_REFINEMENT/metaWRAP_bins -o QUANT_BINS -a ASSEMBLY/final_assembly.fasta CLEAN_READS/ERR*fastq
+metawrap quant_bins -b BIN_REFINEMENT/metawrap_bins -o QUANT_BINS -a ASSEMBLY/final_assembly.fasta CLEAN_READS/ERR*fastq
 ```
 
 The output contains several usefull files. First, there is the `bin_abundance_heatmap.png` - a quick heatmap made to visualize the bin abundances across the samples. 
@@ -264,11 +264,11 @@ bin.3	349.730007621	0.0911113402849	0.196554603409
 Finally, you can view the abundances of all the individual contigs in all the samples in the `quant_files` folder.
 
 ## Step 8: Re-assemble the consolidated bin set with the Reassemble_bins module
-Now that we have our final, consilidated bin set in `BIN_REFINEMENT/metaWRAP_bins`, we can try to further improve it with reassembly. The Reassemble bins module will collect reads belonging to each bun, and then reassemble them sepperately with a "permissive" and a "strict" algorithm. Only the bins that improved through reassembly will be altered in the final set.
+Now that we have our final, consilidated bin set in `BIN_REFINEMENT/metawrap_bins`, we can try to further improve it with reassembly. The Reassemble bins module will collect reads belonging to each bun, and then reassemble them sepperately with a "permissive" and a "strict" algorithm. Only the bins that improved through reassembly will be altered in the final set.
 
 Let us run the Reassemble_bins module with all the reads we have:
 ```
-metawrap reassemble_bins -o BIN_REASSEMBLY -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -t 96 -m 800 -c 50 -x 10 -b BIN_REFINEMENT/metaWRAP_bins
+metawrap reassemble_bins -o BIN_REASSEMBLY -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -t 96 -m 800 -c 50 -x 10 -b BIN_REFINEMENT/metawrap_bins
 ```
 
 Looking at the output in `BIN_REASSEMBLY/reassembled_bins.stats`, we can see that 3 bins were improved though strict reassembly, 6 improved thorugh permissive reassembly, and 4 bins could not be improved (`.strict`, `.permissive`, and `.orig` bin extensions, respectively):
