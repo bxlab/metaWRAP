@@ -5,7 +5,9 @@ metaWRAP v=1.1 (In development)
 		clarifying notes in many help messages
 		changed python script shebangs to force use python2.7
 		deleted depricated modules "all" and "phylosift", to avoid confusion
+		main help message now displays metawrap version
 	Binning
+		removed insert size calculations to avoid stalled bwa run bug
 		added proper scikit dependancy to avoid GMM errors when running CONCOCT
 		fixed Maxbin distribution to use conda's Perl instead of system Perl (in maxbin v=2.2.5)
 		fixed checkm folder error when resuming a previously attempted run
@@ -14,13 +16,17 @@ metaWRAP v=1.1 (In development)
 		added -l option that sets the minimum contig length to bin for all four binners
 		removed cleanup feature so re-running the module with a new binner is possible
 	Bin_refinement
+		major speed improvement with new --quick option, especially on low-memory systems
 		major big fix that caused the module to sometimes needlessly throw away good bins, especially at lower completion thresholds (-c)
 		advanced cleanup if using an existing output directory
 		improved error and status messages
 		fixed bug that created dandom tmp files in output directory when using two bin sets
 		output metawrap folder is now in lower case
+	Blobology
+		added failsafe if assembly file does not exist
 	Kraken
 		added help message details
+		added progress messages during kraken translation process
 	Quant_bins
 		added exception that skips making the heatmap when the sample count is only 1
 		fixed error causing the heatmap funciton to fail due to bool error

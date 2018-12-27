@@ -20,8 +20,8 @@ help_message () {
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
 	echo "	-m INT		memory available (default=40)"
-	echo "  -c INT          minimum % completion of bins [should be >50%] (default=70)"
-	echo "  -x INT          maximum % contamination of bins that is acceptable (default=10)"
+	echo "	-c INT          minimum % completion of bins [should be >50%] (default=70)"
+	echo "	-x INT          maximum % contamination of bins that is acceptable (default=10)"
 	echo ""
 	echo "	-A STR		folder with metagenomic bins (files must have .fa or .fasta extension)"
 	echo "	-B STR		another folder with metagenomic bins"
@@ -32,6 +32,7 @@ help_message () {
 	echo "	--skip-consolidation	choose the best version of each bin from all bin refinement iteration"
 	echo "	--keep-ambiguous	for contigs that end up in more than one bin, keep them in all bins (default: keeps them only in the best bin)"
 	echo "	--remove-ambiguous	for contigs that end up in more than one bin, remove them in all bins (default: keeps them only in the best bin)"
+	echo "	--quick			adds --reduced_tree option to checkm, reducing runtime, especially with low memory"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
@@ -74,10 +75,10 @@ source $config_file
 threads=1; mem=40; out="false"; comp=70; cont=10; x=10; c=70; 
 bins1=None; bins2=None; bins3=None
 # long options defaults
-run_checkm=true; refine=true; cherry_pick=true; dereplicate=partial
+run_checkm=true; refine=true; cherry_pick=true; dereplicate=partial; quick=false
 
 # load in params
-OPTS=`getopt -o ht:m:o:x:c:A:B:C: --long help,skip-checkm,skip-refinement,skip-consolidation,keep-ambiguous,remove-ambiguous -- "$@"`
+OPTS=`getopt -o ht:m:o:x:c:A:B:C: --long help,skip-checkm,skip-refinement,skip-consolidation,keep-ambiguous,remove-ambiguous,quick -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -98,6 +99,7 @@ while true; do
 		--skip-consolidation) cherry_pick=false; shift 1;;
 		--keep-ambiguous) dereplicate=false; shift 1;;
 		--remove-ambiguous) dereplicate=complete; shift 1;;
+		--quick) quick=true; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -248,7 +250,12 @@ if [ "$run_checkm" == "true" ]; then
 	for bin_set in $(ls | grep -v tmp); do 
 		comm "Running CheckM on $bin_set bins"
 		mkdir ${bin_set}.tmp
-		checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads
+		if [ "$quick" == "true" ]; then
+			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads --reduced_tree
+		else
+			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads
+		fi
+
 		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 		${SOFT}/summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
 		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
@@ -337,7 +344,13 @@ announcement "FINALIZING THE REFINED BINS"
 if [ "$run_checkm" == "true" ] && [ $dereplicate != "false" ]; then
 	comm "Re-running CheckM on binsO bins"
 	mkdir binsO.tmp
-	checkm lineage_wf -x fa binsO binsO.checkm -t $threads --tmpdir binsO.tmp --pplacer_threads $p_threads
+
+	if [ "$quick" == "true" ]; then
+		checkm lineage_wf -x fa binsO binsO.checkm -t $threads --tmpdir binsO.tmp --pplacer_threads $p_threads --reduced_tree
+	else
+		checkm lineage_wf -x fa binsO binsO.checkm -t $threads --tmpdir binsO.tmp --pplacer_threads $p_threads
+	fi
+
 	if [[ ! -s binsO.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 	rm -r binsO.tmp
 	${SOFT}/summarize_checkm.py binsO.checkm/storage/bin_stats_ext.tsv manual binsM.stats | (read -r; printf "%s\n" "$REPLY"; sort -rn -k2) > binsO.stats

@@ -13,11 +13,14 @@
 # Master metaWRAP script that calls on individual modules/pipelines 
 ##############################################################################################################################################################
 
+VERSION="1.0.6"
+
 help_message () {
         echo""
+	echo "MetaWRAP v=$VERSION"
 	echo "Usage: metaWRAP [module]"
-        echo "Options:"
-        echo ""
+	echo ""
+        echo "	Modules:"
 	echo "	read_qc		Raw read QC module (read trimming and contamination removal)"
         echo "	assembly	Assembly module (metagenomic assembly)"
 	echo "	kraken		KRAKEN module (taxonomy annotation of reads and assemblies)"
@@ -105,7 +108,7 @@ elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 elif [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
         echo ""
-	echo "metaWRAP v=1.0.5"
+	echo "metaWRAP v=$VERSION"
 	echo ""
         exit 0
 elif [ "$1" = "--show-config" ]; then

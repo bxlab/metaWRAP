@@ -153,6 +153,7 @@ fi
 announcement "RUNNING KRAKEN-TRANSLATE ON OUTPUT"
 
 for file in ${out}/*.krak; do
+	comm "Translating $file"
 	kraken-translate --db ${KRAKEN_DB} $file > ${file}en
 	if [[ ! -s ${file}en ]] ; then error "Something went wrong with running kraken-translate... Exiting."; fi
 	rm $file

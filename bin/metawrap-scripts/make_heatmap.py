@@ -71,12 +71,8 @@ df+=0.01; df=np.log(df)
 #df = df.div(df.max(axis=1), axis=0)
 
 
-
-if "2016-02" in df: lut = set_colors_to_timeline(df)
-else: lut=False
-
+lut=False
 draw_clustermap(df, lut)
-	
 
 if len(sys.argv)<3: out=".".join(sys.argv[1].split(".")[:-1])+".png"
 else: out=sys.argv[2]

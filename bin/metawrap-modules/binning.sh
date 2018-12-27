@@ -216,9 +216,9 @@ else
 	if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
 fi
 
-if [ $read_type = paired ]; then
-	echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
-fi
+#if [ $read_type = paired ]; then
+	#echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
+#fi
 
 # If there are several pairs of reads passed, they are processed sepperately
 for num in "$@"; do
@@ -235,11 +235,12 @@ for num in "$@"; do
 			
 			if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
 				comm "Aligning $reads_1 and $reads_2 back to assembly, sorting the alignment, and gathering statistics on insert lengths"
-				echo -n -e "${sample}\t" >> ${out}/insert_sizes.txt
-				bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2\
-				| tee >( awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
-				>> ${out}/insert_sizes.txt ) \
-				| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+				#echo -n -e "${sample}\t" >> ${out}/insert_sizes.txt
+				bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2 \
+				#| tee >( awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
+				#>> ${out}/insert_sizes.txt ) \
+				| samtools view -@ $threads -bS - \
+				| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
 				-o ${out}/work_files/${sample}.bam -
 				
 				if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
@@ -259,14 +260,16 @@ for num in "$@"; do
 				comm "Aligning $reads back to assembly, and sorting the alignment"
 				if [ $read_type = single ]; then
 					bwa mem -t $threads ${out}/work_files/assembly.fa $reads \
-					| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+					| samtools view -@ $threads -bS - \
+					| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
 					-o ${out}/work_files/${sample}.bam -
 					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
 				fi
 
 				if [ $read_type = interleaved ]; then
 					bwa mem -p -t $threads ${out}/work_files/assembly.fa $reads \
-					| samtools view -@ $threads -bS - | samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
+					| samtools view -@ $threads -bS - \
+					| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
 					-o ${out}/work_files/${sample}.bam -
 					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
 				fi
@@ -312,7 +315,7 @@ if [ $metabat1 = true ]; then
 
         comm "Starting binning with metaBAT1..."
         metabat1 -i ${out}/work_files/assembly.fa -a ${out}/work_files/metabat_depth.txt\
-         -o ${out}/metabat1_bins/bin -m $metabat_len -t $threads --unbinned --superspecific
+         -o ${out}/metabat1_bins/bin -m $metabat_len --minContigByCorr $len -t $threads --unbinned --superspecific
         if [[ $? -ne 0 ]]; then error "Something went wrong with running MetaBAT1. Exiting"; fi
         comm "metaBAT1 finished successfully, and found $(ls -l ${out}/metabat1_bins | grep .fa | wc -l) bins!"
 

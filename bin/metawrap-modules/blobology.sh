@@ -80,6 +80,10 @@ if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure the meta-scripts folder path is correctly set in config.sh file"
 fi
 
+if  [ ! -f "$ASSEMBLY" ]; then
+	error "Assembly file $ASSEMBLY does not exist. Exiting..."
+fi
+
 #  Checks for NCBI_nt database for BLAST
 if [ ! -f "${BLASTDB}/nt.00.nhd" ]; then
 	error "The file ${BLASTDB}/nt.00.nhd doesnt exist, which likely means that you havent set the correct path to your NCBI_nt database or\
@@ -135,7 +139,7 @@ assembly=${ASSEMBLY##*/}
 SAMPLE=${assembly%.*}
 
 ## the following command selects desired number of contigs at random to classify and plot:
-comm "Choosing $n contigs from $ASSEMBLY"
+comm "Choosing $n_contigs from $ASSEMBLY"
 ${SOFT}/blobology/fastaqual_select.pl -f $ASSEMBLY -s r -n $n_contigs > ${out}/$assembly
 
 comm "Running MEGABLAST on $assembly"
