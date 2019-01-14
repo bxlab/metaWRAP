@@ -1,6 +1,6 @@
  **See the metaWRAP publication in [Microbiome](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).**
 
-**To update to the latest version, run `conda install metawrap-mg=1.1` (consider backing up your `bin/config-metawrap`file before you update)
+**To update to the latest version, run `conda install metawrap-mg=1.1.1` (consider backing up your `bin/config-metawrap`file before you update)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
