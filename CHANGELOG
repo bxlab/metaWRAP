@@ -1,3 +1,10 @@
+metaWRAP v 1.2 (In development)
+	Binning
+		fixed syntax bug coming from comment lines following "next line" character
+	Classify_bins
+		added exception to prune hits script to account for newer version of NCBI database
+
+
 metaWRAP v=1.1 (January 2019)
 	General
 		modified conda requirements for software version (multiple)
