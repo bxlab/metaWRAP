@@ -216,10 +216,6 @@ else
 	if [[ $? -ne 0 ]] ; then error "Something went wrong with indexing the assembly. Exiting."; fi
 fi
 
-#if [ $read_type = paired ]; then
-	#echo -e "sample\tsample_size\tmean\tstdev" > ${out}/insert_sizes.txt
-#fi
-
 # If there are several pairs of reads passed, they are processed sepperately
 for num in "$@"; do
 	# paired end reads
@@ -235,14 +231,8 @@ for num in "$@"; do
 			
 			if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
 				comm "Aligning $reads_1 and $reads_2 back to assembly, sorting the alignment, and gathering statistics on insert lengths"
-				#echo -n -e "${sample}\t" >> ${out}/insert_sizes.txt
-				bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2 \
-				#| tee >( awk '{ if ($9 > 0) { N+=1; S+=$9; S2+=$9*$9 }} END { M=S/N; print ""N"\t "M"\t "sqrt ((S2-M*M*N)/(N-1))}'\
-				#>> ${out}/insert_sizes.txt ) \
-				| samtools view -@ $threads -bS - \
-				| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
-				-o ${out}/work_files/${sample}.bam -
-				
+				bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2 | samtools view -@ $threads -bS - \
+				| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam -o ${out}/work_files/${sample}.bam -
 				if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
 			else
 				comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
@@ -259,18 +249,14 @@ for num in "$@"; do
 			if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
 				comm "Aligning $reads back to assembly, and sorting the alignment"
 				if [ $read_type = single ]; then
-					bwa mem -t $threads ${out}/work_files/assembly.fa $reads \
-					| samtools view -@ $threads -bS - \
-					| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
-					-o ${out}/work_files/${sample}.bam -
+					bwa mem -t $threads ${out}/work_files/assembly.fa $reads | samtools view -@ $threads -bS - \
+					| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam -o ${out}/work_files/${sample}.bam -
 					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
 				fi
 
 				if [ $read_type = interleaved ]; then
-					bwa mem -p -t $threads ${out}/work_files/assembly.fa $reads \
-					| samtools view -@ $threads -bS - \
-					| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam \
-					-o ${out}/work_files/${sample}.bam -
+					bwa mem -p -t $threads ${out}/work_files/assembly.fa $reads | samtools view -@ $threads -bS - \
+					| samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O bam -o ${out}/work_files/${sample}.bam -
 					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning/sorting the reads to the assembly!"; fi
 				fi
 			else
