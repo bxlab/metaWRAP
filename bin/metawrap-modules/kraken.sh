@@ -23,6 +23,7 @@ help_message () {
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads"
 	echo "	-s INT		read subsampling number (default=all)"
+	echo "	--no-preload	do not pre-load the kraken DB into memory (slower, but lower memory requirement)"
 	echo ""
 	echo "	Note: you may pass any number of sequence files with the following extensions:"
 	echo "	*.fa *.fasta (assumed to be assembly files) or *_1.fastq and *_2.fastq (assumed to be paired)"
@@ -43,18 +44,28 @@ announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 config_file=$(which config-metawrap)
 source $config_file
 
-
 # Set defaults
-threads=1; out="false"; depth="all"
-# Load in options
-while getopts ht:o:s: option; do
-	case "${option}" in
-		h) help_message; exit 1;;
-		t) threads=${OPTARG};;
-		o) out=${OPTARG};;
-		s) depth=${OPTARG};;
+threads=1; out="false"; depth="all"; preload=true
+
+
+# load in params
+OPTS=`getopt -o ht:o:s: --long help,no-preload -- "$@"`
+# make sure the params are entered correctly
+if [ $? -ne 0 ]; then help_message; exit 1; fi
+
+# loop through input params
+while true; do
+	case "$1" in
+		-t) threads=$2; shift 2;;
+		-o) out=$2; shift 2;;
+		-s) depth=$2; shift 2;;
+		-h | --help) help_message; exit 1; shift 1;;
+		--no-preload) preload=false; shift 1;;
+		--) help_message; exit 1; shift; break ;;
+		*) break;;
 	esac
 done
+
 
 ########################################################################################################
 ########################           MAKING SURE EVERYTHING IS SET UP             ########################
@@ -103,7 +114,7 @@ for num in "$@"; do
 		
 		tmp=${reads_1##*/}
 		sample=${tmp%_*}
-		comm "Now processing $reads_1 and $reads_2"
+		comm "Now processing $reads_1 and $reads_2 with $threads threads"
 
 		# if sampling depth is specified, randomly subsample the fastq reads
 		if [ ! "$depth" = "all" ]; then
@@ -119,8 +130,12 @@ for num in "$@"; do
 		fi
 
 		if [ ! -s $reads_1 ]; then error "$reads_1 doesnt exist. Exiting..."; fi
-		kraken --db ${KRAKEN_DB} --fastq-input --paired --threads $threads\
-	 	--output ${out}/${sample}.krak $reads_1 $reads_2
+
+		if [ "$preload" = true ]; then
+			kraken --db ${KRAKEN_DB} --fastq-input --paired --threads $threads --preload --output ${out}/${sample}.krak $reads_1 $reads_2
+		else
+			kraken --db ${KRAKEN_DB} --fastq-input --paired --threads $threads --output ${out}/${sample}.krak $reads_1 $reads_2
+		fi
 	
 		if [[ $? -ne 0 ]] || [[ ! -s ${out}/${sample}.krak ]]; then error "Something went wrong with running kraken on $reads_1 and $reads_2 . Exiting..."; fi
 			
@@ -131,10 +146,13 @@ for num in "$@"; do
 	if [[ $num == *"fa" ]] || [[ $num == *"fasta" ]]; then
 		tmp=${num##*/}
 		sample=${tmp%.*}
-		comm "Now processing $num"
-
-		kraken --db ${KRAKEN_DB} --fasta-input --threads $threads\
-		--output ${out}/${sample}.krak $num
+		comm "Now processing $num with $threads threads"
+		
+		if [ "$preload" = true ]; then
+			kraken --db ${KRAKEN_DB} --fasta-input --threads $threads --preload --output ${out}/${sample}.krak $num
+		else
+			kraken --db ${KRAKEN_DB} --fasta-input --threads $threads --output ${out}/${sample}.krak $num
+		fi		
 
 		if [[ $? -ne 0 ]] || [[ ! -s ${out}/${sample}.krak ]]; then error "Something went wrong with running kraken on ${num}. Exiting..."; fi
 	fi

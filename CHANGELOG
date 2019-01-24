@@ -1,8 +1,13 @@
-metaWRAP v 1.2 (In development)
+metaWRAP v=1.2 (In development)
+	Reassemble_bins
+		added check limit on maximum number of open python file handles
 	Binning
 		fixed syntax bug coming from comment lines following "next line" character
 	Classify_bins
 		added exception to prune hits script to account for newer version of NCBI database
+	Kraken
+		kraken now pre-loads the database before running by default, improving speed on systems with slow IO
+		added --no-preload option for running form hard disk for lower memory requirements
 
 
 metaWRAP v=1.1 (January 2019)
