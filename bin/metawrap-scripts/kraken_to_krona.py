@@ -3,8 +3,11 @@ import sys
 # This script takes in a translated kraken file of either contigs (from SPAdes) or reads, and parses it into a format for ktImportText to produce a kronachart.
 data={}
 for line in open(sys.argv[1]):
-	name=line.split("\t")[0]
-	tax="\t".join(line.strip().split("\t")[1].split(";"))
+	cut=line.strip().split("\t")
+	if len(cut)<2:
+		continue
+	name=cut[0]
+	tax="\t".join(cut[1].split(";"))
 	
 	#this is a contig! calculate weight with cov*length
 	if "length" in name:
