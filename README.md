@@ -1,4 +1,4 @@
- **See the metaWRAP publication in [Microbiome](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).**
+### New: MetaWRAP platform used in large-scale human microbiome diversity study published in [_Cell_](https://www.sciencedirect.com/science/article/pii/S0092867419300017)
 
 **To update to the latest version, run `conda install metawrap-mg=1.1.1` (consider backing up your `bin/config-metawrap`file before you update)
 
