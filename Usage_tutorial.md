@@ -38,7 +38,7 @@ ERR011349_2.fastq
 
 
 ## Step 1: Run metaWRAP-Read_qc to trim the reads and remove human contamination
-Note: you will need the bmtagger hg38 index to remove the human reads - see the metaWRAP database installation instructions. Alternatively, use the `--skip-bmtagger` flag of of the ReadQC module to only do the read trimming.
+Note: you will need the bmtagger hg38 index to remove the human reads - see the metaWRAP database installation instructions. You may also use another host genome to filter against with the `-x` option. Alternatively, use the `--skip-bmtagger` flag of of the ReadQC module to only do the read trimming.
 
 Individually process each sample
 ```
