@@ -147,6 +147,8 @@ if [[ ! -s ${out}/${SAMPLE}.nt.1e-5.megablast ]] ; then
 	blastn -task megablast -query ${out}/$assembly -db ${BLASTDB}/nt\
 	 -evalue 1e-5 -num_threads $threads -max_target_seqs 1 -outfmt '6 qseqid sseqid staxids'\
 	 | cut -f 1,3 > ${out}/${SAMPLE}.nt.1e-5.megablast
+else
+	comm "Looks like taxonomy assignment was already run. Skipping..."
 fi
 
 if [[ ! -s ${out}/${SAMPLE}.nt.1e-5.megablast ]] ; then 
@@ -159,8 +161,14 @@ fi
 ########################################################################################################
 announcement "MAP READS TO ASSEMBLY WITH BOWTIE2"
 
-comm "Indexing ${out}/$assembly"
-bowtie2-build -q ${out}/$assembly ${out}/$assembly
+if [[ ! -s ${out}/${SAMPLE}.fa.1.bt2 ]]; then
+	comm "Indexing ${out}/$assembly"
+	bowtie2-build -q ${out}/$assembly ${out}/$assembly
+else
+	comm "Looks like the assembly was already indexed. Skipping..."
+fi
+if [[ $? -ne 0 ]]; then error "Something went wrong with indexing the assembly $assembly. Exiting..."; fi
+
 
 for arg in "$@"; do
         if [[ $arg == *"_1.fastq" ]]; then
@@ -172,16 +180,18 @@ for arg in "$@"; do
 	
 		base=${arg##*/}
 		sample=${base%_*}
-
-		comm "Now processing sample $sample ... Aligning $f_reads and $r_reads to ${out}/$assembly with bowtie2"
-
-		${SOFT}/blobology/shuffleSequences_fastx.pl 4 <(cat $f_reads) <(cat $r_reads) > ${out}/tmp
-		if [[ $? -ne 0 ]]; then error "Something went wrong with shuffling reads. Exiting..."; fi
+		if [[ ! -s ${out}/${sample}.bowtie2.bam ]] ; then
+			comm "Now processing sample $sample ... Aligning $f_reads and $r_reads to ${out}/$assembly with bowtie2"
+			${SOFT}/blobology/shuffleSequences_fastx.pl 4 <(cat $f_reads) <(cat $r_reads) > ${out}/tmp
+			if [[ $? -ne 0 ]]; then error "Something went wrong with shuffling reads. Exiting..."; fi
 		
-		bowtie2 -x ${out}/$assembly --very-fast-local -k 1 -t -p $threads --reorder --mm -U ${out}/tmp\
-		 | samtools view -S -b -@ $threads - > ${out}/${sample}.bowtie2.bam
-		if [[ $? -ne 0 ]]; then error "Failed to run bowtie2 on sample $sample reads. Exiting..."; fi
-		rm ${out}/tmp
+			bowtie2 -x ${out}/$assembly --very-fast-local -k 1 -t -p $threads --reorder --mm -U ${out}/tmp\
+			 | samtools view -S -b -@ $threads - > ${out}/${sample}.bowtie2.bam
+			if [[ $? -ne 0 ]]; then error "Failed to run bowtie2 on sample $sample reads. Exiting..."; fi
+			rm ${out}/tmp
+		else
+			comm "Looks like the alignment file for $sample already exists. Skipping..."
+		fi
 
 		if [[ ! -s ${out}/${sample}.bowtie2.bam ]] ; then
 			error "Something went wrong with aligning reads from sample $sample back to the contigs with bowtie2. Exiting.";
