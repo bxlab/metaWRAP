@@ -1,4 +1,6 @@
 metaWRAP v=1.2 (In development)
+	Read_qc
+		added support for non-human host contamination removal
 	Reassemble_bins
 		added check limit on maximum number of open python file handles
 	Binning
@@ -8,6 +10,7 @@ metaWRAP v=1.2 (In development)
 	Kraken
 		kraken now pre-loads the database before running by default, improving speed on systems with slow IO
 		added --no-preload option for running form hard disk for lower memory requirements
+		fixed exception that crashed the module if kraken-translate could not find a taxonomy for a classification
 
 
 metaWRAP v=1.1 (January 2019)

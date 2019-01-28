@@ -18,6 +18,7 @@ help_message () {
 	echo "	-2 STR          reverse fastq reads" 
 	echo "	-o STR          output directory"
 	echo "	-t INT          number of threads (default=1)"
+	echo "	-x STR		prefix of host index in bmtagger database folder (default=hg38)"
 	echo ""
 	echo "	--skip-bmtagger		dont remove human sequences with bmtagger"
 	echo "	--skip-trimming		dont trim sequences with trimgalore"
@@ -44,9 +45,10 @@ source $config_file
 # default params
 threads=1; out="false"; reads_1="false"; reads_2="false"
 bmtagger=true; trim=true; pre_qc_report=true; post_qc_report=true
+HOST=hg38
 
 # load in params
-OPTS=`getopt -o ht:o:1:2: --long help,skip-trimming,skip-bmtagger,skip-pre-qc-report,skip-post-qc-report -- "$@"`
+OPTS=`getopt -o ht:o:1:2:x: --long help,skip-trimming,skip-bmtagger,skip-pre-qc-report,skip-post-qc-report -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -57,6 +59,7 @@ while true; do
 		-o) out=$2; shift 2;;
 		-1) reads_1=$2; shift 2;;
 		-2) reads_2=$2; shift 2;;
+		-x) HOST=$2; shift 2;;
 		-h | --help) help_message; exit 1; shift 1;;
 		--skip-trimming) trim=false; shift 1;;
 		--skip-bmtagger) bmtagger=false; shift 1;;
@@ -142,16 +145,17 @@ fi
 
 if [ "$bmtagger" = true ]; then
 	########################################################################################################
-	########################               REMOVING HUMAN SEQUENCES                 ########################
+	########################               REMOVING HOST SEQUENCES                  ########################
 	########################################################################################################
-        announcement "REMOVING HUMAN SEQUENCES WITH BMTAGGER"
+        announcement "REMOVING HOST SEQUENCES WITH BMTAGGER"
 
 	mkdir ${out}/bmtagger_tmp
-	bmtagger.sh -b ${BMTAGGER_DB}/hg38.bitmask -x ${BMTAGGER_DB}/hg38.srprism -T ${out}/bmtagger_tmp -q1\
+	comm "running bmtagger with ${BMTAGGER_DB}/${HOST}.bitmask ${BMTAGGER_DB}/${HOST}.srprism indexes..."
+	bmtagger.sh -b ${BMTAGGER_DB}/${HOST}.bitmask -x ${BMTAGGER_DB}/${HOST}.srprism -T ${out}/bmtagger_tmp -q1\
 	 -1 $reads_1 -2 $reads_2\
 	 -o ${out}/${sample}.bmtagger.list
-	if [[ $? -ne 0 ]]; then error "Something went wrong with running Bmtagger!. Exiting"; fi
-	if [[ ! -s ${out}/${sample}.bmtagger.list ]]; then warning "No human reads found, which is very unlikely. Just sayin'"; fi
+	if [[ $? -ne 0 ]]; then error "Something went wrong with running Bmtagger! Exiting."; fi
+	if [[ ! -s ${out}/${sample}.bmtagger.list ]]; then warning "No contamination reads found, which is very unlikely."; fi
 
 
 	comm "Now sorting out found human reads from the main fastq files..."
@@ -159,9 +163,9 @@ if [ "$bmtagger" = true ]; then
 	${SOFT}/skip_human_reads.py ${out}/${sample}.bmtagger.list $reads_2 > ${out}/${sample}_2.clean.fastq
 	
 	comm "Now sorting out found human reads and putting them into a new file... for science..."
-	${SOFT}/select_human_reads.py ${out}/${sample}.bmtagger.list $reads_1 > ${out}/human_reads_1.fastq
-	${SOFT}/select_human_reads.py ${out}/${sample}.bmtagger.list $reads_2 > ${out}/human_reads_2.fastq
-	if [[ ! -s ${out}/${sample}_1.clean.fastq ]]; then error "Something went wrong with removing human reads with bmtagger. Exiting."; fi
+	${SOFT}/select_human_reads.py ${out}/${sample}.bmtagger.list $reads_1 > ${out}/host_reads_1.fastq
+	${SOFT}/select_human_reads.py ${out}/${sample}.bmtagger.list $reads_2 > ${out}/host_reads_2.fastq
+	if [[ ! -s ${out}/${sample}_1.clean.fastq ]]; then error "Something went wrong with removing contaminant reads with bmtagger. Exiting."; fi
 
 	rm -r ${out}/bmtagger_tmp
 	rm ${out}/${sample}.bmtagger.list
