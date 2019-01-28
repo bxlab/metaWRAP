@@ -21,7 +21,7 @@
 ## OVERVIEW OF METAWRAP MODULES:
 
 #### Metagemonic data pre-processing modules:
-	1) Read_QC: read trimming and human read removal
+	1) Read_QC: read trimming and host (e.g. human) read removal
 	2) Assembly: metagenomic assembly and QC with metaSPAdes or MegaHit
 	3) Kraken: taxonomy profiling and visualization or reads or contigs
 	
