@@ -52,8 +52,8 @@ TAXDUMP=/your/location/of/database/NCBI_tax
 ```
 
 
-## Making human genome index for bmtagger
-If you want to remove human reads from tour sequencing in the READ_QC module, you will need to dowlnoad and index the human genome. See the official bmtagger manual for detailed instructions: https://www.hmpdacc.org/hmp/doc/HumanSequenceRemoval_SOP.pdf
+## Making host genome index for bmtagger
+If you want to remove human (see end of instrutions for non-human hosts) reads from tour sequencing in the READ_QC module, you will need to dowlnoad and index the human genome. See the official bmtagger manual for detailed instructions: https://www.hmpdacc.org/hmp/doc/HumanSequenceRemoval_SOP.pdf
 
 First, lets download and merge the human genome hg38:
 ``` bash 
@@ -74,3 +74,7 @@ Done! Now dont forget to specify the BMTAGGER_DB variable in the config-metawrap
 ``` bash
 BMTAGGER_DB=/path/to/your/index/BMTAGGER_INDEX
 ```
+
+### Instructions for non-human hosts: 
+For non-human hosts, the protocol for building and using the bmtagger index should be the same. In the end, you need to have th `.srprism` and `.bitmask` index files in the `BMTAGGER_INDEX` directory that you will link to in the `config-metawrap` file. When you run `metawrap read_qc`, you need to use the `-x` option to specify the prefix of your host. For example, if your `BMTAGGER_INDEX` directory has files `pig.srprism` and `pig.bitmask`, use `-x pig` as the option. 
+
