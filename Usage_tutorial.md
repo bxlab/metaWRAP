@@ -48,6 +48,19 @@ metawrap read_qc -1 RAW_READS/ERR011348_1.fastq -2 RAW_READS/ERR011348_2.fastq -
 metawrap read_qc -1 RAW_READS/ERR011349_1.fastq -2 RAW_READS/ERR011349_2.fastq -t 24 -o READ_QC/ERR011349
 ```
 
+Alternatively, process all samples at the same time with a parallel for loop (especially if you have many samples):
+```
+for F in RAW_READS/*_1.fastq; do 
+	R=${F%_*}_2.fastq
+	BASE=${F##*/}
+	SAMPLE=${BASE%_*}
+	metawrap read_qc -1 $F -2 $R -t 1 -o READ_QC/$SAMPLE &
+done	
+```
+
+Or as a one-liner: `for F in RAW_READS/*_1.fastq; do R=${F%_*}_2.fastq; BASE=${F##*/}; SAMPLE=${BASE%_*}; metawrap read_qc -1 $F -2 $R -t 1 -o READ_QC/$SAMPLE & done`
+
+
 Lets have a glance at one of the output folders: `ls READ_QC/ERR011347`
 
 These are html reports of the read quality before and after QC:
