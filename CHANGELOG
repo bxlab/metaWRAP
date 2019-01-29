@@ -1,6 +1,6 @@
 metaWRAP v=1.2 (In development)
 	Read_qc
-		added support for non-human host contamination removal
+		added support for non-human host contamination removal with bmtagger
 	Reassemble_bins
 		added check limit on maximum number of open python file handles
 	Binning
