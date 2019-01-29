@@ -337,7 +337,7 @@ bin.4.permissive.fa	Bacteria
 bin.13.permissive.fa	Bacteria;Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae
 bin.7.strict.fa	Bacteria
 ```
-As you can see some of the bins are annotated very deeply and others can only be classified as "Bacteria". This method is relatively trustworthy, however it often fails to annotate organisms that are very distant from anything in the NCBI database. For these triky bins, manually looking at marker genes is the way to go.
+As you can see some of the bins are annotated very deeply, while others can only be classified as "Bacteria". This method is relatively trustworthy, however it often fails to annotate organisms that are very distant from anything in the NCBI database. For these tricky bins, manually looking at marker genes (such as ribosomal proteins) can result in much more sensitive taxonomy assignment.
 
 
 ## Step 10: Functionally annotate bins with the Annotate_bins module
