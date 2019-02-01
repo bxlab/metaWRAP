@@ -56,7 +56,7 @@
  conda config --add channels bioconda
  conda config --add channels ursky
 
- conda install -c ursky metawrap-mg
+ conda install -y -c ursky metawrap-mg
  # Note: may take a couple hours
  ```
  
@@ -72,7 +72,7 @@ conda config --add channels conda-forge
 conda config --add channels bioconda
 conda config --add channels ursky
 
-conda install -c ursky metawrap-mg
+conda install -y -c ursky metawrap-mg
 # Note: may take a couple hours
 ```
 
@@ -84,7 +84,7 @@ MetaWRAP is also available through the Bioconda channel. **However**, this distr
 
 ```
 # Bioconda installation (not recommended):
-conda install -c bioconda metawrap
+conda install -y -c bioconda metawrap
 ```
  
 ## DATABASES
