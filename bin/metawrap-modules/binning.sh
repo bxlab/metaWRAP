@@ -87,7 +87,7 @@ checkm=false; read_type=paired
 markers=107
 
 # load in params
-OPTS=`getopt -o ht:m:o:a:l: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm,single-end,universal -- "$@"`
+OPTS=`getopt -o ht:m:o:a:l: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm,single-end,universal,interleaved -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
