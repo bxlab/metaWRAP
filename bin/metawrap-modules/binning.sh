@@ -88,7 +88,6 @@ markers=107
 
 # load in params
 OPTS=`getopt -o ht:m:o:a:l: --long help,metabat1,metabat2,maxbin2,concoct,run-checkm,single-end,universal,interleaved -- "$@"`
-# make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
 # loop through input params
@@ -116,6 +115,10 @@ done
 ########################################################################################################
 ########################           MAKING SURE EVERYTHING IS SET UP             ########################
 ########################################################################################################
+# Make sure at least one binning method was chosen
+if [ $metabat2 = false ] && [ $metabat1 = false ] &&[ $maxbin2 = false ] && [ $concoct = false ]; then
+	error "You must select at least one binning method: --metabat2, --metabat1, --maxbin2, --concoct"
+fi
 
 # check if all parameters are entered
 if [ $out = false ] || [ $ASSEMBLY = false ] ; then 
@@ -158,11 +161,6 @@ if [ $read_type = paired ]; then
 
 	comm "$num_of_F_read_files forward and $num_of_R_read_files reverse read files detected"
 	if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F and R reads must be the same!"; fi
-fi
-
-# Make sure at least one binning method was chosen
-if [ $metabat2 = false ] && [ $metabat1 = false ] &&[ $maxbin2 = false ] && [ $concoct = false ]; then
-	error "You must select at least one binning method: --metabat2, --metabat1, --maxbin2, --concoct"
 fi
 
 if [ $len -lt 1500 ]; then
