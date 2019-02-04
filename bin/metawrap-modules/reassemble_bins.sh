@@ -142,7 +142,7 @@ for i in $(ls ${out}/original_bins); do cat ${out}/original_bins/$i >> ${out}/bi
 announcement "RECRUITING READS TO BINS FOR REASSEMBLY"
 
 ulimit -n 10000
-if [[ $? -new 0 ]]; then
+if [[ $? -ne 0 ]]; then
 	ULIMIT=$(ulimit -n)
 	warning "Your operating system will allow you to process up to $ULIMIT files at a time. If this is number is less than 4X times of the number of bins you are reassembling, you will likely get an error. Try re-assembling a smaller number of bins."
 fi
