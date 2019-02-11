@@ -37,7 +37,7 @@
 
 
 ##  SYSTEM REQUIREMENTS
- The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I recommend at 8+ cores and 64GB+ RAM. MetaWRAP officially supports only Linux x64 systems, but may be manually installed on others.
+ The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I recommend at 8+ cores and 64GB+ RAM. MetaWRAP officially supports only Linux x64 systems, but may be installed on OSX manually or with docker (see below).
 
 ## INSTALLATION
 
@@ -75,9 +75,6 @@ conda config --add channels ursky
 conda install -y -c ursky metawrap-mg
 # Note: may take a couple hours
 ```
-
-#### Manual installation:
- You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.md). When you are ready, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH`. Thats it! 
  
 #### Bioconda installation:
 MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended for most users, as I will only push major releases to Bioconda. This source is meant for specific applications that require a Bioconda distribution. To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. 
@@ -86,6 +83,16 @@ MetaWRAP is also available through the Bioconda channel. **However**, this distr
 # Bioconda installation (not recommended):
 conda install -y -c bioconda metawrap
 ```
+
+#### Docker installation:
+If you are running on OSX, and dont want to install manually, then [Docker](https://quay.io/repository/biocontainers/metawrap?tab=info) could be the way to go. **However**, as with the Bioconda distribution, I will only push major releases to Bioconda (i.e. `v1.1`, `v1.2`). To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. If you still need to use Docker but run into bugs that have been fixed in the latest versions, you can manually update your scripts from this repository to apply the most recent patches. To install with Docker, run:
+```
+# Docker installation (not recommended unless you need docker)
+docker pull quay.io/biocontainers/metawrap:1.1--0
+```
+ 
+#### Manual installation:
+ You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.md). When you are ready, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH`. Thats it! 
  
 ## DATABASES
 
