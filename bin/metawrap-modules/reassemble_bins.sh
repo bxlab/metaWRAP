@@ -120,7 +120,7 @@ fi
 ########################               BEGIN REASSEMBLY PIPELINE!               ########################
 ########################################################################################################
 announcement "BEGIN PIPELINE!"
-comm "setting up output folder and copything over bins..."
+comm "setting up output folder and copying over bins..."
 if [ ! -d $out ]; then
         mkdir $out;
 else

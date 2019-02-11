@@ -1,10 +1,13 @@
 metaWRAP v=1.2 (In development)
+	General
+		config-metawrap sets database locations to HOME by defualt during installation
 	Read_qc
 		added support for non-human host contamination removal with bmtagger
 	Reassemble_bins
 		added check limit on maximum number of open python file handles
 	Binning
 		fixed syntax bug coming from comment lines following "next line" character
+		split the alignment and alignment sorting stages to help resolve stalled jobs
 	Classify_bins
 		added exception to prune hits script to account for newer version of NCBI database
 	Kraken
