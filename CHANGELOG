@@ -8,6 +8,10 @@ metaWRAP v=1.2 (In development)
 	Binning
 		fixed syntax bug coming from comment lines following "next line" character
 		split the alignment and alignment sorting stages to help resolve stalled jobs
+	Blobology
+		removed shuffle reads features
+		use paired reads for bowtie alignment
+		split alignment and bam conversions steps to clarity and debugging
 	Classify_bins
 		added exception to prune hits script to account for newer version of NCBI database
 	Kraken

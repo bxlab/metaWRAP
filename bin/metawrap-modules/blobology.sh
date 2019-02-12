@@ -42,7 +42,7 @@ source $config_file
 
 
 # Set defaults
-threads=1; out="false"; n_contigs=1000000000; 
+threads=1; out="false"; n_contigs="false"; 
 ASSEMBLY="false"; bin_folder=false
 
 # load in params
@@ -138,9 +138,13 @@ fi
 assembly=${ASSEMBLY##*/}
 SAMPLE=${assembly%.*}
 
-## the following command selects desired number of contigs at random to classify and plot:
-comm "Choosing $n_contigs from $ASSEMBLY"
-${SOFT}/blobology/fastaqual_select.pl -f $ASSEMBLY -s r -n $n_contigs > ${out}/$assembly
+if [ "$$n_contigs" = "false" ]l then 
+	cp $ASSEMBLY ${out}/$assembly
+else
+	## the following command selects desired number of contigs at random to classify and plot:
+	comm "Choosing $n_contigs from $ASSEMBLY"
+	${SOFT}/blobology/fastaqual_select.pl -f $ASSEMBLY -s r -n $n_contigs > ${out}/$assembly
+fi
 
 comm "Running MEGABLAST on $assembly"
 if [[ ! -s ${out}/${SAMPLE}.nt.1e-5.megablast ]] ; then
@@ -181,14 +185,16 @@ for arg in "$@"; do
 		base=${arg##*/}
 		sample=${base%_*}
 		if [[ ! -s ${out}/${sample}.bowtie2.bam ]] ; then
-			comm "Now processing sample $sample ... Aligning $f_reads and $r_reads to ${out}/$assembly with bowtie2"
-			${SOFT}/blobology/shuffleSequences_fastx.pl 4 <(cat $f_reads) <(cat $r_reads) > ${out}/tmp
-			if [[ $? -ne 0 ]]; then error "Something went wrong with shuffling reads. Exiting..."; fi
-		
-			bowtie2 -x ${out}/$assembly --very-fast-local -k 1 -t -p $threads --reorder --mm -U ${out}/tmp\
-			 | samtools view -S -b -@ $threads - > ${out}/${sample}.bowtie2.bam
+			#${SOFT}/blobology/shuffleSequences_fastx.pl 4 <(cat $f_reads) <(cat $r_reads) > ${out}/tmp
+			#if [[ $? -ne 0 ]]; then error "Something went wrong with shuffling reads. Exiting..."; fi
+			
+			comm "Now processing sample $sample ... Aligning $f_reads and $r_reads to ${out}/$assembly with bowtie2"	
+			bowtie2 -x ${out}/$assembly --very-fast-local -k 1 -t -p $threads --mm -1 $f_reads -2 $r_reads > ${out}/${sample}.bowtie2.sam
 			if [[ $? -ne 0 ]]; then error "Failed to run bowtie2 on sample $sample reads. Exiting..."; fi
-			rm ${out}/tmp
+
+			comm "converting ${out}/${sample}.bowtie2.sam alignment to bam format"
+			samtools view -b -@ $threads ${out}/${sample}.bowtie2.sam > ${out}/${sample}.bowtie2.bam
+			if [[ $? -ne 0 ]]; then error "Failed to run bowtie2 on sample $sample reads. Exiting..."; fi
 		else
 			comm "Looks like the alignment file for $sample already exists. Skipping..."
 		fi
