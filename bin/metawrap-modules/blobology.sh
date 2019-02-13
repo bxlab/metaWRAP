@@ -138,7 +138,7 @@ fi
 assembly=${ASSEMBLY##*/}
 SAMPLE=${assembly%.*}
 
-if [ "$$n_contigs" = "false" ]l then 
+if [ "$n_contigs" = "false" ]; then 
 	cp $ASSEMBLY ${out}/$assembly
 else
 	## the following command selects desired number of contigs at random to classify and plot:
@@ -290,7 +290,8 @@ mv ${out}/*png ${out}/blobplot_figures
 
 
 comm "cleaning up..."
-rm ${out}/*bam
+rm ${out}/*sam
+ rm ${out}/*bam
 ########################################################################################################
 ########################      BLOBPLOT PIPELINE FINISHED SUCCESSFULLY!!!        ########################
 ########################################################################################################
