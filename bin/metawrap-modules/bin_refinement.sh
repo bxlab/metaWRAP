@@ -147,6 +147,7 @@ else
 	rm -r ${out}/binsBC
 	rm -r ${out}/binsAC
 	rm -r ${out}/binsABC
+	rm ${out}/bin.*
 fi
 
 
@@ -239,7 +240,11 @@ else
 fi
 	
 comm "fixing bin naming to .fa convention for consistancy..."
-for i in $(ls); do for j in $(ls $i | grep .fasta); do mv ${i}/${j} ${i}/${j%.*}.fa; done; done
+for i in $(ls); do 
+	for j in $(ls $i | grep .fasta); do 
+		mv ${i}/${j} ${i}/${j%.*}.fa
+	done
+done
 
 
 ########################################################################################################
@@ -247,7 +252,7 @@ for i in $(ls); do for j in $(ls $i | grep .fasta); do mv ${i}/${j} ${i}/${j%.*}
 ########################################################################################################
 if [ "$run_checkm" == "true" ]; then
 	announcement "RUNNING CHECKM ON ALL SETS OF BINS"
-	for bin_set in $(ls | grep -v tmp | grep -v stats); do 
+	for bin_set in $(ls | grep -v tmp | grep -v stats | grep bins); do 
 		comm "Running CheckM on $bin_set bins"
 		mkdir ${bin_set}.tmp
 		if [ "$quick" == "true" ]; then

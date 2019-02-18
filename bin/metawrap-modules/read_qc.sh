@@ -89,8 +89,8 @@ if [ ! -s $SOFT/sort_contigs.py ]; then
 	error "The folder $SOFT doesnt exist. Please make sure the path to meta-scripts folder configured correctly in config.sh"
 fi
 
-if [ ! -s ${BMTAGGER_DB}/hg38.bitmask ] && [ "$bmtagger" = "true" ]; then
-	error "${BMTAGGER_DB}/hg38.bitmask file doesnt exist. Please configure your bmtagger human genome index"
+if [ ! -s ${BMTAGGER_DB}/${HOST}.bitmask ] && [ "$bmtagger" = "true" ]; then
+	error "${BMTAGGER_DB}/${HOST}.bitmask file doesnt exist. Please configure your bmtagger genome index"
 fi
 
 ########################################################################################################
