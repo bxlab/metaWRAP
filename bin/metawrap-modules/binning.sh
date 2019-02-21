@@ -413,9 +413,9 @@ if [ $concoct = true ]; then
         cd ${out}/work_files/concoct_out
 
 	if [[ $out == /* ]]; then
-		concoct -t $threads --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly_10K.fa -l $len
+		concoct --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly_10K.fa -l $len
 	else
-	        concoct -t $threads --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly_10K.fa -l $len
+	        concoct --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly_10K.fa -l $len
         fi
 
 	if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting..."; fi
