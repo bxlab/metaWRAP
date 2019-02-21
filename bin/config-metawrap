@@ -6,13 +6,11 @@ PIPES=${bin_path}/metawrap-modules
 
 # OPTIONAL databases (see 'Databases' section of metaWRAP README for details)
 # path to kraken standard database
-KRAKEN_DB="/home-2/guritsk1@jhu.edu/scratch/Programs/kraken/kraken_standard_database"
+KRAKEN_DB=/localscratch/gu/KRAKEN_DB
 
-# path to indexed human genome (see bmtagger website for guide). This insludes files hg38.bitmask and hg38.srprism.*
-BMTAGGER_DB="/home-2/guritsk1@jhu.edu/scratch/Programs/bmtagger_db"
+# path to indexed human genome (see metaWRAP website for guide). This includes files hg38.bitmask and hg38.srprism.*
+BMTAGGER_DB=/scratch/gu/BMTAGGER_DB
 
 # paths to BLAST databases
-BLASTDB=/home-2/guritsk1@jhu.edu/scratch/RefSeq/NCBI_nt
-TAXDUMP=/home-2/guritsk1@jhu.edu/scratch/RefSeq/NCBI_tax
-
-
+BLASTDB=/localscratch/gu/NCBI_nt
+TAXDUMP=/localscratch/gu/NCBI_tax

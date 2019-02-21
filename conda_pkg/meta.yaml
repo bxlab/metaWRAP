@@ -22,7 +22,7 @@ requirements:
     - bwa 0.7.15
     - cairo 1.14.8
     - checkm-genome 1.*
-    - concoct 0.4.0
+    - concoct 1.*
     - fastqc 0.11.5
     - gnutls 3.5.15
     - icu 58.2
@@ -49,7 +49,7 @@ requirements:
     - r-ggplot2 2.2.1
     - salmon 0.9.*
     - samtools 1.6
-    - scikit-learn 0.16.1
+    - scikit-learn 0.20.2
     - scipy 0.17.1
     - seaborn 0.8.1
     - spades 3.*

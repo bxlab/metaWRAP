@@ -390,30 +390,44 @@ if [ $concoct = true ]; then
 	########################################################################################################
         announcement "RUNNING CONCOCT"
 
-        comm "making contig depth file..."
-        jgi_summarize_bam_contig_depths --outputDepth ${out}/work_files/tmp --noIntraDepthVariance ${out}/work_files/*.bam
-        if [[ $? -ne 0 ]]; then error "Something went wrong with making contig depth file. Exiting."; fi
-        grep -v totalAvgDepth ${out}/work_files/tmp | cut -f 1,4- > ${out}/work_files/concoct_depth.txt
-        rm ${out}/work_files/tmp
+	comm "indexing .bam alignment files..."
+	for FILE in ${out}/work_files/*.bam; do
+		echo $FILE
+		samtools index -@ $threads -b $FILE
+	done
 
-        comm "Starting binning with CONCOCT. This may take a while..."
+        comm "cutting up contigs into 10kb fragments for CONCOCT..."
+	cut_up_fasta.py ${out}/work_files/assembly.fa -c 10000 --merge_last -b ${out}/work_files/assembly_10K.bed -o 0 > ${out}/work_files/assembly_10K.fa
+        if [[ $? -ne 0 ]]; then error "Something went wrong with cutting up contigs. Exiting."; fi
+
+	comm "estimating contig fragment coverage..."	
+	CMD="concoct_coverage_table.py ${out}/work_files/assembly_10K.bed ${out}/work_files/*.bam > ${out}/work_files/concoct_depth.txt"
+	$(eval $CMD)
+	if [[ $? -ne 0 ]]; then error "Something went wrong with estimating fragment abundance. Exiting..."; fi
+
+
+        comm "Starting binning with CONCOCT..."
         # I have to do some directory changing because CONCOCT dumps all files into current directory...
         home=$(pwd)
         mkdir ${out}/work_files/concoct_out
         cd ${out}/work_files/concoct_out
 
 	if [[ $out == /* ]]; then
-		concoct --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly.fa -l $len
+		concoct -t $threads --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly_10K.fa -l $len
 	else
-	        concoct --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly.fa -l $len
+	        concoct -t $threads --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly_10K.fa -l $len
         fi
 
-	if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting."; fi
+	if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting..."; fi
         cd $home
+
+	comm "merging 10kb fragments back into contigs"
+	merge_cutup_clustering.py ${out}/work_files/concoct_out/clustering_gt${len}.csv > ${out}/work_files/concoct_out/clustering_gt${len}_merged.csv
+	if [[ $? -ne 0 ]]; then error "Something went wrong with merging fragments. Exiting..."; fi
 
         comm "splitting contigs into bins"
         mkdir ${out}/concoct_bins
-        ${SOFT}/split_concoct_bins.py ${out}/work_files/concoct_out/clustering_gt${len}.csv ${out}/work_files/assembly.fa ${out}/concoct_bins
+        ${SOFT}/split_concoct_bins.py ${out}/work_files/concoct_out/clustering_gt${len}_merged.csv ${out}/work_files/assembly.fa ${out}/concoct_bins
         comm "CONCOCT finished successfully, and found $(ls -l ${out}/concoct_bins | grep .fa | wc -l) bins!"
 
 	if [ $checkm = true ]; then

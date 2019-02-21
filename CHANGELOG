@@ -1,6 +1,6 @@
 metaWRAP v=1.2 (In development)
 	General
-		config-metawrap sets database locations to HOME by defualt during installation
+		config-metawrap sets database locations to $HOME by defualt during installation
 	Read_qc
 		added support for non-human host contamination removal with bmtagger
 	Reassemble_bins
@@ -8,6 +8,8 @@ metaWRAP v=1.2 (In development)
 	Binning
 		fixed syntax bug coming from comment lines following "next line" character
 		split the alignment and alignment sorting stages to help resolve stalled jobs
+		added support for CONCOCT v1.0, greatly improving performance
+		added recommended contig splitting step for CONCOCT, greatly improving its performance on larger contigs
 	Blobology
 		removed shuffle reads features
 		use paired reads for bowtie alignment
