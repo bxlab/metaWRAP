@@ -117,6 +117,7 @@ done
 ########################################################################################################
 # Make sure at least one binning method was chosen
 if [ $metabat2 = false ] && [ $metabat1 = false ] &&[ $maxbin2 = false ] && [ $concoct = false ]; then
+	help_message
 	error "You must select at least one binning method: --metabat2, --metabat1, --maxbin2, --concoct"
 fi
 
