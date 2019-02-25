@@ -11,7 +11,7 @@ requirements:
   run:
     - bcftools 1.6
     - biopython 1.69
-    - blast 2.7.*
+    - blast 2.6.0
     - bmfilter 3.101
     - bmtagger 3.101
     - bmtool 3.101
@@ -20,18 +20,18 @@ requirements:
     - bowtie2 2.3.*
     - brewer2mpl 1.4.1
     - bwa 0.7.15
-    - cairo 1.14.8
+    - cairo 1.14.12
     - checkm-genome 1.*
-    - concoct 1.*
+    - concoct 1.0.0
     - fastqc 0.11.5
-    - gnutls 3.5.15
+    - gnutls 3.5.19
     - icu 58.2
     - java-jdk 8.0.92
-    - kraken
+    - kraken 1.1
     - krona 2.7
     - libgfortran-ng 7.2.0
     - libopenblas 0.2.20
-    - matplotlib 1.5.1
+    - matplotlib 2.2.3
     - maxbin2 2.2.5
     - megahit 1.1.2
     - metabat2 2.12.1

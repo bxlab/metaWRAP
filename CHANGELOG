@@ -10,6 +10,7 @@ metaWRAP v=1.2 (In development)
 		split the alignment and alignment sorting stages to help resolve stalled jobs
 		added support for CONCOCT v1.0, greatly improving performance
 		added recommended contig splitting step for CONCOCT, greatly improving its performance on larger contigs
+		CONCOCT now supports multi-threading greatly speeding up binning on larger data
 	Blobology
 		removed shuffle reads features
 		use paired reads for bowtie alignment

@@ -34,7 +34,7 @@ help_message () {
         echo "	--metabat2      bin contigs with metaBAT2"
 	echo "	--metabat1	bin contigs with the original metaBAT"
 	echo "	--maxbin2	bin contigs with MaxBin2"
-	echo "	--concoct	bin contigs with CONCOCT (warning: this one is slow...)"
+	echo "	--concoct	bin contigs with CONCOCT"
 	echo ""
 	echo "	--universal	use universal marker genes instead of bacterial markers in MaxBin2 (improves Archaea binning)"
 	echo "	--run-checkm	immediately run CheckM on the bin results (requires 40GB+ of memory)"
@@ -413,9 +413,9 @@ if [ $concoct = true ]; then
         cd ${out}/work_files/concoct_out
 
 	if [[ $out == /* ]]; then
-		concoct --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly_10K.fa -l $len
+		concoct -t $threads --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly_10K.fa -l $len
 	else
-	        concoct --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly_10K.fa -l $len
+	        concoct -t $threads --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly_10K.fa -l $len
         fi
 
 	if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting..."; fi
