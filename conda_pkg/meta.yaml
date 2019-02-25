@@ -42,7 +42,7 @@ requirements:
     - perl-threaded 5.22.0
     - pplacer 1.1.alpha17
     - prokka 1.*
-    - qt 4.8.5
+    - qt 5.6.3
     - quast 4.*
     - readline 6.2
     - r-ggplot2 2.2.1
