@@ -20,7 +20,7 @@ requirements:
     - bowtie2 2.3.*
     - brewer2mpl 1.4.1
     - bwa 0.7.15
-    - cairo 1.14.8
+    - cairo 1.14.12
     - checkm-genome 1.*
     - concoct 1.0.0
     - fastqc 0.11.5
@@ -45,8 +45,8 @@ requirements:
     - qt 4.8.5
     - quast 4.*
     - readline 6.2
-    - r-recommended 3.3.2
     - r-ggplot2 2.2.1
+    - r-recommended 3.4.3
     - salmon 0.9.*
     - samtools 1.6
     - scikit-learn 0.20.2
