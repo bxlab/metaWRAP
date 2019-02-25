@@ -20,7 +20,7 @@ requirements:
     - bowtie2 2.3.*
     - brewer2mpl 1.4.1
     - bwa 0.7.15
-    - cairo 1.14.12
+    - cairo 1.14.8
     - checkm-genome 1.*
     - concoct 1.0.0
     - fastqc 0.11.5
