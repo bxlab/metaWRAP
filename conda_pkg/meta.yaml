@@ -56,7 +56,7 @@ requirements:
     - srprism 2.4.24
     - subprocess32 3.2.7
     - taxator-tk 1.3.3e
-    - tk 8.5.19
+    - tk 8.6.9
     - trim-galore 0.4.*
     - xorg-libxrender 0.9.10
 
