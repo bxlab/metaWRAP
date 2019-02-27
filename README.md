@@ -1,4 +1,6 @@
-**To update to the latest version, run `conda install metawrap-mg=1.1.3` (consider backing up your `bin/config-metawrap`file before you update)
+**New: MetaWRAP now deploys CONCOCT v1.0, resulting in major binning performance improvements and reduced runtime!
+
+**To update to the latest version, run `conda install metawrap-mg=1.1.4` (consider backing up your `bin/config-metawrap`file before you update)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
