@@ -10,7 +10,8 @@ requirements:
 
   run:
     - bcftools 1.6
-    - biopython 1.69
+    - biopython 1.68
+    - blas 1.0
     - blast 2.6.0
     - bmfilter 3.101
     - bmtagger 3.101
@@ -29,13 +30,18 @@ requirements:
     - java-jdk 8.0.92
     - kraken 1.1
     - krona 2.7
+    - libcurl 7.62.0
     - libgfortran-ng 7.2.0
     - libopenblas 0.2.20
+    - libssh2 1.8.0
     - matplotlib 2.2.3
     - maxbin2 2.2.5
     - megahit 1.1.2
     - metabat2 2.12.1
     - nomkl 3.0
+    - numpy 1.15.0
+    - numpy-base 1.15.0
+    - openssl 1.1.1a
     - pandas 0.23.4
     - perl 5.26.2
     - perl-bioperl 1.6.924
@@ -44,7 +50,7 @@ requirements:
     - prokka 1.*
     - qt 5.6.3
     - quast 4.*
-    - readline 6.2
+    - readline 7.0
     - r-ggplot2 2.2.1
     - r-recommended 3.4.3
     - salmon 0.9.*
