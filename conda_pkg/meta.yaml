@@ -11,7 +11,7 @@ requirements:
   run:
     - bcftools 1.6
     - biopython 1.68
-    - blas 1.0
+    - blas 1.1
     - blast 2.6.0
     - bmfilter 3.101
     - bmtagger 3.101
@@ -39,8 +39,9 @@ requirements:
     - megahit 1.1.2
     - metabat2 2.12.1
     - nomkl 3.0
-    - numpy 1.15.0
-    - numpy-base 1.15.0
+    - numpy 1.11.3
+    - numpy-base 1.14.3
+    - openblas 0.3.5
     - openssl 1.1.1a
     - pandas 0.23.4
     - perl 5.26.2
