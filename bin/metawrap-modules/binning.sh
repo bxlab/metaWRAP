@@ -410,13 +410,11 @@ if [ $concoct = true ]; then
         # I have to do some directory changing because CONCOCT dumps all files into current directory...
         home=$(pwd)
         mkdir ${out}/work_files/concoct_out
-        cd ${out}/work_files/concoct_out
 
-	if [[ $out == /* ]]; then
-		concoct -t $threads --coverage_file ${out}/work_files/concoct_depth.txt --composition_file ${out}/work_files/assembly_10K.fa -l $len
-	else
-	        concoct -t $threads --coverage_file ${home}/${out}/work_files/concoct_depth.txt --composition_file ${home}/${out}/work_files/assembly_10K.fa -l $len
-        fi
+	concoct -l $len -t $threads \
+		--coverage_file ${home}/${out}/work_files/concoct_depth.txt \
+		--composition_file ${home}/${out}/work_files/assembly_10K.fa \
+		-b ${out}/work_files/concoct_out
 
 	if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting..."; fi
         cd $home
