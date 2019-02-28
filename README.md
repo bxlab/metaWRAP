@@ -91,8 +91,9 @@ If you are running on OSX, and dont want to install manually, then [Docker](http
 docker pull quay.io/biocontainers/metawrap:1.1--0
 ```
  
-#### Manual installation:
- You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to manually install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.md). When you are ready, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH`. Thats it! 
+#### Manual/customizable installation:
+ You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.md). It should be noted that one of the easiest ways to intall the denpendancies is still through conda, by running `conda install --only-deps -c ursky metawrap-mg`. This will install the dependancies without metawrap itself tying them together, which will give you flexibility in customizing the environment without packages clashing with metaWRAP's (strict) requirements. When you are ready, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH`. Thats it! This is how I personally prefer to work with metaWRAP.
+ 
  
 ## DATABASES
 
