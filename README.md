@@ -63,7 +63,7 @@
  #### Better installation
  The conda installation of metaWRAP will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is strongly recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
 ``` bash
-conda create -n metawrap-env python=2.7
+conda create -y -n metawrap-env python=2.7
 source activate metawrap-env
 
 # Note: ordering is important
