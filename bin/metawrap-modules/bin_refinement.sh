@@ -254,8 +254,10 @@ if [ "$run_checkm" == "true" ]; then
 	announcement "RUNNING CHECKM ON ALL SETS OF BINS"
 	for bin_set in $(ls | grep -v tmp | grep -v stats | grep bins); do 
 		comm "Running CheckM on $bin_set bins"
-		mkdir ${bin_set}.tmp
+		if [[ -d ${bin_set}.checkm ]]; then rm -r ${bin_set}.checkm; fi
+		if [[ ! -d ${bin_set}.tmp ]]; then mkdir ${bin_set}.tmp; fi
 		if [ "$quick" == "true" ]; then
+			comm "Note: running with --reduced_tree option"
 			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads --reduced_tree
 		else
 			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads

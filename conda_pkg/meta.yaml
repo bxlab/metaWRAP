@@ -22,7 +22,7 @@ requirements:
     - brewer2mpl 1.4.1
     - bwa 0.7.15
     - cairo 1.14.12
-    - checkm-genome 1.*
+    - checkm-genome 1.0.12
     - concoct 1.0.0
     - fastqc 0.11.5
     - gnutls 3.5.19

@@ -66,7 +66,7 @@ ax.spines['bottom'].set_color('black')
 ax.spines["right"].set_visible(False)
 ax.spines["left"].set_visible(False)
 #ax.set_facecolor('white')
-ax.set_axis_bgcolor("white")
+ax.set_facecolor("white")
 
 # Ensure that the axis ticks only show up on the bottom and left of the plot.    
 ax.get_xaxis().tick_bottom()
@@ -153,7 +153,7 @@ ax.spines['bottom'].set_color('black')
 ax.spines["right"].set_visible(False)
 ax.spines["left"].set_visible(False)
 #ax.set_facecolor('white')
-ax.set_axis_bgcolor("white")
+ax.set_facecolor("white")
 
 # Ensure that the axis ticks only show up on the bottom and left of the plot.    
 ax.get_xaxis().tick_bottom()
