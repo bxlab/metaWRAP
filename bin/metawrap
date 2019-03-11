@@ -1,19 +1,9 @@
 #!/usr/bin/env bash
-#SBATCH
-#SBATCH --job-name=metaWRAP
-#SBATCH --partition=lrgmem
-#SBATCH --time=72:0:0
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=48
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=800G
-
-
 ##############################################################################################################################################################
 # Master metaWRAP script that calls on individual modules/pipelines 
 ##############################################################################################################################################################
 
-VERSION="1.1.4"
+VERSION="1.1.5"
 
 help_message () {
         echo""
