@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 **To update to the latest version, run `conda install metawrap-mg=1.1.6` (consider backing up your `bin/config-metawrap`file before you update)
 
+=======
+>>>>>>> 16aac3160679ffcac09b0b951faf5b99c9d6b0c0
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
  MetaWRAP aims to be an **easy-to-use metagenomic wrapper suite** that accomplishes the core tasks of metagenomic analysis from start to finish: read quality control, assembly, visualization, taxonomic profiling, extracting draft genomes (binning), and functional annotation. Additionally, metaWRAP takes bin extraction and analysis to the next level (see module overview below). While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple approach before you delve deeper into parameterization of your analysis. MetaWRAP can be applied to a variety of environments, including gut, water, and soil microbiomes (see metaWRAP paper for benchmarks). Each individual module of metaWRAP is a standalone program, which means you can use only the modules you are interested in for your data.
@@ -38,6 +41,7 @@
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I recommend at 8+ cores and 64GB+ RAM. MetaWRAP officially supports only Linux x64 systems, but may be installed on OSX manually or with docker (see below).
 
 ## INSTALLATION
+**To update to the latest version, run `conda install metawrap-mg=1.1.5` (consider backing up your `bin/config-metawrap`file before you update)
 
 #### Basic installation:
  To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it:
