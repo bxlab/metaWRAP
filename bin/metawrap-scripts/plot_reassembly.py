@@ -87,7 +87,7 @@ for y in range(0,max_n50, 50000):
 	plt.plot(range(0, max_x), [y] * len(range(0, max_x)), "--", lw=0.5, color="black", alpha=0.3)    
   
 # Remove the tick marks; they are unnecessary with the tick lines we just plotted.    
-plt.tick_params(axis="both", which="both", bottom="off", top="off", labelbottom="on", left="off", right="off", labelleft="on")    
+plt.tick_params(axis="both", which="both", bottom=False, top=False, labelbottom=True, left=False, right=False, labelleft=True)    
 
 
 # PLOTTING THE DATA
@@ -177,7 +177,7 @@ for y in range(min_completion, 105, 10):
 	plt.plot(range(0, max_x), [y] * len(range(0, max_x)), "--", lw=0.5, color="black", alpha=0.3)    
   
 # Remove the tick marks; they are unnecessary with the tick lines we just plotted.    
-plt.tick_params(axis="both", which="both", bottom="off", top="off", labelbottom="on", left="off", right="off", labelleft="on")    
+plt.tick_params(axis="both", which="both", bottom=False, top=False, labelbottom=True, left=False, right=False, labelleft=True)    
 
 
 # PLOTTING THE DATA
@@ -279,7 +279,7 @@ for y in range(0, max_contamination+1, 2):
 	plt.plot(range(0, max_x), [y] * len(range(0, max_x)), "--", lw=0.5, color="black", alpha=0.3)    
   
 # Remove the tick marks; they are unnecessary with the tick lines we just plotted.    
-plt.tick_params(axis="both", which="both", bottom="off", top="off", labelbottom="on", left="off", right="off", labelleft="on")    
+plt.tick_params(axis="both", which="both", bottom=False, top=False, labelbottom=True, left=False, right=False, labelleft=False)    
 
 
 # PLOTTING THE DATA
