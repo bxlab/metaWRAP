@@ -135,11 +135,11 @@ comm "There is $mem RAM and $threads threads available, and each pplacer thread 
 ########################################################################################################
 announcement "BEGIN PIPELINE!"
 comm "setting up output folder and copything over bins..."
-if [ ! -d $out ]; then
+if [[ ! -d $out ]]; then
         mkdir $out
-	if [ ! -d $out ]; then error "cannot make $out"; fi
+	if [[ ! -d $out ]]; then error "cannot make $out"; fi
 else
-        warning "Warning: $out already exists. It is HIGHLY recommended that you clear this directory to prevent any conflicts... Attempting to clean."
+        warning "Warning: $out already exists. Attempting to clean."
 	rm -r ${out}/binsA
 	rm -r ${out}/binsB
 	rm -r ${out}/binsC
@@ -175,12 +175,13 @@ fi
 
 comm "There are $n_binnings bin sets!"
 
-
-comm "Fix contig naming by removing special characters..."
-for f in ${out}/binsA/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
-for f in ${out}/binsB/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
-if [[ -d $bins3 ]]; then
-	for f in ${out}/binsC/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+if [[ ! -s ${out}/work_files/binsA.stats ]]; then
+	comm "Fix contig naming by removing special characters..."
+	for f in ${out}/binsA/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+	for f in ${out}/binsB/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+	if [[ -d $bins3 ]]; then
+		for f in ${out}/binsC/*; do ${SOFT}/fix_config_naming.py $f > ${out}/tmp.fa; mv ${out}/tmp.fa $f; done
+	fi
 fi
 
 
@@ -189,7 +190,7 @@ fi
 home=$(pwd)
 cd $out
 
-if [ "$refine" == "true" ]; then
+if [ "$refine" == "true" ] && [[ ! -s work_files/binsA.stats ]]; then
 	announcement "BEGIN BIN REFINEMENT"	
 	if [[ $n_binnings -eq 1 ]]; then
 		comm "There is only one bin folder, so no refinement of bins possible. Moving on..."
@@ -235,6 +236,8 @@ if [ "$refine" == "true" ]; then
 		error "Something is off here - somehow there are not 1, 2, or 3 bin folders ($n_binnings)"
 	fi
 	comm "Bin refinement finished successfully!"
+elif [ "$refine" == "true" ] && [[ -s work_files/binsM.stats ]]; then
+	comm "Previous bin refinment files found. If this was not intended, please re-run with a clear output directory. Skipping refinement..."
 else
 	comm "Skipping bin refinement. Will proceed with the $n_binnings bins specified."
 fi
@@ -250,7 +253,7 @@ done
 ########################################################################################################
 ########################              RUN CHECKM ON ALL BIN SETS                ########################
 ########################################################################################################
-if [ "$run_checkm" == "true" ]; then
+if [ "$run_checkm" == "true" ] && [[ ! -s work_files/binsM.stats ]]; then
 	announcement "RUNNING CHECKM ON ALL SETS OF BINS"
 	for bin_set in $(ls | grep -v tmp | grep -v stats | grep bins); do 
 		comm "Running CheckM on $bin_set bins"
@@ -262,7 +265,7 @@ if [ "$run_checkm" == "true" ]; then
 		else
 			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads
 		fi
-
+		
 		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
 		${SOFT}/summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
 		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
@@ -271,8 +274,14 @@ if [ "$run_checkm" == "true" ]; then
 		num=$(cat ${bin_set}.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
 		comm "There are $num 'good' bins found in $bin_set! (>${comp}% completion and <${cont}% contamination)"
 	done
+elif [ "$run_checkm" == "true" ] && [[ -s work_files/binsM.stats ]]; then
+	comm "Previous bin refinement files found. If this was not intended, please re-run with a clear output directory. Skipping CheckM runs..."
+	rm -r bins*
+	cp -r work_files/binsA* ./
+	cp -r work_files/binsB* ./
+	cp -r work_files/binsC* ./
 else
-	comm "Skipping CheckM. Warning: bin cnosolidation will not be possible."
+	comm "Skipping CheckM. Warning: bin consolidation will not be possible."
 fi
 
 ########################################################################################################
@@ -387,40 +396,43 @@ if [ "$run_checkm" == "true" ]; then
 	mv binning_results.png figures/intermediate_binning_results.png
 fi
 
-
-comm "Finalizing bin set naming, and moving over intermediate files into 'work_files'"
-if [[ $n_binnings -ne 1 ]]; then
-	mkdir work_files
-	for f in $(ls | grep -v results | grep -v figures | grep -v work); do
-		mv $f work_files/
-	done
-fi
+########################################################################################################
+########################               MOVING OVER TEMPORARY FILES              ########################
+########################################################################################################
+announcement "MOVING OVER TEMPORARY FILES"
 
 if [ "${bins1:$((${#bins1}-1)):1}" = "/" ]; then bins1=${bins1%/*}; fi
 if [ "${bins2:$((${#bins2}-1)):1}" = "/" ]; then bins2=${bins2%/*}; fi
 if [ "${bins3:$((${#bins3}-1)):1}" = "/" ]; then bins3=${bins3%/*}; fi
 
-if [[ $n_binnings -eq 2 ]]; then
-	cp -r work_files/binsA ${bins1##*/}
-	cp -r work_files/binsB ${bins2##*/}
-	cp -r work_files/binsO metawrap_bins
 
-	cp work_files/binsA.stats ${bins1##*/}.stats	
-	cp work_files/binsB.stats ${bins2##*/}.stats
-	cp work_files/binsO.stats metawrap_bins.stats
-elif [[ $n_binnings -eq 3 ]]; then
-	cp -r work_files/binsA ${bins1##*/}
-	cp -r work_files/binsB ${bins2##*/}
-	cp -r work_files/binsC ${bins3##*/}
-	cp -r work_files/binsO metawrap_bins
-
-	cp work_files/binsA.stats ${bins1##*/}.stats
-	cp work_files/binsB.stats ${bins2##*/}.stats
-	cp work_files/binsC.stats ${bins3##*/}.stats
-	cp work_files/binsO.stats metawrap_bins.stats
-else
-	error "something went wrong with determining the number of input bin sets when finalizing output names..."
+if [[ -s work_files/binsM.stats ]]; then
+	rm -r work_files/bins*
+	rm -r ${bins1##*/}* ${bins2##*/}* ${bins3##*/}*
 fi
+
+if [[ $n_binnings -ne 1 ]]; then
+	mkdir work_files
+	for f in binsA* binsB* binsC* binsM* binsO*; do
+		mv $f work_files/
+	done
+fi
+
+
+cp -r work_files/binsO metawrap_${comp}_${cont}_bins
+cp work_files/binsO.stats metawrap_${comp}_${cont}_bins.stats
+
+cp -r work_files/binsA ${bins1##*/}
+cp work_files/binsA.stats ${bins1##*/}.stats
+
+cp -r work_files/binsB ${bins2##*/}
+cp work_files/binsB.stats ${bins2##*/}.stats
+
+if [[ $n_binnings -eq 3 ]]; then
+	cp -r work_files/binsC ${bins3##*/}
+	cp work_files/binsC.stats ${bins3##*/}.stats
+fi
+
 
 if [ "$run_checkm" == "true" ]; then
         comm "making completion and contamination ranking plots of final outputs"

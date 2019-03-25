@@ -147,7 +147,7 @@ for arg in "$@"; do
 		sample=${tmp%_*}
 
 		comm "processing sample $sample with reads $reads_1 and $reads_2..."
-		salmon quant -i ${out}/assembly_index --libType IU -1 $reads_1 -2 $reads_2 -o ${out}/alignment_files/${sample}.quant
+		salmon quant -i ${out}/assembly_index --libType IU -1 $reads_1 -2 $reads_2 -o ${out}/alignment_files/${sample}.quant --meta -p $threads
 		if [[ $? -ne 0 ]]; then error "Something went wrong with aligning $sample fastq files back to assembly! Exiting..."; fi
 	fi
 done

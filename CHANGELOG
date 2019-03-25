@@ -8,6 +8,7 @@ metaWRAP v=1.2 (In development)
 		added support for non-human host contamination removal with bmtagger
 	Bin_refinement
 		set_axis_bgcolor was replaced by set_facecolor in plotting function
+		the module is able to continue previous progress is the .stats files are present
 	Reassemble_bins
 		set_axis_bgcolor was replaced by set_facecolor in plotting function
 		added check limit on maximum number of open python file handles
@@ -27,6 +28,9 @@ metaWRAP v=1.2 (In development)
 		kraken now pre-loads the database before running by default, improving speed on systems with slow IO
 		added --no-preload option for running form hard disk for lower memory requirements
 		fixed exception that crashed the module if kraken-translate could not find a taxonomy for a classification
+	Quant_bins
+		utilize the --meta option for salmon
+		utilize the -p option to enable multi-threading
 
 
 metaWRAP v=1.1 (January 2019)
