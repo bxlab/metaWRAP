@@ -3,7 +3,7 @@
 # Master metaWRAP script that calls on individual modules/pipelines 
 ##############################################################################################################################################################
 
-VERSION="1.1.5"
+VERSION="1.1.7"
 
 help_message () {
         echo""
