@@ -1,6 +1,6 @@
 package:
   name: metawrap-mg
-  version: "1.1.6"
+  version: "1.1.7"
 
 source:
   git_url: https://github.com/bxlab/metaWRAP.git
@@ -11,7 +11,7 @@ requirements:
   run:
     - bcftools 1.6
     - biopython 1.68
-    - blas 1.1
+    - blas 2.4
     - blast 2.6.0
     - bmfilter 3.101
     - bmtagger 3.101
@@ -30,7 +30,7 @@ requirements:
     - java-jdk 8.0.92
     - kraken 1.1
     - krona 2.7
-    - libcurl 7.62.0
+    - libcurl 7.64.0
     - libgfortran-ng 7.2.0
     - libopenblas 0.2.20
     - libssh2 1.8.0
@@ -39,10 +39,10 @@ requirements:
     - megahit 1.1.2
     - metabat2 2.12.1
     - nomkl 3.0
-    - numpy 1.11.3
+    - numpy 1.16.2
     - numpy-base 1.14.3
     - openblas 0.3.5
-    - openssl 1.1.1a
+    - openssl 1.1.1b
     - pandas 0.23.4
     - perl 5.26.2
     - perl-bioperl 1.6.924
@@ -55,7 +55,7 @@ requirements:
     - r-ggplot2 2.2.1
     - r-recommended 3.4.3
     - salmon 0.9.*
-    - samtools 1.6
+    - samtools 1.9
     - scikit-learn 0.19.1
     - scipy 1.1.0
     - seaborn 0.8.1

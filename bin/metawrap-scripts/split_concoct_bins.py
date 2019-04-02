@@ -8,16 +8,22 @@ import sys, os
 print "Loading in the bins that the contigs belong to..."
 bins={}
 for line in open(sys.argv[1]):
-	bins[line.strip().split(",")[0]] = line.strip().split(",")[1]
+	if line.startswith("contig_id"):
+		continue
+	bins[line.strip().split(",")[0].split(".")[0]] = line.strip().split(",")[1]
 
 
 print "Going through the entire assembly and splitting contigs into their respective bin file..."
 current_bin=""
 for line in open(sys.argv[2]):
 	if line.startswith(">"):
-		if current_bin!="": f.close()
-		if line[1:-1] in bins: current_bin="bin."+bins[line[1:-1]]+".fa"
-		else: current_bin="unbinned.fa"
+		if current_bin!="": 
+			f.close()
+		contig = line[1:-1].split(".")[0]
+		if contig in bins: 
+			current_bin="bin."+bins[contig]+".fa"
+		else: 
+ 			current_bin="unbinned.fa"
 		f = open(sys.argv[3]+"/"+current_bin,'a')
 	f.write(line)
 print "Done!"

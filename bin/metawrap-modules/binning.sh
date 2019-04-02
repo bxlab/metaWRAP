@@ -406,18 +406,32 @@ if [ $concoct = true ]; then
 	if [[ $? -ne 0 ]]; then error "Something went wrong with estimating fragment abundance. Exiting..."; fi
 
 
+	concoct -h
+        if [[ $? -ne 0 ]]; then
+                comm "Looks like our environment has a faulty libgslcblas.so link. Will try to manually create symlink in conda environment"
+                conda_path=$(which concoct)
+                conda_path=${conda_path%/*}
+                if [ $(echo -n $conda_path | tail -c 1) = "/" ]; then conda_path=${conda_path%/*}; fi
+                conda_path=${conda_path%/*}
+		echo "conda path: $conda_path"
+                if [ ! -d ${conda_path}/lib/libgslcblas.so ]; then
+                        error "${conda_path}/lib/libgslcblas.so does not exixt. Cannot set libgslcblas.so.0 symlink. Please make sure that concoct is working before re-trying. Exiting..."
+                fi
+
+		echo "Creating symlink ${conda_path}/lib/libgslcblas.so.0 from ${conda_path}/lib/libgslcblas.so"
+		rm ${conda_path}/lib/libgslcblas.so.0
+		ln ${conda_path}/lib/libgslcblas.so ${conda_path}/lib/libgslcblas.so.0
+        fi
+
         comm "Starting binning with CONCOCT..."
-        # I have to do some directory changing because CONCOCT dumps all files into current directory...
-        home=$(pwd)
         mkdir ${out}/work_files/concoct_out
 
 	concoct -l $len -t $threads \
-		--coverage_file ${home}/${out}/work_files/concoct_depth.txt \
-		--composition_file ${home}/${out}/work_files/assembly_10K.fa \
+		--coverage_file ${out}/work_files/concoct_depth.txt \
+		--composition_file ${out}/work_files/assembly_10K.fa \
 		-b ${out}/work_files/concoct_out
 
 	if [[ $? -ne 0 ]]; then error "Something went wrong with binning with CONCOCT. Exiting..."; fi
-        cd $home
 
 	comm "merging 10kb fragments back into contigs"
 	merge_cutup_clustering.py ${out}/work_files/concoct_out/clustering_gt${len}.csv > ${out}/work_files/concoct_out/clustering_gt${len}_merged.csv

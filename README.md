@@ -1,4 +1,4 @@
-**To update to the latest version, run `conda install metawrap-mg=1.1.6` (consider backing up your `bin/config-metawrap`file before you update)
+**To update to the latest version, run `conda install metawrap-mg=1.1.7` (consider backing up your `bin/config-metawrap`file before you update)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 

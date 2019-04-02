@@ -4,20 +4,24 @@ metaWRAP v=1.2 (In development)
 		numpy, openblas, and scipy versions updated for concoct 1.0
 		enforce CheckM v1.0.12 (newer versions are reported to fail)
 		fixed depricated matplotlib functions in plotting scripts
+		updated to Samtools v1.9 to avoid libcrypto.so.1.0.0 issues
 	Read_qc
 		added support for non-human host contamination removal with bmtagger
 	Bin_refinement
 		set_axis_bgcolor was replaced by set_facecolor in plotting function
 		the module is able to continue previous progress is the .stats files are present
+		matplotlib depricated option fixes
 	Reassemble_bins
 		set_axis_bgcolor was replaced by set_facecolor in plotting function
 		added check limit on maximum number of open python file handles
 	Binning
 		fixed syntax bug coming from comment lines following "next line" character
 		split the alignment and alignment sorting stages to help resolve stalled jobs
+		matplotlib depricated option fixes
 		added support for CONCOCT v1.0, greatly improving performance
 		added recommended contig splitting step for CONCOCT, greatly improving its performance on larger contigs
 		CONCOCT now supports multi-threading greatly speeding up binning on larger data
+		fixed outdated path handling in new CONCOCT implementation
 	Blobology
 		removed shuffle reads features
 		use paired reads for bowtie alignment
