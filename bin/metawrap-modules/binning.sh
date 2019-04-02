@@ -414,7 +414,7 @@ if [ $concoct = true ]; then
                 if [ $(echo -n $conda_path | tail -c 1) = "/" ]; then conda_path=${conda_path%/*}; fi
                 conda_path=${conda_path%/*}
 		echo "conda path: $conda_path"
-                if [ ! -d ${conda_path}/lib/libgslcblas.so ]; then
+                if [ ! -s ${conda_path}/lib/libgslcblas.so ]; then
                         error "${conda_path}/lib/libgslcblas.so does not exixt. Cannot set libgslcblas.so.0 symlink. Please make sure that concoct is working before re-trying. Exiting..."
                 fi
 
