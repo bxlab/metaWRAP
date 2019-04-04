@@ -1,6 +1,6 @@
 package:
   name: metawrap-mg
-  version: "1.1.7"
+  version: "1.1.8"
 
 source:
   git_url: https://github.com/bxlab/metaWRAP.git
@@ -9,63 +9,32 @@ requirements:
   build:
 
   run:
-    - bcftools 1.6
     - biopython 1.68
-    - blas 2.4
     - blast 2.6.0
-    - bmfilter 3.101
     - bmtagger 3.101
-    - bmtool 3.101
-    - boost 1.64.0
-    - boost-cpp 1.64.0
-    - bowtie2 2.3.*
-    - brewer2mpl 1.4.1
-    - bwa 0.7.15
-    - cairo 1.14.12
-    - checkm-genome 1.0.12
+    - bowtie2 2.3.5
+    - bwa 0.7.17
+    - checkm-genome 1.0.13
     - concoct 1.0.0
-    - fastqc 0.11.5
-    - gnutls 3.5.19
-    - icu 58.2
-    - java-jdk 8.0.92
+    - fastqc 0.11.8
     - kraken 1.1
     - krona 2.7
-    - libcurl 7.64.0
-    - libgfortran-ng 7.2.0
-    - libopenblas 0.2.20
-    - libssh2 1.8.0
     - matplotlib 2.2.3
     - maxbin2 2.2.5
-    - megahit 1.1.2
+    - megahit 1.1.3
     - metabat2 2.12.1
-    - nomkl 3.0
-    - numpy 1.16.2
-    - numpy-base 1.14.3
-    - openblas 0.3.5
-    - openssl 1.1.1b
-    - pandas 0.23.4
-    - perl 5.26.2
-    - perl-bioperl 1.6.924
-    - perl-threaded 5.22.0
-    - pplacer 1.1.alpha17
-    - prokka 1.*
-    - qt 5.6.3
-    - quast 4.*
-    - readline 7.0
-    - r-ggplot2 2.2.1
-    - r-recommended 3.4.3
-    - salmon 0.9.*
+    - pandas 0.24.2
+    - pplacer 1.1.alpha19
+    - prokka 1.13
+    - quast 5.0.2
+    - r-ggplot2 3.1.0
+    - r-recommended 3.5.1
+    - salmon 0.13.1
     - samtools 1.9
-    - scikit-learn 0.19.1
-    - scipy 1.1.0
-    - seaborn 0.8.1
-    - spades 3.*
-    - srprism 2.4.24
-    - subprocess32 3.2.7
+    - seaborn 0.9.0
+    - spades 3.13.0
     - taxator-tk 1.3.3e
-    - tk 8.6.9
-    - trim-galore 0.4.*
-    - xorg-libxrender 0.9.10
+    - trim-galore 0.5.0
 
 about:
   home: https://github.com/ursky/metaWRAP

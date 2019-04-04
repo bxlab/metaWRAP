@@ -111,10 +111,13 @@ if [ "$metaspades_assemble" = true ]; then
 	
 	mkdir ${out}/metaspades.tmp
 
-	metaspades.py --tmp-dir ${out}/metaspades.tmp -t $threads -m $mem -o ${out}/metaspades -1 $reads_1 -2 $reads_2 
-	rm -r ${out}/metaspades.tmp
+	if [[ -s ${out}/metaspades/spades.log ]]; then
+		metaspades.py -o ${out}/metaspades --restart-from last -t $threads -m $mem --tmp-dir ${out}/metaspades.tmp
+	else
+		metaspades.py --tmp-dir ${out}/metaspades.tmp -t $threads -m $mem -o ${out}/metaspades -1 $reads_1 -2 $reads_2
+	fi
+
 	if [ ! -f "${out}/metaspades/scaffolds.fasta" ]; then error "Something went wrong with metaSPAdes assembly. Exiting."; fi
-	
 	rm -r ${out}/metaspades.tmp
 fi
 

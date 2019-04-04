@@ -390,20 +390,24 @@ if [ $concoct = true ]; then
 	########################################################################################################
         announcement "RUNNING CONCOCT"
 
-	comm "indexing .bam alignment files..."
-	for FILE in ${out}/work_files/*.bam; do
-		echo $FILE
-		samtools index -@ $threads -b $FILE
-	done
+	if [[ ! -s ${out}/work_files/concoct_depth.txt ]]; then
+		comm "indexing .bam alignment files..."
+		for FILE in ${out}/work_files/*.bam; do
+			echo $FILE
+			samtools index -@ $threads -b $FILE
+		done
 
-        comm "cutting up contigs into 10kb fragments for CONCOCT..."
-	cut_up_fasta.py ${out}/work_files/assembly.fa -c 10000 --merge_last -b ${out}/work_files/assembly_10K.bed -o 0 > ${out}/work_files/assembly_10K.fa
-        if [[ $? -ne 0 ]]; then error "Something went wrong with cutting up contigs. Exiting."; fi
+        	comm "cutting up contigs into 10kb fragments for CONCOCT..."
+		cut_up_fasta.py ${out}/work_files/assembly.fa -c 10000 --merge_last -b ${out}/work_files/assembly_10K.bed -o 0 > ${out}/work_files/assembly_10K.fa
+        	if [[ $? -ne 0 ]]; then error "Something went wrong with cutting up contigs. Exiting."; fi
 
-	comm "estimating contig fragment coverage..."	
-	CMD="concoct_coverage_table.py ${out}/work_files/assembly_10K.bed ${out}/work_files/*.bam > ${out}/work_files/concoct_depth.txt"
-	$(eval $CMD)
-	if [[ $? -ne 0 ]]; then error "Something went wrong with estimating fragment abundance. Exiting..."; fi
+		comm "estimating contig fragment coverage..."	
+		CMD="concoct_coverage_table.py ${out}/work_files/assembly_10K.bed ${out}/work_files/*.bam > ${out}/work_files/concoct_depth.txt"
+		$(eval $CMD)
+		if [[ $? -ne 0 ]]; then error "Something went wrong with estimating fragment abundance. Exiting..."; fi
+	else
+		comm "looks like contig coverage was already estimated... skipping"
+	fi
 
 
 	concoct -h
