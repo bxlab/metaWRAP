@@ -5,6 +5,7 @@ metaWRAP v=1.2 (In development)
 		enforce CheckM v1.0.12 (newer versions are reported to fail)
 		fixed depricated matplotlib functions in plotting scripts
 		updated to Samtools v1.9 to avoid libcrypto.so.1.0.0 issues
+		simplified metaWRAP preprequisite programs to base minimum number (but with strict version control)
 	Assembly
 		added "--restart-from last" feature for metaspades to allow continuation of previously terminated runs
 	Read_qc
