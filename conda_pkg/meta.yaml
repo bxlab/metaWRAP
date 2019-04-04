@@ -10,6 +10,7 @@ requirements:
 
   run:
     - biopython 1.68
+    - blas 2.5
     - blast 2.6.0
     - bmtagger 3.101
     - bowtie2 2.3.5
