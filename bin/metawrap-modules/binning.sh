@@ -410,7 +410,7 @@ if [ $concoct = true ]; then
 	fi
 
 
-	concoct -h
+	concoct -v
         if [[ $? -ne 0 ]]; then
                 comm "Looks like our environment has a faulty libgslcblas.so link. Will try to manually create symlink in conda environment"
                 conda_path=$(which concoct)
