@@ -91,7 +91,7 @@ conda config --add channels ursky
 conda install --only-deps -c ursky metawrap-mg
 
 # OR
-conda install biopython=1.68 blas=2.5 blast=2.6.0 bmtagger=3.101 bowtie2=2.3.5 bwa=0.7.17 checkm-genome=1.0.13 concoct=1.0.0 fastqc=0.11.8 kraken=1.1 krona=2.7 matplotlib=2.2.3 maxbin2=2.2.5 megahit=1.1.3 metabat2=2.12.1 pandas=0.24.2 pplacer=1.1.alpha19 prokka=1.13 quast=5.0.2 r-ggplot2=3.1.0 r-recommended=3.5.1 salmon=0.13.1 samtools=1.9 seaborn=0.9.0 spades=3.13.0 taxator-tk=1.3.3e trim-galore=0.5.0
+conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome=1.0.12 concoct=1.0 fastqc kraken=1.1 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas pplacer=1.1.alpha19 prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
  ```
 
 #### Bioconda installation:
