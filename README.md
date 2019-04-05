@@ -31,7 +31,7 @@
 	5) Blobology: visualize the community and extracted bins with blobplots
 	6) Classify_bins: conservative but accurate taxonomy prediction for bins
 	7) Annotate_bins: functionally annotate genes in a set of bins
-#### For more details, please consult the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md) and the [publication preprint](https://www.biorxiv.org/content/early/2018/03/06/277442).
+#### For more details, please consult the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md) and the [publication](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).
 
 
 ##  SYSTEM REQUIREMENTS
