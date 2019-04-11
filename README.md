@@ -1,4 +1,4 @@
-**To update to the latest version, run `conda install metawrap-mg=1.1.7` (consider backing up your `bin/config-metawrap`file before you update)
+**To update to the latest version, run `conda install metawrap-mg=1.1.8` (consider backing up your `bin/config-metawrap`file before you update)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
@@ -31,7 +31,7 @@
 	5) Blobology: visualize the community and extracted bins with blobplots
 	6) Classify_bins: conservative but accurate taxonomy prediction for bins
 	7) Annotate_bins: functionally annotate genes in a set of bins
-#### For more details, please consult the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md) and the [publication preprint](https://www.biorxiv.org/content/early/2018/03/06/277442).
+#### For more details, please consult the [metaWRAP module descriptions](https://github.com/bxlab/metaWRAP/blob/master/Module_descriptions.md) and the [publication](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).
 
 
 ##  SYSTEM REQUIREMENTS
@@ -59,7 +59,7 @@
  # Note: may take a couple hours
  ```
  
- #### Better installation
+ #### Better installation:
  The conda installation of metaWRAP will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is strongly recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
 ``` bash
 conda create -y -n metawrap-env python=2.7
@@ -74,7 +74,26 @@ conda config --add channels ursky
 conda install -y -c ursky metawrap-mg
 # Note: may take a couple hours
 ```
+
  
+#### Best (manual) installation:
+ This is how I usually use metaWRAP. By manually installing metaWRAP you will have better control over your environment and be able to change any programs and their versions as you see fit. You can also easily get the lastest updates throught `git pull`. If you are installing on a system other than Linux64, this may be your best bet. The hardest part is to install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/conda_pkg/meta.yaml), but this is much easier than you would think with the use of conda. Once you have these installed in your environment, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH` (likely by editing the `~/.bash_profile`). Alternatively, just copy over the `metaWRAP/bin/` contents into any location with excecutbale permission such as `/usr/bin/` or `/miniconda2/bin/` (depending on your permissions). Thats it!
+ 
+ Easiest way to quickly install the dependancies:
+ ```
+ # Note: ordering is important
+conda config --add channels defaults
+conda config --add channels conda-forge
+conda config --add channels bioconda
+conda config --add channels ursky
+
+# Unix/Linux only
+conda install --only-deps -c ursky metawrap-mg
+
+# OR
+conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome=1.0.12 concoct=1.0 fastqc kraken=1.1 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas pplacer=1.1.alpha19 prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
+ ```
+
 #### Bioconda installation:
 MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended for most users, as I will only push major releases to Bioconda. This source is meant for specific applications that require a Bioconda distribution. To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. 
 
@@ -89,10 +108,7 @@ If you are running on OSX, and dont want to install manually, then [Docker](http
 # Docker installation (not recommended unless you need docker)
 docker pull quay.io/biocontainers/metawrap:1.1--0
 ```
- 
-#### Manual/customizable installation:
- You may want to manually install metaWRAP if you want better control over your environment, if you are installing on a system other than Linux64, or you just really dislike conda. In any case, you will need to install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/installation/dependancies.md). It should be noted that one of the easiest ways to intall the denpendancies is still through conda. On linus, you can do this by running `conda install --only-deps -c ursky metawrap-mg`. This will install the dependancies without metawrap itself tying them together, which will give you flexibility in customizing the environment without packages clashing with metaWRAP's (strict) requirements. On OSX you will need to install them manually with `conda install`. When you are ready, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH`. Thats it! This is how I personally prefer to work with metaWRAP.
- 
+
  
 ## DATABASES
 
