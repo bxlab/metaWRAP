@@ -410,6 +410,24 @@ if [ $concoct = true ]; then
 	fi
 
 
+	concoct -h
+        if [[ $? -ne 0 ]]; then
+                comm "Looks like our environment has a faulty libgslcblas.so link. Will try to manually create symlink in conda environment"
+                conda_path=$(which concoct)
+                conda_path=${conda_path%/*}
+                if [ $(echo -n $conda_path | tail -c 1) = "/" ]; then conda_path=${conda_path%/*}; fi
+                conda_path=${conda_path%/*}
+		echo "conda path: $conda_path"
+                if [ ! -s ${conda_path}/lib/libgslcblas.so ]; then
+                        error "${conda_path}/lib/libgslcblas.so does not exixt. Cannot set libgslcblas.so.0 symlink. Please make sure that concoct is working before re-trying. Exiting..."
+                fi
+
+		echo "Creating symlink ${conda_path}/lib/libgslcblas.so.0 from ${conda_path}/lib/libgslcblas.so"
+		rm ${conda_path}/lib/libgslcblas.so.0
+		ln ${conda_path}/lib/libgslcblas.so ${conda_path}/lib/libgslcblas.so.0
+	fi
+
+
         comm "Starting binning with CONCOCT..."
         mkdir ${out}/work_files/concoct_out
 
