@@ -21,7 +21,7 @@ requirements:
     - kraken 1.1
     - krona 2.7
     - matplotlib 2.2.3
-    - maxbin2 2.2.5
+    - maxbin2 2.2.6
     - megahit 1.1.3
     - metabat2 2.12.1
     - pandas 0.24.2
