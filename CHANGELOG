@@ -1,4 +1,4 @@
-metaWRAP v=1.2 (In development)
+metaWRAP v=1.2 (April 2019)
 	General
 		config-metawrap sets database locations to $HOME by defualt during installation
 		numpy, openblas, and scipy versions updated for concoct 1.0
