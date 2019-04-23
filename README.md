@@ -38,7 +38,6 @@
  The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I recommend at 8+ cores and 64GB+ RAM. MetaWRAP officially supports only Linux x64 systems, but may be installed on OSX manually or with docker (see below).
 
 ## INSTALLATION
-**To update to the latest version, run `conda install metawrap-mg=1.1.5` (consider backing up your `bin/config-metawrap`file before you update)
 
 #### Basic installation:
  To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it:
