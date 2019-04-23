@@ -94,7 +94,7 @@ conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome=
  ```
 
 #### Bioconda installation:
-MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended for most users, as I will only push major releases to Bioconda. This source is meant for specific applications that require a Bioconda distribution. To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. 
+MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended for most users, as I will only push major releases to Bioconda (i.e. `v1.1`, `v1.2`). This source is meant for specific applications that require a Bioconda distribution. To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. 
 
 ```
 # Bioconda installation (not recommended):
@@ -102,9 +102,9 @@ conda install -y -c bioconda metawrap
 ```
 
 #### Docker installation:
-If you are running on OSX, and dont want to install manually, then [Docker](https://quay.io/repository/biocontainers/metawrap?tab=info) could be the way to go. **However**, as with the Bioconda distribution, I will only push major releases to Bioconda (i.e. `v1.1`, `v1.2`). To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. If you still need to use Docker but run into bugs that have been fixed in the latest versions, you can manually update your scripts from this repository to apply the most recent patches. To install with Docker, run:
+If you are running on OSX and dont want to install manually, or prefer to work in containerized environments, then [Docker](https://quay.io/repository/biocontainers/metawrap?tab=info) could be the way to go. **However**, as with the Bioconda distribution, I will only push major releases to Bioconda (i.e. `v1.1`, `v1.2`). To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. If you still need to use Docker but run into bugs that have been fixed in the latest versions, you can manually update your scripts from this repository to apply the most recent patches. To install with Docker, run:
 ```
-# Docker installation (not recommended unless you need docker)
+# Docker installation (not recommended)
 docker pull quay.io/biocontainers/metawrap:1.1--0
 ```
 
@@ -179,5 +179,5 @@ Principal Investigators: [James Taylor](http://bio.jhu.edu/directory/james-taylo
 
 Institution: Johns Hopkins, [Department of Cell, Molecular, Developmental Biology, and Biophysics](http://cmdb.jhu.edu/) 
 
-All feedback is welcome! For errors and bugs, please open a new Issue thread on this github page, and I will try to get things patched as quickly as possible. Please include the **full** output (stdout and stderr) from metaWRAP, and the version of you are using (run `metawrap -v`), For general questions, suggestions and other feedback, you can contact me at guritsk1@jhu.edu. 
+All feedback is welcome! For errors and bugs, please open a new Issue thread on this github page, and I will try to get things patched as quickly as possible. Please include the **full** output (stdout and stderr) from metaWRAP, and the version of you are using (run `metawrap -v`), For general feedback you can contact me at guritsk1@jhu.edu, however please do not email me with error/bug reports. 
 
