@@ -25,6 +25,7 @@ metaWRAP v=1.2 (April 2019)
 		added recommended contig splitting step for CONCOCT, greatly improving its performance on larger contigs
 		CONCOCT now supports multi-threading greatly speeding up binning on larger data
 		fixed outdated path handling in new CONCOCT implementation
+		updated to maxbin2 v2.2.6
 	Blobology
 		removed shuffle reads features
 		use paired reads for bowtie alignment

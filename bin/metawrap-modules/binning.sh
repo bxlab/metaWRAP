@@ -236,6 +236,7 @@ for num in "$@"; do
 				comm "Sorting the $sample alignment file"
 				samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O BAM -o ${out}/work_files/${sample}.bam ${out}/work_files/${sample}.sam
 				if [[ $? -ne 0 ]]; then error "Something went wrong with sorting the alignments. Exiging..."; fi
+				rm ${out}/work_files/${sample}.sam
 			else
 				comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
 			fi
@@ -263,6 +264,7 @@ for num in "$@"; do
 				comm "Sorting the $sample alignment file"
 				samtools sort -T ${out}/work_files/tmp-samtools -@ $threads -O BAM -o ${out}/work_files/${sample}.bam ${out}/work_files/${sample}.sam
 				if [[ $? -ne 0 ]]; then error "Something went wrong with sorting the alignments. Exiging..."; fi
+				rm ${out}/work_files/${sample}.sam
 			else
 				comm "skipping aligning $sample reads to assembly because ${out}/work_files/${sample}.bam already exists."
 			fi
