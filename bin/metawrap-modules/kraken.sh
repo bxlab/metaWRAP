@@ -120,9 +120,9 @@ for num in "$@"; do
 		if [ ! "$depth" = "all" ]; then
 			comm "subsampling down to $depth reads..." 
 			paste $reads_1 $reads_2 | \
-			 awk '{ printf("%s",$0); n++; if(n%4==0) { printf("\n");} else { printf("\t\t");} }' | `#combine paired end reads onto one line` \
-			 shuf | head -n $depth | sed 's/\t\t/\n/g' | `#shuffle reads, select top N reads, and then restore tabulation` \
-			 awk -F"\t" '{print $1 > "'"${out}/tmp_1.fastq"'"; print $2 > "'"${out}/tmp_2.fastq"'"}' `#separate reads into F and R files`
+			 awk '{ printf("%s",$0); n++; if(n%4==0) { printf("\n");} else { printf("\t\t");} }' | \ #combine paired end reads onto one line 
+			 shuf | head -n $depth | sed 's/\t\t/\n/g' | \ #shuffle reads, select top N reads, and then restore tabulation 
+			 awk -F"\t" '{print $1 > "'"${out}/tmp_1.fastq"'"; print $2 > "'"${out}/tmp_2.fastq"'"}' #separate reads into F and R files
 			reads_1=${out}/tmp_1.fastq
 			reads_2=${out}/tmp_2.fastq
 			comm "Subsampling done. Starting KRAKEN..."
@@ -159,7 +159,7 @@ for num in "$@"; do
 done
 
 # check if any files were processed
-if [[ $( ls $out | grep ".krak" ) -eq 0 ]]; then 
+if [[ $( ls $out | grep ".krak" | wc -l ) -eq 0 ]]; then 
 	comm "No fasta or fastq files detected! (must be in .fastq .fa .fastq or .fq format)"
 	help_message; exit 1
 fi
