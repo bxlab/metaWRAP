@@ -1,6 +1,4 @@
-**To update to the latest version, run `conda install metawrap-mg=1.2` (consider backing up your `bin/config-metawrap`file before you update).
-
- **To fix the CONCOCT endless warning messages in metaWRAP=1.2, run `conda install -y blas=2.5=mkl`
+**To fix the CONCOCT endless warning messages in metaWRAP=1.2, run `conda install -y blas=2.5=mkl`
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
