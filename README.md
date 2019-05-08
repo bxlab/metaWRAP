@@ -1,4 +1,6 @@
-**To update to the latest version, run `conda install metawrap-mg=1.2` (consider backing up your `bin/config-metawrap`file before you update)
+**To update to the latest version, run `conda install metawrap-mg=1.2` (consider backing up your `bin/config-metawrap`file before you update).
+
+ **To fix the CONCOCT endless warning messages in metaWRAP=1.2, run `conda install blas=2.5=mkl`
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
@@ -56,6 +58,9 @@
 
  conda install -y -c ursky metawrap-mg
  # Note: may take a couple hours
+ 
+ # To fix the CONCOCT endless warning messages in metaWRAP=1.2, run
+ conda install blas=2.5=mkl
  ```
  
  #### Better installation:
@@ -72,6 +77,9 @@ conda config --add channels ursky
 
 conda install -y -c ursky metawrap-mg
 # Note: may take a couple hours
+
+ # To fix the CONCOCT endless warning messages in metaWRAP=1.2, run
+ conda install blas=2.5=mkl
 ```
 
  
