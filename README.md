@@ -44,6 +44,9 @@ MetaWRAP is being constantly improved week to week as more bugs and issues pop u
 
 Before updating, back up your `config-metawrap` file so you do not have to re-do the database configurations. Then update with conda:
 ```
+conda update -y -c ursky metawrap-mg
+
+# or for a specific version:
 conda install -y -c ursky metawrap-mg=1.2
 ```
 
