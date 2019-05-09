@@ -39,6 +39,18 @@
 
 ## INSTALLATION
 
+#### To update to the latest version:
+MetaWRAP is being constantly improved week to week as more bugs and issues pop up. Because of the scale of the project it is almost impossible to get a perfect working version as the dependancy software are constantly changing. I recommend to update to the newest version of metaWRAP on a monthly basis.
+
+Before updating, back up your `config-metawrap` file so you do not have to re-do the database configurations. Then update with conda:
+```
+conda install -y -c ursky metawrap-mg=1.2
+```
+
+If you are using the (recommended) manual instalation of metaWRAP, simply run `git pull` inside the metaWRAP directory.
+It should also be noted that it is possible for th eupdates to produce strange behavior in complex conda environments, so if you experience issues the safest way is to just delete the old metawrap-env environment (`rm -r miniconda/envs/metawrap-env`) and re-install from scratch.  
+
+
 #### Basic installation:
  To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it:
  ``` bash
