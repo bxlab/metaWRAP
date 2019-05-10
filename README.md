@@ -151,6 +151,7 @@ This is very important if you want to use any functions requiring databases, but
 ## DETAILED PIPELINE WALKTHROUGH
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/HDUPeXC.png)
+  Note: some features of this walkthrough are depricated since v0.7. To understand specific steps of each module, you can glance at the bash code in each script.
 
 
 ## USAGE
@@ -191,7 +192,7 @@ Options:
 ```
 
 ### Citing metaWRAP
-If you found metaWRAP usefull in your research, please cite the publication: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).
+If you found metaWRAP usefull in your research, please cite the publication: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1). If certain software wrapped into metaWRAP were integral to your investigation (e.g. Salmon, MaxBin2, SPAdes, Kraken, etc.) please give them credit as well.
 
 ### Acknowledgements
 Author of pipeline: [Gherman Uritskiy](https://github.com/ursky).
