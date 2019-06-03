@@ -1,6 +1,6 @@
 package:
   name: metawrap-mg
-  version: "1.2"
+  version: "1.2.1"
 
 source:
   git_url: https://github.com/bxlab/metaWRAP.git
@@ -10,7 +10,7 @@ requirements:
 
   run:
     - biopython 1.68
-    - blas 2.5
+    - blas 2.5 mkl
     - blast 2.6.0
     - bmtagger 3.101
     - bowtie2 2.3.5
