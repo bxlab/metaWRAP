@@ -1,4 +1,4 @@
-**To update to the latest version, run `conda install metawrap-mg=1.2` (consider backing up your `bin/config-metawrap`file before you update)
+**To fix the CONCOCT endless warning messages in metaWRAP=1.2, run `conda install -y blas=2.5=mkl`
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
@@ -39,6 +39,21 @@
 
 ## INSTALLATION
 
+#### To update to the latest version:
+MetaWRAP is being constantly improved week to week as more bugs and issues pop up. Because of the scale of the project it is almost impossible to get a perfect working version as the dependancy software are constantly changing. I recommend to update to the newest version of metaWRAP on a monthly basis.
+
+Before updating, back up your `config-metawrap` file so you do not have to re-do the database configurations. Then update with conda:
+```
+conda update -y -c ursky metawrap-mg
+
+# or for a specific version:
+conda install -y -c ursky metawrap-mg=1.2
+```
+
+If you are using the (recommended) manual instalation of metaWRAP, simply run `git pull` inside the metaWRAP directory.
+It should also be noted that it is possible for th eupdates to produce strange behavior in complex conda environments, so if you experience issues the safest way is to just delete the old metawrap-env environment (`rm -r miniconda/envs/metawrap-env`) and re-install from scratch.  
+
+
 #### Basic installation:
  To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it:
  ``` bash
@@ -56,6 +71,9 @@
 
  conda install -y -c ursky metawrap-mg
  # Note: may take a couple hours
+ 
+ # To fix the CONCOCT endless warning messages in metaWRAP=1.2, run
+ conda install -y blas=2.5=mkl
  ```
  
  #### Better installation:
@@ -72,6 +90,9 @@ conda config --add channels ursky
 
 conda install -y -c ursky metawrap-mg
 # Note: may take a couple hours
+
+ # To fix the CONCOCT endless warning messages in metaWRAP=1.2, run
+ conda install -y blas=2.5=mkl
 ```
 
  
@@ -130,6 +151,7 @@ This is very important if you want to use any functions requiring databases, but
 ## DETAILED PIPELINE WALKTHROUGH
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/HDUPeXC.png)
+  Note: some features of this walkthrough are depricated since v0.7. To understand specific steps of each module, you can glance at the bash code in each script.
 
 
 ## USAGE
@@ -170,7 +192,7 @@ Options:
 ```
 
 ### Citing metaWRAP
-If you found metaWRAP usefull in your research, please cite the publication: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1).
+If you found metaWRAP usefull in your research, please cite the publication: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1). If certain software wrapped into metaWRAP were integral to your investigation (e.g. Salmon, MaxBin2, SPAdes, Kraken, etc.) please give them credit as well.
 
 ### Acknowledgements
 Author of pipeline: [Gherman Uritskiy](https://github.com/ursky).

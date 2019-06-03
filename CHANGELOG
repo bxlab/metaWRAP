@@ -1,9 +1,12 @@
 metaWRAP v=1.3 (In development)
-	Binning
-		fixed library dependancy causing endless OPEN blas warning when running CONCOCT
 	Quant_bins
 		bin coverage is now estimated with weighted median coverage (reduces contribution of outliers)
 		fixed warning message to pring to stderr
+	General
+		enforce MKL build of blas software to prevent CONCOCT infinite warning messages
+	Binning
+		added SAM file cleanup step
+		fixed library dependancy causing endless OPEN blas warning when running CONCOCT
 
 metaWRAP v=1.2 (April 2019)
 	General
@@ -28,15 +31,15 @@ metaWRAP v=1.2 (April 2019)
 		fixed syntax bug coming from comment lines following "next line" character
 		split the alignment and alignment sorting stages to help resolve stalled jobs
 		matplotlib depricated option fixes
-		added support for CONCOCT v1.0, greatly improving performance
-		added recommended contig splitting step for CONCOCT, greatly improving its performance on larger contigs
+		added support for CONCOCT v1.0, improving binning performance
+		added recommended contig splitting step for CONCOCT, improving its performance on larger contigs
 		CONCOCT now supports multi-threading greatly speeding up binning on larger data
 		fixed outdated path handling in new CONCOCT implementation
 		updated to maxbin2 v2.2.6
 	Blobology
 		removed shuffle reads features
 		use paired reads for bowtie alignment
-		split alignment and bam conversions steps to clarity and debugging
+		split alignment and BAM conversions steps to clarity and debugging
 	Classify_bins
 		added exception to prune hits script to account for newer version of NCBI database
 	Kraken
