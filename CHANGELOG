@@ -7,6 +7,8 @@ metaWRAP v=1.3 (In development)
 	Binning
 		added SAM file cleanup step
 		fixed library dependancy causing endless OPEN blas warning when running CONCOCT
+	Bin_refinement
+		added additional checkpoints to prevent re-running checkm if program terminated before completing
 
 metaWRAP v=1.2 (April 2019)
 	General

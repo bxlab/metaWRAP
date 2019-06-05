@@ -147,7 +147,7 @@ else
 	rm -r ${out}/binsBC
 	rm -r ${out}/binsAC
 	rm -r ${out}/binsABC
-	rm ${out}/bin.*
+	#rm ${out}/bin.*
 fi
 
 
@@ -257,16 +257,21 @@ if [ "$run_checkm" == "true" ] && [[ ! -s work_files/binsM.stats ]]; then
 	announcement "RUNNING CHECKM ON ALL SETS OF BINS"
 	for bin_set in $(ls | grep -v tmp | grep -v stats | grep bins); do 
 		comm "Running CheckM on $bin_set bins"
-		if [[ -d ${bin_set}.checkm ]]; then rm -r ${bin_set}.checkm; fi
-		if [[ ! -d ${bin_set}.tmp ]]; then mkdir ${bin_set}.tmp; fi
-		if [ "$quick" == "true" ]; then
-			comm "Note: running with --reduced_tree option"
-			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads --reduced_tree
-		else
-			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads
-		fi
+		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then
+			if [[ -d ${bin_set}.checkm ]]; then rm -r ${bin_set}.checkm; fi
+			if [[ ! -d ${bin_set}.tmp ]]; then mkdir ${bin_set}.tmp; fi
+			if [ "$quick" == "true" ]; then
+				comm "Note: running with --reduced_tree option"
+				checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads --reduced_tree
+			else
+				checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads
+			fi
 		
-		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+			if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+		else
+			comm "${bin_set}.checkm/storage/bin_stats_ext.tsv file from a previous CheckM run found. Skipping..."
+		fi
+
 		${SOFT}/summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
 		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
 		rm -r ${bin_set}.checkm; rm -r ${bin_set}.tmp
