@@ -111,8 +111,10 @@ conda config --add channels ursky
 conda install --only-deps -c ursky metawrap-mg
 
 # OR
-conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome=1.0.12 concoct=1.0 fastqc kraken=1.1 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas pplacer=1.1.alpha19 prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
- ```
+conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome fastqc kraken=1.1 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
+# Note: this last solution is universal, but you may need to manually install concoct=1.0 and pplacer.
+```
+ 
 
 #### Bioconda installation:
 MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended for most users, as I will only push major releases to Bioconda (i.e. `v1.1`, `v1.2`). This source is meant for specific applications that require a Bioconda distribution. To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. 
