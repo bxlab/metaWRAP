@@ -239,7 +239,7 @@ if [ "$refine" == "true" ] && [[ ! -s work_files/binsA.stats ]]; then
 elif [ "$refine" == "true" ] && [[ -s work_files/binsM.stats ]]; then
 	comm "Previous bin refinment files found. If this was not intended, please re-run with a clear output directory. Skipping refinement..."
 else
-	comm "Skipping bin refinement. Will proceed with the $n_binnings bin sets specified."
+	comm "Skipping bin refinement. Will proceed with the $n_binnings bins specified."
 fi
 	
 comm "fixing bin naming to .fa convention for consistancy..."
