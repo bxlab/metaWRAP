@@ -359,7 +359,7 @@ if [ $maxbin2 = true ]; then
 		fi
 	
 	        perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
-	        echo "Will use perl5 libraries located in $perl_libs - hopefully they are there..."
+	        echo "Will use perl5 libraries located in $perl_libs - hopefully they are there. Install Perl in the conda environment if the directory does not exist."
 		export PERL5LIB="$perl_libs"
 	fi
 

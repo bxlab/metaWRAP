@@ -1,4 +1,6 @@
 metaWRAP v=1.3 (In development)
+	Annotate_bins
+		removed manual perl library handling feature
 	Quant_bins
 		bin coverage is now estimated with weighted median coverage (reduces contribution of outliers)
 		fixed warning message to pring to stderr

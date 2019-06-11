@@ -96,14 +96,14 @@ mkdir ${out}/prokka_out
 #conda_path=${conda_path%/*}
 #if [ $(echo -n $conda_path | tail -c 1) = "/" ]; then conda_path=${conda_path%/*}; fi
 #conda_path=${conda_path%/*}
-conda_path=""
+#conda_path=""
 #if [ ! -d ${conda_path}/lib/perl5/site_perl/5.22.0 ]; then
 #	error "${conda_path}/lib/perl5/site_perl/5.22.0 does not exixt. Cannot set manual path to perl5 libraries. Exiting..."
 #fi
 
-perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
-echo "Will use perl5 libraries located in $perl_libs - hopefully they are there..."
-export PERL5LIB="$perl_libs"
+#perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
+#echo "Will use perl5 libraries located in $perl_libs - hopefully they are there..."
+#export PERL5LIB="$perl_libs"
 
 
 
