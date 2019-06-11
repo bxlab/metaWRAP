@@ -68,7 +68,7 @@ It should also be noted that it is possible for th eupdates to produce strange b
  conda config --add channels ursky
 
  conda install -y -c ursky metawrap-mg
- # Note: may take a couple hours
+ # Note: may take a while
  
  # To fix the CONCOCT endless warning messages in metaWRAP=1.2, run
  conda install -y blas=2.5=mkl
@@ -87,7 +87,7 @@ conda config --add channels bioconda
 conda config --add channels ursky
 
 conda install -y -c ursky metawrap-mg
-# Note: may take a couple hours
+# Note: may take a while
 
  # To fix the CONCOCT endless warning messages in metaWRAP=1.2, run
  conda install -y blas=2.5=mkl
