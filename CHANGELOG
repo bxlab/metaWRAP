@@ -1,4 +1,6 @@
 metaWRAP v=1.3 (In development)
+	Assembly
+		fixed typo where megahit was not using the specified tmp directory
 	Annotate_bins
 		removed manual perl library handling feature
 	Quant_bins

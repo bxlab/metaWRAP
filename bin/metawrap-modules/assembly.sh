@@ -158,8 +158,8 @@ if [ "$megahit_assemble" = true ]; then
 		 -r ${out}/unused_by_metaspades.fastq\
 		 -o ${out}/megahit\
 		 -t $threads\
-		 -m ${mem}000000000
-		 --tmp-dir ${out}/megahit.tmp\
+		 -m ${mem}000000000\
+		 --tmp-dir ${out}/megahit.tmp
 		mv ${out}/unused_by_metaspades.fastq ${out}/metaspades/
 	else
 		comm "assembling $reads_1 and $reads_2 with megahit"
