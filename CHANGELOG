@@ -6,8 +6,11 @@ metaWRAP v=1.3 (In development)
 	Quant_bins
 		bin coverage is now estimated with weighted median coverage (reduces contribution of outliers)
 		fixed warning message to pring to stderr
+		allow for periods in sample names
+		allow for all 0 columns or rows
 	General
 		enforce MKL build of blas software to prevent CONCOCT infinite warning messages
+		return correct error code instead of always returning 0
 	Binning
 		added SAM file cleanup step
 		fixed library dependancy causing endless OPEN blas warning when running CONCOCT
