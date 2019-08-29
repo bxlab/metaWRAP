@@ -147,13 +147,22 @@ else
 	rm -r ${out}/binsBC
 	rm -r ${out}/binsAC
 	rm -r ${out}/binsABC
-	#rm ${out}/bin.*
+	rm ${out}/bin.*
 fi
 
 
 n_binnings=0
 if [[ -d $bins1 ]]; then 
-	cp -r $bins1 ${out}/binsA
+	mkdir ${out}/binsA
+	for F in ${bins1}/*; do
+		SIZE=$(stat -c%s "$F")
+		if (( $SIZE > 50000)) && (( $SIZE < 20000000)); then 
+			BASE=${F##*/}
+			cp $F ${out}/binsA/${BASE%.*}.fa
+		else 
+			echo "Skipping $F because the bin size is not between 50kb and 20Mb"
+		fi
+	done
 	n_binnings=$((n_binnings +1))
 	comm "there are $(ls ${out}/binsA | wc -l) bins in binsA"
 	if [[ $(ls ${out}/binsA | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
@@ -162,13 +171,33 @@ else
 fi
 
 if [[ -d $bins2 ]]; then 
-	cp -r $bins2 ${out}/binsB; n_binnings=$((n_binnings +1))
+	mkdir ${out}/binsB
+	for F in ${bins2}/*; do
+		SIZE=$(stat -c%s "$F")
+		if (( $SIZE > 50000)) && (( $SIZE < 20000000)); then 
+			BASE=${F##*/}
+			cp $F ${out}/binsB/${BASE%.*}.fa
+		else 
+			echo "Skipping $F because the bin size is not between 50kb and 20Mb"
+		fi
+        done
+	n_binnings=$((n_binnings +1))
 	comm "there are $(ls ${out}/binsB | wc -l) bins in binsB"
 	if [[ $(ls ${out}/binsB | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
 fi
 
 if [[ -d $bins3 ]]; then 
-	cp -r $bins3 ${out}/binsC; n_binnings=$((n_binnings +1))
+	mkdir ${out}/binsC
+	for F in ${bins3}/*; do
+		SIZE=$(stat -c%s "$F")
+		if (( $SIZE > 50000)) && (( $SIZE < 20000000)); then 
+			BASE=${F##*/}
+			cp $F ${out}/binsC/${BASE%.*}.fa
+		else 
+			echo "Skipping $F because the bin size is not between 50kb and 20Mb"
+		fi
+        done
+	n_binnings=$((n_binnings +1))
 	comm "there are $(ls ${out}/binsC | wc -l) bins in binsC"
 	if [[ $(ls ${out}/binsC | wc -l) -eq 0 ]]; then error "Please provide valid input. Exiting..."; fi
 fi
@@ -239,7 +268,7 @@ if [ "$refine" == "true" ] && [[ ! -s work_files/binsA.stats ]]; then
 elif [ "$refine" == "true" ] && [[ -s work_files/binsM.stats ]]; then
 	comm "Previous bin refinment files found. If this was not intended, please re-run with a clear output directory. Skipping refinement..."
 else
-	comm "Skipping bin refinement. Will proceed with the $n_binnings bin sets specified."
+	comm "Skipping bin refinement. Will proceed with the $n_binnings bins specified."
 fi
 	
 comm "fixing bin naming to .fa convention for consistancy..."
@@ -257,24 +286,19 @@ if [ "$run_checkm" == "true" ] && [[ ! -s work_files/binsM.stats ]]; then
 	announcement "RUNNING CHECKM ON ALL SETS OF BINS"
 	for bin_set in $(ls | grep -v tmp | grep -v stats | grep bins); do 
 		comm "Running CheckM on $bin_set bins"
-		if [[ ! -s ${bin_set}.stats ]]; then
-			if [[ -d ${bin_set}.checkm ]]; then rm -r ${bin_set}.checkm; fi
-			if [[ ! -d ${bin_set}.tmp ]]; then mkdir ${bin_set}.tmp; fi
-			if [ "$quick" == "true" ]; then
-				comm "Note: running with --reduced_tree option"
-				checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads --reduced_tree
-			else
-				checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads
-			fi
-		
-			if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
-
-			${SOFT}/summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
-			if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
-			rm -r ${bin_set}.checkm; rm -r ${bin_set}.tmp
+		if [[ -d ${bin_set}.checkm ]]; then rm -r ${bin_set}.checkm; fi
+		if [[ ! -d ${bin_set}.tmp ]]; then mkdir ${bin_set}.tmp; fi
+		if [ "$quick" == "true" ]; then
+			comm "Note: running with --reduced_tree option"
+			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads --reduced_tree
 		else
-			comm "${bin_set}.stats already exists. Skipping running CheckM on $bin_set"
+			checkm lineage_wf -x fa $bin_set ${bin_set}.checkm -t $threads --tmpdir ${bin_set}.tmp --pplacer_threads $p_threads
 		fi
+		
+		if [[ ! -s ${bin_set}.checkm/storage/bin_stats_ext.tsv ]]; then error "Something went wrong with running CheckM. Exiting..."; fi
+		${SOFT}/summarize_checkm.py ${bin_set}.checkm/storage/bin_stats_ext.tsv $bin_set | (read -r; printf "%s\n" "$REPLY"; sort) > ${bin_set}.stats
+		if [[ $? -ne 0 ]]; then error "Cannot make checkm summary file. Exiting."; fi
+		rm -r ${bin_set}.checkm; rm -r ${bin_set}.tmp
 
 		num=$(cat ${bin_set}.stats | awk -v c="$comp" -v x="$cont" '{if ($2>=c && $2<=100 && $3>=0 && $3<=x) print $1 }' | wc -l)
 		comm "There are $num 'good' bins found in $bin_set! (>${comp}% completion and <${cont}% contamination)"
