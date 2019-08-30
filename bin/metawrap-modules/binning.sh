@@ -197,7 +197,8 @@ fi
 if [ ! -d ${out}/work_files ]; then mkdir ${out}/work_files; fi
 
 if [ -f ${out}/work_files/assembly.fa ]; then
-	comm "Looks like the assembly file is already coppied. Skipping..."
+	comm "Looks like the assembly file is already coppied, but will re-transfer just in case to avoid truncation problems."
+	cp $ASSEMBLY ${out}/work_files/assembly.fa
 else
 	comm "making copy of assembly file $ASSEMBLY"
 	cp $ASSEMBLY ${out}/work_files/assembly.fa
