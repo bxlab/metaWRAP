@@ -15,11 +15,15 @@ metaWRAP v=1.3 (In development)
 		added SAM file cleanup step
 		fixed library dependancy causing endless OPEN blas warning when running CONCOCT
 		fixed assembly truncation bug after interrupted binning run
+		fixed bug that left trailing characters in contigs of concoct bins, leading to refinement problems later
 	Bin_refinement
 		added additional checkpoints to prevent re-running checkm if program terminated before completing
 		algorithm now ignores bins smaller than 50Kbp or larger than 20Mbp to save time
 	Blobology
 		fixed perl path to #!/usr/bin/env perl in scripts
+	Kraken
+		fixed syntax bug where some systems would misinterpret comments at the end of lines
+
 
 metaWRAP v=1.2 (April 2019)
 	General

@@ -134,7 +134,7 @@ comm "There is $mem RAM and $threads threads available, and each pplacer thread 
 ########################               BEGIN REFINEMENT PIPELINE!               ########################
 ########################################################################################################
 announcement "BEGIN PIPELINE!"
-comm "setting up output folder and copything over bins..."
+comm "setting up output folder and copying over bins..."
 if [[ ! -d $out ]]; then
         mkdir $out
 	if [[ ! -d $out ]]; then error "cannot make $out"; fi

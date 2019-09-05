@@ -119,10 +119,13 @@ for num in "$@"; do
 		# if sampling depth is specified, randomly subsample the fastq reads
 		if [ ! "$depth" = "all" ]; then
 			comm "subsampling down to $depth reads..." 
+			# combine paired end reads onto one line, then 
+			# shuffle reads, select top N reads, and then restore tabulation, then
+			# separate reads into F and R files
 			paste $reads_1 $reads_2 | \
-			 awk '{ printf("%s",$0); n++; if(n%4==0) { printf("\n");} else { printf("\t\t");} }' | \ #combine paired end reads onto one line 
-			 shuf | head -n $depth | sed 's/\t\t/\n/g' | \ #shuffle reads, select top N reads, and then restore tabulation 
-			 awk -F"\t" '{print $1 > "'"${out}/tmp_1.fastq"'"; print $2 > "'"${out}/tmp_2.fastq"'"}' #separate reads into F and R files
+			 awk '{ printf("%s",$0); n++; if(n%4==0) { printf("\n");} else { printf("\t\t");} }' | \ 
+			 shuf | head -n $depth | sed 's/\t\t/\n/g' | \ 
+			 awk -F"\t" '{print $1 > "'"${out}/tmp_1.fastq"'"; print $2 > "'"${out}/tmp_2.fastq"'"}'
 			reads_1=${out}/tmp_1.fastq
 			reads_2=${out}/tmp_2.fastq
 			comm "Subsampling done. Starting KRAKEN..."
