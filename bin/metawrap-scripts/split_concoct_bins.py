@@ -20,7 +20,7 @@ for line in open(sys.argv[2]):
 		if current_bin!="": 
 			f.close()
 		contig = line[1:-1].split(".")[0].split()[0]
-		line=line.split()[0]
+		line=line.rsplit()[0]+"\n"
 		if contig in bins: 
 			current_bin="bin."+bins[contig]+".fa"
 		else: 
