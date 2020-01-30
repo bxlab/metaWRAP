@@ -27,7 +27,7 @@ help_message () {
 	echo "	-l INT		minimum length of assembled contigs (default=1000)"
 	echo ""
 	echo "	--megahit	assemble with megahit (default)"
-	echo "	--metaspades	assemble with metaspades instead of megahit (better results but slower amd higher memory requirement)"
+	echo "	--metaspades	assemble with metaspades instead of megahit (better results but slower and higher memory requirement)"
 	echo "";}
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
 error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
