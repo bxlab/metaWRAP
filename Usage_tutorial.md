@@ -18,7 +18,7 @@ wget ftp.sra.ebi.ac.uk/vol1/fastq/ERR011/ERR011349/ERR011349_2.fastq.gz
 
 Unzip the data
 ```
-gunzip *qz
+gunzip *.gz
 ```
 
 
