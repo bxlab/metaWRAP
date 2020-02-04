@@ -231,7 +231,7 @@ for num in "$@"; do
 			
 			if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
 				comm "Aligning $reads_1 and $reads_2 back to assembly"
-				bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2 > ${out}/work_files/${sample}.sam
+				bwa mem -v 1 -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2 > ${out}/work_files/${sample}.sam
 				if [[ $? -ne 0 ]]; then error "Something went wrong with aligning $reads_1 and $reads_2 reads to the assembly. Exiting"; fi
 
 				comm "Sorting the $sample alignment file"
@@ -256,7 +256,7 @@ for num in "$@"; do
 					bwa mem -t $threads ${out}/work_files/assembly.fa $reads > ${out}/work_files/${sample}.sam
 					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning the reads to the assembly!"; fi
 				elif [ $read_type = interleaved ]; then
-					bwa mem -p -t $threads ${out}/work_files/assembly.fa $reads > ${out}/work_files/${sample}.sam
+					bwa mem -v 1 -p -t $threads ${out}/work_files/assembly.fa $reads > ${out}/work_files/${sample}.sam
 					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning the reads to the assembly!"; fi
 				else
 					error "something from with the read_type (=$read_type)"

@@ -17,8 +17,8 @@ announcement () { ${SOFT}/print_comment.py "$1" "#"; }
 run_checkm () {
 	comm "Running CheckM on ${1} bins"
 
-	p_threads=30
-	threads=100
+	p_threads=40
+	threads=40
 
 	mkdir ${1}.tmp
 	checkm lineage_wf -x fa ${1} ${1}.checkm -t $threads --tmpdir ${1}.tmp --pplacer_threads $p_threads
