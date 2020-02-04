@@ -17,6 +17,7 @@ data={}
 max_x=0
 # loop over all bin .stats files
 for file_name in sys.argv[3:]:
+	print file_name
 	bin_set=".".join(file_name.split("/")[-1].split(".")[:-1])
 	data[bin_set]=[]
 	for line in open(file_name):

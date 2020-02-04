@@ -25,6 +25,7 @@ requirements:
     - megahit 1.1.3
     - metabat2 2.12.1
     - pandas 0.24.2
+    - perl-bioperl
     - pplacer 1.1.alpha19
     - prokka 1.13
     - quast 5.0.2
