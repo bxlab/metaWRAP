@@ -278,6 +278,14 @@ for i in $(ls); do
 	done
 done
 
+comm "making sure every refined bin set contains bins..."
+for bin_set in $(ls | grep bins); do 
+	if [[ $(ls $bin_set|grep -c fa) == 0 ]]; then
+		comm "Removing bin set $bin_set because it yielded 0 refined bins ... "
+		rm -r $bin_set
+	fi
+done
+
 
 ########################################################################################################
 ########################              RUN CHECKM ON ALL BIN SETS                ########################
