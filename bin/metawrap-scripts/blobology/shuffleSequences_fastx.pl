@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 die "Usage: shuffleSequences_fastx.pl [2|4] <forward_fasta_or_fastq_file> <reverse_fasta_or_fastq_file> > <output_file_name>\n" unless scalar @ARGV == 3;
 $lines_per_seq = shift @ARGV;

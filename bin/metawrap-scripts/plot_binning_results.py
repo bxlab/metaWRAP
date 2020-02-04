@@ -86,7 +86,9 @@ plt.xticks(fontsize=14)
 
 # Provide tick lines across the plot to help your viewers trace along    
 for y in range(min_completion, 105, 10):    
-	plt.plot(range(0, max_x), [y] * len(range(0, max_x)), "--", lw=0.5, color="black", alpha=0.3)    
+	plt.axhline(y=y, linestyle="--", lw=0.5, color="black", alpha=0.3)
+for x in range(0, 1000, 20):
+	plt.axvline(x=x, linestyle="--", lw=0.5, color="black", alpha=0.3)
   
 # Remove the tick marks; they are unnecessary with the tick lines we just plotted.    
 plt.tick_params(axis="both", which="both", bottom=False, top=False, labelbottom=True, left=False, right=False, labelleft=True)    
@@ -98,7 +100,11 @@ plt.tick_params(axis="both", which="both", bottom=False, top=False, labelbottom=
 labels = []
 for k in data: labels.append(k)
 
-# start plotting data
+# plot the data and labels
+N = len(labels)
+y_increment = (100-min_completion)/N/2
+y_pos = 100-y_increment
+
 for rank, bin_set in enumerate(labels):
 	# chose a color!
 	c=plot_colors[bin_set]
@@ -107,9 +113,11 @@ for rank, bin_set in enumerate(labels):
 	plt.plot(data[bin_set], lw=2.5, color=c)
 	
 	# add bin set label to plot
-	y_pos = data[bin_set][len(data[bin_set])*3/4]
-	x_pos=len(data[bin_set])*3/4
+	for x_pos,y in enumerate(data[bin_set]):
+		if y<y_pos:
+			break
 	plt.text(x_pos, y_pos, bin_set, fontsize=18, color=c)
+	y_pos-=y_increment
 
 # add plot and axis titles and adjust edges
 plt.title("Bin completion ranking", fontsize=26) 
@@ -175,7 +183,9 @@ plt.xticks(fontsize=14)
 
 # Provide tick lines across the plot to help your viewers trace along
 for y in range(0, max_contamination+1, 1):
-        plt.plot(range(0, max_x), [y] * len(range(0, max_x)), "--", lw=0.5, color="black", alpha=0.3)
+        plt.axhline(y=y, linestyle="--", lw=0.5, color="black", alpha=0.3)
+for x in range(0, 1000, 20):
+        plt.axvline(x=x, linestyle="--", lw=0.5, color="black", alpha=0.3)
 
  
 # Remove the tick marks; they are unnecessary with the tick lines we just plotted.    
@@ -187,19 +197,25 @@ plt.tick_params(axis="both", which="both", bottom=False, top=False, labelbottom=
 labels = []
 for k in data: labels.append(k)
 
+# plot the data and labels
+N = len(labels)
+y_increment = max_contamination/N/2
+y_pos = y_increment
 
-# start plotting data
 for rank, bin_set in enumerate(labels):
-	# chose a color!
-	c=plot_colors[bin_set]
+        # chose a color!
+        c=plot_colors[bin_set]
 
-	# plot the data
-	plt.plot(data[bin_set], lw=2.5, color=c)
-	
-	# add plot label
-	x_pos = len(data[bin_set])-1
-	y_pos = data[bin_set][-1]
-	plt.text(x_pos, y_pos, bin_set, fontsize=18, color=c)
+        # plot the data
+        plt.plot(data[bin_set], lw=2.5, color=c)
+
+        # add bin set label to plot
+        for x_pos,y in enumerate(data[bin_set]):
+                if y>y_pos:
+                        break
+        plt.text(x_pos, y_pos, bin_set, fontsize=18, color=c)
+        y_pos+=y_increment
+
 
 # add plot and axis titles and adjust the edges
 plt.title("Bin contamination ranking", fontsize=26) 
@@ -211,8 +227,7 @@ plt.gcf().subplots_adjust(right=0.9)
 print "Saving figures binning_results.eps and binning_results.png ..."
 plt.tight_layout(w_pad=10)
 plt.subplots_adjust(top=0.92, right=0.90, left=0.08)
-plt.savefig("binning_results.eps",format='eps', dpi=600)
-plt.savefig("binning_results.png",format='png', dpi=600)
+plt.savefig("binning_results.png",format='png', dpi=300)
 #plt.show()
 
 

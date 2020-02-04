@@ -26,7 +26,7 @@ contig_lengths[contig]=length
 # load in the salmon abundances
 bin_abundances={}
 for salmon_file in os.listdir(sys.argv[1]):
-	sample=salmon_file.split(".")[0]
+	sample=".".join(salmon_file.split(".")[:-2])
 	ct=0
 	for line in open(sys.argv[1]+'/'+salmon_file):
 		if "transcript" in line: continue

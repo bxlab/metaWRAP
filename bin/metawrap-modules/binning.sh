@@ -197,7 +197,8 @@ fi
 if [ ! -d ${out}/work_files ]; then mkdir ${out}/work_files; fi
 
 if [ -f ${out}/work_files/assembly.fa ]; then
-	comm "Looks like the assembly file is already coppied. Skipping..."
+	comm "Looks like the assembly file is already coppied, but will re-transfer just in case to avoid truncation problems."
+	cp $ASSEMBLY ${out}/work_files/assembly.fa
 else
 	comm "making copy of assembly file $ASSEMBLY"
 	cp $ASSEMBLY ${out}/work_files/assembly.fa
@@ -230,7 +231,7 @@ for num in "$@"; do
 			
 			if [[ ! -f ${out}/work_files/${sample}.bam ]]; then
 				comm "Aligning $reads_1 and $reads_2 back to assembly"
-				bwa mem -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2 > ${out}/work_files/${sample}.sam
+				bwa mem -v 1 -t $threads ${out}/work_files/assembly.fa $reads_1 $reads_2 > ${out}/work_files/${sample}.sam
 				if [[ $? -ne 0 ]]; then error "Something went wrong with aligning $reads_1 and $reads_2 reads to the assembly. Exiting"; fi
 
 				comm "Sorting the $sample alignment file"
@@ -255,7 +256,7 @@ for num in "$@"; do
 					bwa mem -t $threads ${out}/work_files/assembly.fa $reads > ${out}/work_files/${sample}.sam
 					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning the reads to the assembly!"; fi
 				elif [ $read_type = interleaved ]; then
-					bwa mem -p -t $threads ${out}/work_files/assembly.fa $reads > ${out}/work_files/${sample}.sam
+					bwa mem -v 1 -p -t $threads ${out}/work_files/assembly.fa $reads > ${out}/work_files/${sample}.sam
 					if [[ $? -ne 0 ]]; then error "Something went wrong with aligning the reads to the assembly!"; fi
 				else
 					error "something from with the read_type (=$read_type)"
@@ -359,7 +360,7 @@ if [ $maxbin2 = true ]; then
 		fi
 	
 	        perl_libs=${conda_path}/lib/perl5/site_perl/5.22.0
-	        echo "Will use perl5 libraries located in $perl_libs - hopefully they are there..."
+	        echo "Will use perl5 libraries located in $perl_libs - hopefully they are there. Install Perl in the conda environment if the directory does not exist."
 		export PERL5LIB="$perl_libs"
 	fi
 

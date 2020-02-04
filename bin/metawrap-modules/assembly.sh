@@ -27,7 +27,7 @@ help_message () {
 	echo "	-l INT		minimum length of assembled contigs (default=1000)"
 	echo ""
 	echo "	--megahit	assemble with megahit (default)"
-	echo "	--metaspades	assemble with metaspades instead of megahit (better results but slower amd higher memory requirement)"
+	echo "	--metaspades	assemble with metaspades instead of megahit (better results but slower and higher memory requirement)"
 	echo "";}
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
 error () { ${SOFT}/print_comment.py "$1" "*"; exit 1; }
@@ -158,8 +158,8 @@ if [ "$megahit_assemble" = true ]; then
 		 -r ${out}/unused_by_metaspades.fastq\
 		 -o ${out}/megahit\
 		 -t $threads\
-		 -m ${mem}000000000
-		 --tmp-dir ${out}/megahit.tmp\
+		 -m ${mem}000000000\
+		 --tmp-dir ${out}/megahit.tmp
 		mv ${out}/unused_by_metaspades.fastq ${out}/metaspades/
 	else
 		comm "assembling $reads_1 and $reads_2 with megahit"
