@@ -57,6 +57,9 @@ It should also be noted that it is possible for th eupdates to produce strange b
  
  Easiest way to quickly install the dependancies:
  ```
+conda create -y -n metawrap-env python=2.7
+conda activate metawrap-env
+ 
  # Note: ordering is important
 conda config --add channels defaults
 conda config --add channels conda-forge
@@ -97,7 +100,7 @@ conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome 
  The conda installation of metaWRAP will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is strongly recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
 ``` bash
 conda create -y -n metawrap-env python=2.7
-source activate metawrap-env
+conda activate metawrap-env
 
 # Note: ordering is important
 conda config --add channels defaults
