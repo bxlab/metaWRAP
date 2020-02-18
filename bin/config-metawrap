@@ -6,7 +6,7 @@ PIPES=${bin_path}/metawrap-modules
 
 # OPTIONAL databases (see 'Databases' section of metaWRAP README for details)
 # path to kraken standard database
-KRAKEN_DB=/localscratch/gu/KRAKEN_DB
+KRAKEN_DB=/scratch/gu/MY_KRAKEN_DB
 
 # path to indexed human genome (see metaWRAP website for guide). This includes files hg38.bitmask and hg38.srprism.*
 BMTAGGER_DB=/scratch/gu/BMTAGGER_DB
