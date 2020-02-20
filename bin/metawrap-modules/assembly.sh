@@ -66,8 +66,8 @@ while true; do
 		-2) reads_2=$2; shift 2;;
 		-l) min_len=$2; shift 2;;
 		-h | --help) help_message; exit 1; shift 1;;
-		--megahit) megahit_assemble=true; metaspades_assemble=false; shift 1;;
-		--metaspades) megahit_assemble=false; metaspades_assemble=true; shift 1;;
+		--megahit) megahit_assemble=true; shift 1;;
+		--metaspades) metaspades_assemble=true; shift 1;;
 		--) help_message; exit 1; shift; break ;;
 		*) break;;
 	esac
