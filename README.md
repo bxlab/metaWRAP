@@ -45,7 +45,7 @@ Before updating, back up your `config-metawrap` file so you do not have to re-do
 conda update -y -c ursky metawrap-mg
 
 # or for a specific version:
-conda install -y -c ursky metawrap-mg=1.2.3
+conda install -y -c ursky metawrap-mg=1.2.4
 ```
 
 If you are using the (recommended) manual instalation of metaWRAP, simply run `git pull` inside the metaWRAP directory.
