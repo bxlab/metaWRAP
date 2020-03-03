@@ -6,7 +6,7 @@
 # Ideally it should take in the assembly file of all of your samples, followed by the reads of all the samples that went into the assembly.
 # The more samples, the better the binning. 
 #
-# The script uses metaBAT2 and/or CONCOCT and/or MaxBin2 to bin the contigs. MetaBAT2 is the defualt due to its speed and great performance,
+# The script uses metaBAT2 and/or CONCOCT and/or MaxBin2 to bin the contigs. MetaBAT2 is the default due to its speed and great performance,
 # but all these binners have their advantages and disadvantages, so it recomended to run the bin_refinement module to QC the bins, get the 
 # best bins of all of each method, and to reassembly and refine the final bins. 
 #

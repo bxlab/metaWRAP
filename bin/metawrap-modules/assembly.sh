@@ -23,7 +23,7 @@ help_message () {
 	echo "	-2 STR          reverse fastq reads" 
 	echo "	-o STR          output directory"
 	echo "	-m INT          memory in GB (default=24)"
-	echo "	-t INT          number of threads (defualt=1)"
+	echo "	-t INT          number of threads (default=1)"
 	echo "	-l INT		minimum length of assembled contigs (default=1000)"
 	echo ""
 	echo "	--megahit	assemble with megahit (default)"
