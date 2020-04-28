@@ -150,8 +150,8 @@ if [[ $? -ne 0 ]]; then error "Failed to run taxator. Exiting..."; fi
 
 comm "binning and consolidating classifications for each contig"
 sort -k1,1 ${out}/predictions.gff3 | binner -n classification -i genus:0.6 > ${out}/binned_predictions.txt
-mv binning.log $out
 if [[ $? -ne 0 ]]; then error "Failed to run binner. Exiting..."; fi
+mv binning.log $out
 
 
 comm "pulling out full taxonomy path with taxknife"
