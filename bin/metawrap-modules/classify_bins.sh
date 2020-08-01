@@ -113,14 +113,17 @@ for f in $(ls $bin_folder); do cat ${bin_folder}/${f} >> ${out}/all_contigs.fa; 
 if [[ ! -s ${out}/all_contigs.fa ]]; then error "something went wrong with joining files in $bin_folder into ${out}/all_contigs.fa"; fi
 
 
+if [[ -s ${out}/megablast_out.raw.tab ]]; then 
+	comm "megablast alignment already done. Skipping..."
+else
+	comm "aligning ${out}/all_contigs.fa to ${BLASTDB} database with MEGABLAST. This is the longest step - please be patient. You may look at the classification progress in ${out}/megablast_out.raw.tab"
+	blastn -task megablast -num_threads $threads\
+	 -db ${BLASTDB}/nt\
+	 -outfmt '6 qseqid qstart qend qlen sseqid staxids sstart send bitscore evalue nident length'\
+	 -query ${out}/all_contigs.fa > ${out}/megablast_out.raw.tab
 
-comm "aligning ${out}/all_contigs.fa to ${BLASTDB} database with MEGABLAST. This is the longest step - please be patient. You may look at the classification progress in ${out}/megablast_out.raw.tab"
-blastn -task megablast -num_threads $threads\
- -db ${BLASTDB}/nt\
- -outfmt '6 qseqid qstart qend qlen sseqid staxids sstart send bitscore evalue nident length'\
- -query ${out}/all_contigs.fa > ${out}/megablast_out.raw.tab
-
-if [[ $? -ne 0 ]]; then error "Failed to run megablast. Exiting..."; fi
+	if [[ $? -ne 0 ]]; then error "Failed to run megablast. Exiting..."; fi
+fi
 
 
 comm "removing unnecessary lines that lead to bad tax IDs (without a proper rank)"

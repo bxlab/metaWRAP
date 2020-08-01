@@ -45,7 +45,7 @@ Before updating, back up your `config-metawrap` file so you do not have to re-do
 conda update -y -c ursky metawrap-mg
 
 # or for a specific version:
-conda install -y -c ursky metawrap-mg=1.2.4
+conda install -y -c ursky metawrap-mg=1.3.0
 ```
 
 If you are using the (recommended) manual instalation of metaWRAP, simply run `git pull` inside the metaWRAP directory.
@@ -92,7 +92,7 @@ conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome 
  conda install -y -c ursky metawrap-mg
  # Note: may take a while
  
- # To fix the CONCOCT endless warning messages in metaWRAP=1.2, run
+ # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
  conda install -y blas=2.5=mkl
  ```
  
@@ -111,7 +111,7 @@ conda config --add channels ursky
 conda install -y -c ursky metawrap-mg
 # Note: may take a while
 
- # To fix the CONCOCT endless warning messages in metaWRAP=1.2, run
+ # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
  conda install -y blas=2.5=mkl
 ```
  

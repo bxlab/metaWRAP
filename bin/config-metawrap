@@ -12,5 +12,5 @@ KRAKEN_DB=/scratch/gu/MY_KRAKEN_DB
 BMTAGGER_DB=/scratch/gu/BMTAGGER_DB
 
 # paths to BLAST databases
-BLASTDB=/localscratch/gu/NCBI_nt
-TAXDUMP=/localscratch/gu/NCBI_tax
+BLASTDB=~/PGScratch/testing_taxonomy/NCBI_nt_v4
+TAXDUMP=~/PGScratch/testing_taxonomy/NCBI_tax

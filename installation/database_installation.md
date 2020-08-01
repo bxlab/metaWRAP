@@ -33,6 +33,8 @@ cd  NCBI_nt
 wget "ftp://ftp.ncbi.nlm.nih.gov/blast/db/nt.*.tar.gz"
 for a in nt.*.tar.gz; do tar xzf $a; done
 ```
+Note: if you are using a more recent blast verions (beyond v2.6) you will need a the newer database format: `wget "ftp://ftp.ncbi.nlm.nih.gov/blast/db/v4/nt_v4.*.tar.gz"`
+
 Do not forget to set the BLASTDB variable in the config-metawrap file!
 ``` bash
 BLASTDB=/your/location/of/database/NCBI_nt

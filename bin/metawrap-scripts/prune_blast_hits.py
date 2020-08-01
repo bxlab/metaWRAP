@@ -7,7 +7,7 @@ for line in open(sys.argv[1]):
 	cut=line.split('\t')
 	ranks[cut[0]]=cut[4]
 
-exclude=["no rank", "subspecies", "species group", "varietas", "forma", "subfamily", "cohort"]
+include=set(["species", "genus", "family", "order", "class", "phylum", "superkingdom"])
 
 #prune blast output to remove mappings without a rank and remove taxid columnn
 for  line in open(sys.argv[2]):
@@ -19,7 +19,7 @@ for  line in open(sys.argv[2]):
 	ct=0
 	for id in ids.split(';'):
 		if id not in ranks: continue
-		if ranks[id] in exclude: continue
+		if ranks[id] not in include: continue
 		if ct>0: continue
 		cut[5]=id
 		ct+=1
