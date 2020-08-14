@@ -124,9 +124,9 @@ if [ ! $num_of_F_read_files == $num_of_R_read_files ]; then error "Number of F a
 
 
 ########################################################################################################
-########################       ASIGN TAXONOMY TO CONTIGS WITH MEGABLAST         ########################
+########################       ASSIGN TAXONOMY TO CONTIGS WITH MEGABLAST         ########################
 ########################################################################################################
-announcement "ASIGN TAXONOMY TO CONTIGS WITH MEGABLAST"
+announcement "ASSIGN TAXONOMY TO CONTIGS WITH MEGABLAST"
 
 
 if [ ! -d $out ]; then
@@ -156,7 +156,7 @@ else
 fi
 
 if [[ ! -s ${out}/${SAMPLE}.nt.1e-5.megablast ]] ; then 
-	error "Something went wrong with asigning taxonomy to contigs with megablast. Exiting";
+	error "Something went wrong with assigning taxonomy to contigs with megablast. Exiting";
 fi
 
 

@@ -114,7 +114,16 @@ conda install -y -c ursky metawrap-mg
  # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
  conda install -y blas=2.5=mkl
 ```
- 
+
+#### Express Installation:
+Directly create a metawrap-specific environment. This accomplishes the same thing as the "Better installation", but with fewer steps.
+```
+ conda create --name metawrap-env --channel ursky --channel bioconda --channel conda-forge metawrap-mg=1.3
+ conda activate metawrap-env
+
+# To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
+ conda install -y blas=2.5=mkl
+```
 
 #### Bioconda installation:
 MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended for most users, as I will only push major releases to Bioconda (i.e. `v1.1`, `v1.2`). This source is meant for specific applications that require a Bioconda distribution. To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. 
