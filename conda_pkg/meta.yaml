@@ -31,6 +31,7 @@ requirements:
     - prokka 1.13
     - quast 5.0.2
     - r-ggplot2 3.1.0
+    - r-reshape2
     - r-recommended 3.5.1
     - salmon 0.13.1
     - samtools 1.9

@@ -165,7 +165,7 @@ fi
 ########################################################################################################
 announcement "MAP READS TO ASSEMBLY WITH BOWTIE2"
 
-if [[ ! -s ${out}/${SAMPLE}.fa.1.bt2 ]]; then
+if [[ ! -s ${out}/${assembly}.1.bt2 ]]; then
 	comm "Indexing ${out}/$assembly"
 	bowtie2-build -q ${out}/$assembly ${out}/$assembly
 else
@@ -193,7 +193,7 @@ for arg in "$@"; do
 			if [[ $? -ne 0 ]]; then error "Failed to run bowtie2 on sample $sample reads. Exiting..."; fi
 
 			comm "converting ${out}/${sample}.bowtie2.sam alignment to bam format"
-			samtools view -b -@ $threads ${out}/${sample}.bowtie2.sam > ${out}/${sample}.bowtie2.bam
+			samtools view -O BAM -b -@ $threads ${out}/${sample}.bowtie2.sam > ${out}/${sample}.bowtie2.bam
 			if [[ $? -ne 0 ]]; then error "Failed to run bowtie2 on sample $sample reads. Exiting..."; fi
 		else
 			comm "Looks like the alignment file for $sample already exists. Skipping..."
@@ -210,13 +210,17 @@ done
 ########################     MAKE BLOB FILE FROM BLAST AND BOWTIE2 OUTPUTS      ########################
 ########################################################################################################
 announcement "MAKE BLOB FILE FROM BLAST AND BOWTIE2 OUTPUT"
-
-${SOFT}/blobology/gc_cov_annotate.pl --blasttaxid ${out}/${SAMPLE}.nt.1e-5.megablast\
- --assembly ${out}/$assembly --bam ${out}/*.bowtie2.bam\
- --out ${out}/${SAMPLE}.blobplot --taxdump $TAXDUMP --taxlist species genus family order subclass phylum superkingdom
-if [[ ! -s ${out}/${SAMPLE}.blobplot ]]; then 
-	error "Something went wrong with making the blob file from the .bam and .megablast files. Exiting."; fi
-comm "blobplot text file saved to ${out}/${SAMPLE}.blobplot"
+if [[ ! -s ${out}/${SAMPLE}.blobplot ]]; then
+	${SOFT}/blobology/gc_cov_annotate.pl --blasttaxid ${out}/${SAMPLE}.nt.1e-5.megablast\
+	 --assembly ${out}/$assembly --bam ${out}/*.bowtie2.bam\
+	 --out ${out}/${SAMPLE}.blobplot --taxdump $TAXDUMP --taxlist species genus family order subclass phylum superkingdom
+	if [[ ! -s ${out}/${SAMPLE}.blobplot ]]; then 
+		error "Something went wrong with making the blob file from the .bam and .megablast files. Exiting."
+	fi
+	comm "blobplot text file saved to ${out}/${SAMPLE}.blobplot"
+else
+	comm "blobplot text file already exists"
+fi
 
 if [ ! "$bin_folder" = false ]; then
 	comm "adding bin annotations to blobfile ${out}/${SAMPLE}.blobplot"
