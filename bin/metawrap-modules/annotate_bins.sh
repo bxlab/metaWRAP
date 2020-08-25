@@ -119,7 +119,7 @@ for i in $(ls ${bins}); do
 	echo $cmd
 	$cmd
 
-	if [[ $? -ne 0 ]]; then error "Something went wrong with annotating ${bin_name}. Exiting..."; fi
+	if [[ $? -ne 0 ]]; then warning "Something possibly went wrong with annotating ${bin_name}. Proceeding anyways"; fi
         if [[ ! -s ${out}/prokka_out/${bin_name}/${bin_name}.gff ]]; then error "Something went wrong with annotating ${bin_name}. Exiting..."; fi
 	rm ${out}/tmp_bin.fa
 done

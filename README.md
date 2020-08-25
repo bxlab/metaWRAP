@@ -45,7 +45,7 @@ Before updating, back up your `config-metawrap` file so you do not have to re-do
 conda update -y -c ursky metawrap-mg
 
 # or for a specific version:
-conda install -y -c ursky metawrap-mg=1.3.0
+conda install -y -c ursky metawrap-mg=1.3.1
 ```
 
 If you are using the (recommended) manual instalation of metaWRAP, simply run `git pull` inside the metaWRAP directory.
@@ -118,7 +118,7 @@ conda install -y -c ursky metawrap-mg
 #### Express Installation:
 Directly create a metawrap-specific environment. This accomplishes the same thing as the "Better installation", but with fewer steps.
 ```
- conda create --name metawrap-env --channel ursky --channel bioconda --channel conda-forge metawrap-mg=1.3
+ conda create --name metawrap-env --channel ursky --channel bioconda --channel conda-forge metawrap-mg=1.3.1
  conda activate metawrap-env
 
 # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
