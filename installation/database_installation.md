@@ -1,14 +1,18 @@
 ## Downloading the CheckM database:
 ``` bash
 mkdir MY_CHECKM_FOLDER
-checkm data setRoot
-# CheckM will prompt to to chose your storage location... Give it the path to the folder you just made.
 
 # Now manually download the database:
 cd MY_CHECKM_FOLDER
 wget https://data.ace.uq.edu.au/public/CheckM_databases/checkm_data_2015_01_16.tar.gz
 tar -xvf *.tar.gz
 rm *.gz
+cd ../
+
+# Now you need to tell CheckM where to find this data before running anything:
+checkm data setRoot     # CheckM will prompt to to chose your storage location
+# On newer versions of CheckM, you would run:
+checkm data setRoot /path/to/your/dir/MY_CHECKM_FOLDER
 ```
 Thats it! CheckM should now use that folder and its contents as its database.
 
