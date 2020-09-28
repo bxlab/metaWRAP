@@ -1,4 +1,4 @@
-### Major update: metaWRAP now supports kraken2
+### Major update: metaWRAP now supports kraken2 (as of v1.3.2)
 
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
