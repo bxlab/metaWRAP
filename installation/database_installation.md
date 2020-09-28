@@ -18,7 +18,8 @@ Thats it! CheckM should now use that folder and its contents as its database.
 
 
 
-## Downloading the KRAKEN standard database:
+## Downloading the KRAKEN1 standard database:
+Note: As of metaWRAP v1.3.2, we recomend you use Kraken2 instead of the original Kraken1 (see below).
 Note: this will download the entire RefSeq database and index it, which takes a lot of computational power, storage space, and RAM. During database building, you will need >450GB of space and >250GB of RAM. With 24 cores, this will take >5 hours. Note that this is only needed if you intend on running the KRAKEN module.
 ``` bash
 kraken-build --standard --threads 24 --db MY_KRAKEN_DATABASE
@@ -29,6 +30,15 @@ Do not forget to set the KRAKEN_DB variable in the config-metawrap file! Run `wh
 KRAKEN_DB=/path/to/my/database/MY_KRAKEN_DATABASE
 ```
 
+## Downloading the KRAKEN2 standard database:
+Note: Compared to Kraken1, the Kraken2 database is considerably more compact, making the download and indexing process much faster and less taxing on the system. You will need an estimated 120GB of RAM and ~128GB of space. Note that this is only needed if you intend on running the KRAKEN2 module.
+``` bash
+kraken2-build --standard --threads 24 --db MY_KRAKEN2_DB
+```
+Do not forget to set the KRAKEN_DB variable in the config-metawrap file! Run `which config-metawrap` to find it.
+``` bash
+KRAKEN2_DB=/path/to/my/database/MY_KRAKEN2_DATABASE
+```
 
 ## Downloading the NCBI_nt BLAST database:
 ``` bash

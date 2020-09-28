@@ -3,7 +3,7 @@
 # Master metaWRAP script that calls on individual modules/pipelines 
 ##############################################################################################################################################################
 
-VERSION="1.3.1"
+VERSION="1.3.2"
 
 help_message () {
         echo""
@@ -14,6 +14,7 @@ help_message () {
 	echo "	read_qc		Raw read QC module (read trimming and contamination removal)"
         echo "	assembly	Assembly module (metagenomic assembly)"
 	echo "	kraken		KRAKEN module (taxonomy annotation of reads and assemblies)"
+	echo "	kraken2		KRAKEN2 module (taxonomy annotation of reads and assemblies)"
 	echo "	blobology	Blobology module (GC vs Abund plots of contigs and bins)"
 	echo ""
 	echo "	binning		Binning module (metabat, maxbin, or concoct)"
@@ -63,6 +64,9 @@ elif [ "$1" = blobology ]; then
 elif [ "$1" = kraken ]; then
         echo metawrap kraken ${@:2}
 	time ${PIPES}/kraken.sh ${@:2}
+elif [ "$1" = kraken2 ]; then
+	echo metawrap kraken2 ${@:2}
+	time ${PIPES}/kraken2.sh ${@:2}
 elif [ "$1" = all ]; then
 	#echo all.sh ${@:2}
         #${PIPES}/all.sh ${@:2}

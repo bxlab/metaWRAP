@@ -1,3 +1,5 @@
+### Major update: metaWRAP now supports kraken2
+
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
  MetaWRAP aims to be an **easy-to-use metagenomic wrapper suite** that accomplishes the core tasks of metagenomic analysis from start to finish: read quality control, assembly, visualization, taxonomic profiling, extracting draft genomes (binning), and functional annotation. Additionally, metaWRAP takes bin extraction and analysis to the next level (see module overview below). While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple approach before you delve deeper into parameterization of your analysis. MetaWRAP can be applied to a variety of environments, including gut, water, and soil microbiomes (see metaWRAP paper for benchmarks). Each individual module of metaWRAP is a standalone program, which means you can use only the modules you are interested in for your data.
@@ -19,7 +21,7 @@
 #### Metagemonic data pre-processing modules:
 	1) Read_QC: read trimming and host (e.g. human) read removal
 	2) Assembly: metagenomic assembly and QC with metaSPAdes or MegaHit
-	3) Kraken: taxonomy profiling and visualization or reads or contigs
+	3) Kraken/Kraken2: taxonomy profiling and visualization or reads or contigs
 	
 #### Bin processing modules:
 	1) Binning: initial bin extraction with MaxBin2, metaBAT2, and/or CONCOCT
@@ -45,7 +47,7 @@ Before updating, back up your `config-metawrap` file so you do not have to re-do
 conda update -y -c ursky metawrap-mg
 
 # or for a specific version:
-conda install -y -c ursky metawrap-mg=1.3.1
+conda install -y -c ursky metawrap-mg=1.3.2
 ```
 
 If you are using the (recommended) manual instalation of metaWRAP, simply run `git pull` inside the metaWRAP directory.
@@ -70,7 +72,7 @@ conda config --add channels ursky
 conda install --only-deps -c ursky metawrap-mg
 
 # OR
-conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome fastqc kraken=1.1 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
+conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome fastqc kraken=1.1 kraken2=2.0.8_beta krona=2.7 matplotlib maxbin2 megahit metabat2 pandas prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
 # Note: this last solution is universal, but you may need to manually install concoct=1.0 and pplacer.
 ```
 
@@ -118,7 +120,7 @@ conda install -y -c ursky metawrap-mg
 #### Express Installation:
 Directly create a metawrap-specific environment. This accomplishes the same thing as the "Better installation", but with fewer steps.
 ```
- conda create --name metawrap-env --channel ursky --channel bioconda --channel conda-forge metawrap-mg=1.3.1
+ conda create --name metawrap-env --channel ursky --channel bioconda --channel conda-forge metawrap-mg=1.3.2
  conda activate metawrap-env
 
 # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
@@ -154,6 +156,7 @@ This is very important if you want to use any functions requiring databases, but
 |:---------------:|:---------------:|:-----:| 
 | Checkm_DB |1.4GB| binning, bin_refinement, reassemble_bins |
 | KRAKEN standard database|161GB |  kraken |
+| KRAKEN2 standard database|125GB | kraken2 |
 | NCBI_nt |71GB |  blobology, classify_bins |
 | NCBI_tax |283MB |  blobology, classify_bins |
 | Indexed hg38  	|  20GB |  read_qc |
@@ -183,6 +186,7 @@ metaWRAP -h
 	quant_bins	Quantify the abundance of each bin across samples
 	blobology	Blobology module
 	kraken		KRAKEN module
+	kraken2		KRAKEN2 module
 ```
 
 Each module is run separately. For example, to run the assembly module:

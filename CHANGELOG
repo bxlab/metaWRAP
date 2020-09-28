@@ -1,4 +1,8 @@
-metaWRAP v=1.3 (In development)
+metaWRAP v=1.4 (in development)
+	Kraken
+		added new module "kraken2" for running kraken2 instead of kraken1 for read or assembly classification
+
+metaWRAP v=1.3 (August 2020)
 	Assembly
 		fixed typo where megahit was not using the specified tmp directory
 	Annotate_bins

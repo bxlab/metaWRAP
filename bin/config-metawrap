@@ -5,12 +5,13 @@ SOFT=${bin_path}/metawrap-scripts
 PIPES=${bin_path}/metawrap-modules
 
 # OPTIONAL databases (see 'Databases' section of metaWRAP README for details)
-# path to kraken standard database
+# path to kraken standard databases
 KRAKEN_DB=/scratch/gu/MY_KRAKEN_DB
+KRAKEN2_DB=/scratch/gu/MY_KRAKEN2_DB
 
 # path to indexed human genome (see metaWRAP website for guide). This includes files hg38.bitmask and hg38.srprism.*
 BMTAGGER_DB=/scratch/gu/BMTAGGER_DB
 
 # paths to BLAST databases
-BLASTDB=~/PGScratch/testing_taxonomy/NCBI_nt_v4
-TAXDUMP=~/PGScratch/testing_taxonomy/NCBI_tax
+BLASTDB=/scratch/gu/NCBI_nt
+TAXDUMP=/scratch/gu/NCBI_tax
