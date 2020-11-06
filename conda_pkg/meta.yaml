@@ -19,7 +19,7 @@ requirements:
     - concoct 1.0.0
     - fastqc 0.11.8
     - kraken 1.1
-    - kraken2 2.0.9_beta
+    - kraken2 2.0
     - krona 2.7
     - matplotlib 2.2.3
     - maxbin2 2.2.6
