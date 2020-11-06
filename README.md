@@ -55,14 +55,18 @@ It should also be noted that it is possible for th eupdates to produce strange b
 
 
 #### Best (manual) installation:
- This is how I usually use metaWRAP. By manually installing metaWRAP you will have better control over your environment and be able to change any programs and their versions as you see fit. You can also easily get the lastest updates throught `git pull`. If you are installing on a system other than Linux64, this may be your best bet. The hardest part is to install the [relevant prerequisite programs](https://github.com/bxlab/metaWRAP/blob/master/conda_pkg/meta.yaml), but this is much easier than you would think with the use of conda. Once you have these installed in your environment, download or clone this ripository, carefully configure the `metaWRAP/bin/config-metawrap` file, and add the `metaWRAP/bin/` directory to to the `$PATH` (likely by editing the `~/.bash_profile`). Alternatively, just copy over the `metaWRAP/bin/` contents into any location with excecutbale permission such as `/usr/bin/` or `/miniconda2/bin/` (depending on your permissions). Thats it!
+ The best way to install and manage metaWRAP is to install it directly from github, and then install all of its dependancies through conda. This is how I usually use metaWRAP, as it allows to easily update the versions of metawrap and other packages. This also works on MacOS as well as Unix.  
  
- Easiest way to quickly install the dependancies:
- ```
+ 1. Download or clone this ripository: `git clone https://github.com/bxlab/metaWRAP.git`
+ 2. Carefully configure the `yourpath/metaWRAP/bin/config-metawrap` file to it points to your desired database locations (you can modify this later). Follow the [database configuration guide](https://github.com/bxlab/metaWRAP/blob/master/installation/database_installation.md) for details.
+ 3. Make metaWRAP executable by adding `yourpath/metaWRAP/bin/` directory to to your `$PATH`. Either add the line `PATH=yourpath/metaWRAP/bin/:$PATH` to your `~/.bash_profile` script, or copy over the contents of `yourpath/metaWRAP/bin/` into a location already in your `$PATH` (such as `/usr/bin/` or `/miniconda2/bin/`). 
+ 4. (Optional but recommended) Make a new conda environment to install and manage all dependancies:
+```
 conda create -y -n metawrap-env python=2.7
 conda activate metawrap-env
- 
- # Note: ordering is important
+```
+5. Install all [metaWRAP dependancies](https://github.com/bxlab/metaWRAP/blob/master/conda_pkg/meta.yaml) with conda:
+ ```
 conda config --add channels defaults
 conda config --add channels conda-forge
 conda config --add channels bioconda
@@ -76,51 +80,10 @@ conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome 
 # Note: this last solution is universal, but you may need to manually install concoct=1.0 and pplacer.
 ```
 
-#### Basic installation:
- To start, download [miniconda2](https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh) and install it:
- ``` bash
- wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
- bash Miniconda2-latest-Linux-x86_64.sh
- ```
- 
- Then add channels to your conda environment, and install metaWRAP (supports Linux64):
- ``` bash
- # Note: ordering is important
- conda config --add channels defaults
- conda config --add channels conda-forge
- conda config --add channels bioconda
- conda config --add channels ursky
-
- conda install -y -c ursky metawrap-mg
- # Note: may take a while
- 
- # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
- conda install -y blas=2.5=mkl
- ```
- 
- #### Better installation:
- The conda installation of metaWRAP will install over 140 software dependancies, which may cause some conflicts with your currenly installed packages. If you already use conda, it is strongly recommended to [set up a conda custom environment](https://conda.io/docs/user-guide/tasks/manage-environments.html) and install metaWRAP only in there. That way your current conda environment and metaWRAP's environment do not not conflict.
-``` bash
-conda create -y -n metawrap-env python=2.7
-conda activate metawrap-env
-
-# Note: ordering is important
-conda config --add channels defaults
-conda config --add channels conda-forge
-conda config --add channels bioconda
-conda config --add channels ursky
-
-conda install -y -c ursky metawrap-mg
-# Note: may take a while
-
- # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
- conda install -y blas=2.5=mkl
-```
-
 #### Express Installation:
-Directly create a metawrap-specific environment. This accomplishes the same thing as the "Better installation", but with fewer steps.
+Directly create a metawrap-specific environment and install metawrap.
 ```
- conda create --name metawrap-env --channel ursky --channel bioconda --channel conda-forge metawrap-mg=1.3.2
+ conda create --name metawrap-env --channel ursky metawrap-mg=1.3.2
  conda activate metawrap-env
 
 # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
