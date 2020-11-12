@@ -119,9 +119,6 @@ for num in "$@"; do
 		# if sampling depth is specified, randomly subsample the fastq reads
 		if [ ! "$depth" = "all" ]; then
 			comm "subsampling down to $depth reads..." 
-			# combine paired end reads onto one line, then 
-			# shuffle reads, select top N reads, and then restore tabulation, then
-			# separate reads into F and R files
 			paste $reads_1 $reads_2 | \
 			 awk '{ printf("%s",$0); n++; if(n%4==0) { printf("\n");} else { printf("\t\t");} }' | \
 			 shuf | head -n $depth | sed 's/\t\t/\n/g' | \
