@@ -1,5 +1,3 @@
-### Major update: metaWRAP now supports kraken2 (as of v1.3.2)
-
 # MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis
 
  MetaWRAP aims to be an **easy-to-use metagenomic wrapper suite** that accomplishes the core tasks of metagenomic analysis from start to finish: read quality control, assembly, visualization, taxonomic profiling, extracting draft genomes (binning), and functional annotation. Additionally, metaWRAP takes bin extraction and analysis to the next level (see module overview below). While there is no single best approach for processing metagenomic data, metaWRAP is meant to be a fast and simple approach before you delve deeper into parameterization of your analysis. MetaWRAP can be applied to a variety of environments, including gut, water, and soil microbiomes (see metaWRAP paper for benchmarks). Each individual module of metaWRAP is a standalone program, which means you can use only the modules you are interested in for your data.
@@ -39,30 +37,16 @@
 
 ## INSTALLATION
 
-#### To update to the latest version:
-MetaWRAP is being constantly improved week to week as more bugs and issues pop up. Because of the scale of the project it is almost impossible to get a perfect working version as the dependancy software are constantly changing. I recommend to update to the newest version of metaWRAP on a monthly basis.
-
-Before updating, back up your `config-metawrap` file so you do not have to re-do the database configurations. Then update with conda:
-```
-conda update -y -c ursky metawrap-mg
-
-# or for a specific version:
-conda install -y -c ursky metawrap-mg=1.3.2
-```
-
-If you are using the (recommended) manual instalation of metaWRAP, simply run `git pull` inside the metaWRAP directory.
-It should also be noted that it is possible for th eupdates to produce strange behavior in complex conda environments, so if you experience issues the safest way is to just delete the old metawrap-env environment (`rm -r miniconda/envs/metawrap-env`) and re-install from scratch.  
-
-
-#### Best (manual) installation:
+#### Manual installation (this is best, if you are comfortable):
  The best way to install and manage metaWRAP is to install it directly from github, and then install all of its dependancies through conda. This is how I usually use metaWRAP, as it allows to easily update the versions of metawrap and other packages. This also works on MacOS as well as Unix.  
  
+ 0. Install mamba: `conda install -y mamba`. Mamba will effectively replace conda and do exactly the same thing, but _much_ faster.
  1. Download or clone this ripository: `git clone https://github.com/bxlab/metaWRAP.git`
  2. Carefully configure the `yourpath/metaWRAP/bin/config-metawrap` file to it points to your desired database locations (you can modify this later). Follow the [database configuration guide](https://github.com/bxlab/metaWRAP/blob/master/installation/database_installation.md) for details.
  3. Make metaWRAP executable by adding `yourpath/metaWRAP/bin/` directory to to your `$PATH`. Either add the line `PATH=yourpath/metaWRAP/bin/:$PATH` to your `~/.bash_profile` script, or copy over the contents of `yourpath/metaWRAP/bin/` into a location already in your `$PATH` (such as `/usr/bin/` or `/miniconda2/bin/`). 
  4. (Optional but recommended) Make a new conda environment to install and manage all dependancies:
 ```
-conda create -y -n metawrap-env python=2.7
+mamba create -y -n metawrap-env python=2.7
 conda activate metawrap-env
 ```
 5. Install all [metaWRAP dependancies](https://github.com/bxlab/metaWRAP/blob/master/conda_pkg/meta.yaml) with conda:
@@ -73,35 +57,43 @@ conda config --add channels bioconda
 conda config --add channels ursky
 
 # Unix/Linux only
-conda install --only-deps -c ursky metawrap-mg
+mamba install --only-deps -c ursky metawrap-mg
+# `conda install --only-deps -c ursky metawrap-mg` also works, but much slower
 
 # OR
-conda install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome fastqc kraken=1.1 kraken=2.0 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
-# Note: this last solution is universal, but you may need to manually install concoct=1.0 and pplacer.
+mamba install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome fastqc kraken=1.1 kraken=2.0 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
+# Note: this last solution is more universal, but you may need to manually install concoct=1.0 and pplacer.
 ```
 
-#### Express Installation:
+#### Express Conda/Mamba installation (the quickest but least configurable):
 Directly create a metawrap-specific environment and install metawrap.
 ```
- conda create --name metawrap-env --channel ursky metawrap-mg=1.3.2
+# install mamba (replaces conda, but much faster):
+ conda install -y mamba 
+ 
+# install metawrap:
+ mamba create -y --name metawrap-env --channel ursky metawrap-mg=1.3.2
  conda activate metawrap-env
 
 # To fix the CONCOCT endless warning messages in metaWRAP=1.2+, run
  conda install -y blas=2.5=mkl
 ```
 
-#### Bioconda installation:
+#### Bioconda installation (avoid):
 MetaWRAP is also available through the Bioconda channel. **However**, this distribution is not recommended for most users, as I will only push major releases to Bioconda (i.e. `v1.1`, `v1.2`). This source is meant for specific applications that require a Bioconda distribution. To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. 
 
 ```
 # Bioconda installation (not recommended):
-conda install -y -c bioconda metawrap
+conda install -y mamba
+mamba install -y -c bioconda metawrap
+
+# or `conda install -y -c bioconda metawrap`
 ```
 
-#### Docker installation:
+#### Docker installation (avoid):
 If you are running on OSX and dont want to install manually, or prefer to work in containerized environments, then [Docker](https://quay.io/repository/biocontainers/metawrap?tab=info) could be the way to go. **However**, as with the Bioconda distribution, I will only push major releases to Bioconda (i.e. `v1.1`, `v1.2`). To get the latest version of metaWRAP with the newest patches and bug fixes, please install through the `-c ursky` channel, as seen above. If you still need to use Docker but run into bugs that have been fixed in the latest versions, you can manually update your scripts from this repository to apply the most recent patches. To install with Docker, run:
 ```
-# Docker installation (not recommended)
+# Docker installation (not recommended and not fully supported)
 docker pull quay.io/biocontainers/metawrap:1.2--0
 ```
 
@@ -172,12 +164,14 @@ Options:
 ### Citing metaWRAP
 If you found metaWRAP usefull in your research, please cite the publication: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1). If certain software wrapped into metaWRAP were integral to your investigation (e.g. Salmon, MaxBin2, SPAdes, Kraken, etc.) please give them credit as well.
 
+### Error reporting
+The massive scale of the metaWRAP project unfortunately means that there are lots of opportunities for different components to fail depending on the exact environments it is installed on. Note that metaWRAP is simply a bash wrapper around other popular bioinformatics programs. If one of these other programs fails, the first thing to do is to troubleshoot the installation of that software, and not worry about metaWRAP itself until that component is fixed. If one of the components refuses to work on you environment, there may not be much I can do. Also remember that if you know a bit of bash/shell you can always see how metaWRAP calls these programs by investigating and possibly changing/tweaking the script files in `bin/metawrap-modules/`.
+
+For errors and bugs relating to the actual metaWRAP software, please open a new Issue thread on this github page, however note that I no longer actively support metaWRAP due to moving on to other jobs. If you do report an error, please include the full output (stdout and stderr) from metaWRAP, and the version of you are using (run `metawrap -v`).
+
 ### Acknowledgements
 Author of pipeline: [Gherman Uritskiy](https://github.com/ursky).
 
 Principal Investigators: [James Taylor](http://bio.jhu.edu/directory/james-taylor/) and [Jocelyne DiRuggiero](http://bio.jhu.edu/directory/jocelyne-diruggiero/)
 
 Institution: Johns Hopkins, [Department of Cell, Molecular, Developmental Biology, and Biophysics](http://cmdb.jhu.edu/) 
-
-All feedback is welcome! For errors and bugs, please open a new Issue thread on this github page, and I will try to get things patched as quickly as possible. Please include the **full** output (stdout and stderr) from metaWRAP, and the version of you are using (run `metawrap -v`), For general feedback you can contact me at guritsk1@jhu.edu, however please do not email me with error/bug reports. 
-
