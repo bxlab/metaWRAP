@@ -31,6 +31,7 @@ help_message () {
 	echo "	--permissive-cut-off	maximum allowed SNPs for permissive read mapping (default=5)"
 	echo "	--skip-checkm		dont run CheckM to assess bins"
 	echo "	--parallel		run spades reassembly in parallel, but only using 1 thread per bin"
+	echo "	--nanopore		add nanopore reads for reassembly"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
@@ -74,8 +75,9 @@ bins=None; f_reads=None; r_reads=None; out=None
 strict_max=2; permissive_max=5
 run_checkm=true
 run_parallel=false
+nanopore=false
 # load in params
-OPTS=`getopt -o ht:m:o:x:c:l:b:1:2: --long help,parallel,skip-checkm,strict-cut-off,permissive-cut-off -- "$@"`
+OPTS=`getopt -o ht:m:o:x:c:l:b:1:2: --long help,parallel,skip-checkm,strict-cut-off,permissive-cut-off,nanopore -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -96,6 +98,7 @@ while true; do
 		--permissive-cut-off) permissive_max=$2; shift 2;;
 		--skip-checkm) run_checkm=false; shift 1;;
 		--parallel) run_parallel=true; shift 1;;
+		--nanopore) nanopore_reads=$2;nanopore=true; shift 2;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -157,6 +160,13 @@ if [[ ! -s ${out}/binned_assembly/assembly.fa.amb ]]; then
 	mkdir ${out}/reads_for_reassembly
 
 	comm "Aligning all reads back to entire assembly and splitting reads into individual fastq files based on their bin membership"
+	echo "$nanopore"
+	echo "minimap2 -t $threads -ax map-ont ${out}/binned_assembly/assembly.fa $nanopore_reads | ${SOFT}/filter_nanopore_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly"
+	if [ "$nanopore" = true ]; then
+		minimap2 -t $threads -ax map-ont ${out}/binned_assembly/assembly.fa $nanopore_reads \
+		| ${SOFT}/filter_nanopore_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly
+	fi
+
 	bwa mem -t $threads ${out}/binned_assembly/assembly.fa $f_reads $r_reads \
 	 | ${SOFT}/filter_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly $strict_max $permissive_max
 	if [[ $? -ne 0 ]]; then error "Something went wrong with pulling out reads for reassembly..."; fi
@@ -192,12 +202,41 @@ assemble () {
 		fi
 	fi
 }
+assemble_nanopore() {
+	base_name=$(echo ${1%_*} | rev |cut -f 2- -d . | rev)
+	n_reads=${base_name}.nanopore.fastq
+	bin_name=${1%_*}
+	if [[ -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]]; then
+		comm "Looks like $bin_name was already re-assembled. Skipping..."
+	else
+		tmp_dir=${out}/reassemblies/${bin_name}.tmp
+		mkdir $tmp_dir
+		comm "NOW REASSEMBLING ${bin_name}"
+		spades.py -t $2 -m $mem --tmp $tmp_dir --careful \
+		--untrusted-contigs ${out}/original_bins/${bin_name%.*}.fa \
+		-1 ${out}/reads_for_reassembly/${1%_*}_1.fastq \
+		-2 ${out}/reads_for_reassembly/${1%_*}_2.fastq \
+		--nanopore ${out}/reads_for_reassembly/$n_reads \
+		-o ${out}/reassemblies/${bin_name}
+		
+		if [[ ! -s ${out}/reassemblies/${bin_name}/scaffolds.fasta ]]; then
+	                warning "Something went wrong with reassembling ${bin_name}"
+		else 
+			comm "${bin_name} was reassembled successfully!"
+			rm -r $tmp_dir
+		fi
+	fi
+}
 
 
 if [ "$run_parallel" = true ]; then
 	open_sem $threads
 	for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do 
-		run_with_lock assemble $i 1
+		if [ "$nanopore" = true ]; then
+			run_with_lock assemble_nanopore $i $threads 
+		else
+			run_with_lock assemble $i $threads 
+		fi
 	done
 
 	wait
@@ -207,7 +246,11 @@ fi
 
 if [ "$run_parallel" = false ]; then
 	for i in $(ls ${out}/reads_for_reassembly/ | grep _1.fastq); do
-		assemble $i $threads
+		if [ "$nanopore" = true ]; then
+			assemble_nanopore $i $threads 
+		else
+			assemble $i $threads 
+		fi
 	done
 
 	comm "all assemblies complete"
@@ -304,6 +347,7 @@ if [ "$run_checkm" = true ]; then
 		mv ${out}/reassembled_bins.checkm ${out}/work_files/
 		mv ${out}/reassembled_bins.stats ${out}/work_files/
 		mv ${out}/reads_for_reassembly ${out}/work_files/
+		mv ${out}/nanopore_reads_for_reassembly ${out}/work_files/
 		mv ${out}/binned_assembly ${out}/work_files/
 		mv ${out}/reassemblies ${out}/work_files/
 		#rm -r ${out}/original_bins
