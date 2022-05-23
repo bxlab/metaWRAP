@@ -32,6 +32,7 @@ help_message () {
 	echo "	--skip-checkm		dont run CheckM to assess bins"
 	echo "	--parallel		run spades reassembly in parallel, but only using 1 thread per bin"
 	echo "	--nanopore		add nanopore reads for reassembly"
+	echo "	--mdmcleaner	pass this flag if data was previously cleaned with MDMcleaner to fix contig names"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
@@ -76,8 +77,9 @@ strict_max=2; permissive_max=5
 run_checkm=true
 run_parallel=false
 nanopore=false
+mdmcleaner=false
 # load in params
-OPTS=`getopt -o ht:m:o:x:c:l:b:1:2: --long help,parallel,skip-checkm,strict-cut-off,permissive-cut-off,nanopore -- "$@"`
+OPTS=`getopt -o ht:m:o:x:c:l:b:1:2: --long help,parallel,skip-checkm,strict-cut-off,permissive-cut-off,nanopore,mdmcleaner -- "$@"`
 # make sure the params are entered correctly
 if [ $? -ne 0 ]; then help_message; exit 1; fi
 
@@ -99,6 +101,7 @@ while true; do
 		--skip-checkm) run_checkm=false; shift 1;;
 		--parallel) run_parallel=true; shift 1;;
 		--nanopore) nanopore_reads=$2;nanopore=true; shift 2;;
+		--mdmcleaner) mdmcleaner=true; shift 1;;
                 --) help_message; exit 1; shift; break ;;
                 *) break;;
         esac
@@ -133,6 +136,17 @@ fi
 if [ -d ${out}/original_bins ]; then rm -r ${out}/original_bins; fi
 cp -r $bins ${out}/original_bins
 if [ ! -d ${out}/binned_assembly ]; then mkdir ${out}/binned_assembly; fi
+
+# Clean contig names from MDMcleaner
+if [ "$mdmcleaner" = true ]; then
+comm "Cleaning mdmcleaner contigs..."
+for i in ${out}/original_bins/*_filtered_kept_contigs.fasta
+	do  awk -F " " '/^>/ { print $1; next } 1' $i > tmp.file && \
+	mv tmp.file ${i%_filtered_kept_contigs.fasta}.fa && \
+	rm $i
+done
+rm -f tmp.file
+fi
 
 # combinde the bins into one big assembly file
 if [ -s ${out}/binned_assembly/assembly.fa ]; then rm ${out}/binned_assembly/assembly.fa; fi
