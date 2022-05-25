@@ -21,6 +21,8 @@ help_message () {
 	echo "	-1 STR          forward reads to use for reassembly"
 	echo "	-2 STR          reverse reads to use for reassembly"
 	echo ""
+	echo "	--nanopore STR	nanopore reads to use for reassembly"
+	echo ""
 	echo "	-t INT		number of threads (default=1)"
 	echo "	-m INT		memory in GB (default=40)"
 	echo "	-c INT		minimum desired bin completion % (default=70)"
@@ -31,8 +33,7 @@ help_message () {
 	echo "	--permissive-cut-off	maximum allowed SNPs for permissive read mapping (default=5)"
 	echo "	--skip-checkm		dont run CheckM to assess bins"
 	echo "	--parallel		run spades reassembly in parallel, but only using 1 thread per bin"
-	echo "	--nanopore		add nanopore reads for reassembly"
-	echo "	--mdmcleaner	pass this flag if data was previously cleaned with MDMcleaner to fix contig names"
+	echo "	--mdmcleaner		the bin directory have results from MDMcleaner"
 	echo "";}
 
 comm () { ${SOFT}/print_comment.py "$1" "-"; }
