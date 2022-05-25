@@ -134,7 +134,13 @@ else
 fi
 
 if [ -d ${out}/original_bins ]; then rm -r ${out}/original_bins; fi
-cp -r $bins ${out}/original_bins
+if [ "$mdmcleaner" = true ]; then
+	mkdir ${out}/original_bins
+	for i in $bins/*/*_kept_contigs.fasta.gz; do gunzip -k $i && mv ${i%.gz} ${out}/original_bins; done
+else
+	cp -r $bins ${out}/original_bins
+fi
+
 if [ ! -d ${out}/binned_assembly ]; then mkdir ${out}/binned_assembly; fi
 
 # Clean contig names from MDMcleaner
@@ -174,9 +180,7 @@ if [[ ! -s ${out}/binned_assembly/assembly.fa.amb ]]; then
 	mkdir ${out}/reads_for_reassembly
 
 	comm "Aligning all reads back to entire assembly and splitting reads into individual fastq files based on their bin membership"
-	echo "$nanopore"
-	echo "minimap2 -t $threads -ax map-ont ${out}/binned_assembly/assembly.fa $nanopore_reads | ${SOFT}/filter_nanopore_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly"
-	if [ "$nanopore" = true ]; then
+		if [ "$nanopore" = true ]; then
 		minimap2 -t $threads -ax map-ont ${out}/binned_assembly/assembly.fa $nanopore_reads \
 		| ${SOFT}/filter_nanopore_reads_for_bin_reassembly.py ${out}/original_bins ${out}/reads_for_reassembly
 	fi
