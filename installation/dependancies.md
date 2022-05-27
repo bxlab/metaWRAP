@@ -24,7 +24,7 @@
 - salmon
 - taxator-tk
 - prokka
-
+- minimap2 2.24
 
 ## More detailed dependancies:
 
@@ -54,6 +54,9 @@
 - checkm v1.0.7
 - checkm_DB (standard)
 - SPAdes v3.10.1
+
+#### bin_reassembly
+- minimap2 2.24
 
 ### quant_bins
 - salmon
