@@ -222,6 +222,32 @@ Note: This graph no longer has `Binning_refiner` in it, to reduce confusion. If 
 
 As you can see, the refinment process signifficantly produced the best bin set in terms of both compleiton and contamination. Keep in mind that these improvements are even more dramatic in more complex samples.
 
+## Step 5.5 (optional). Cleaning bins with MDMcleaner
+
+For cleaning the bins you should install [MDMcleaner](https://academic.oup.com/nar/advance-article/doi/10.1093/nar/gkac294/6583244?login=false) tool in separate conda environment, following direction on their github [page](https://github.com/KIT-IBG-5/mdmcleaner).
+### Installation
+In short installation via conda follows next steps:
+```
+# Make conda environment
+conda create -n mdmcleaner
+conda activate mdmcleaner
+
+# Run the installation
+conda install -c bioconda mdmcleaner
+```
+After installation, some databases for MDMcleaner should be downloaded as well. **It takes a long time. For more options see tool ReadME**:
+```
+mdmcleaner.py makedb -o MDMCLEANER_DB_FOLDER 
+```
+And don't forget to add the folder to the configuration file:
+```
+mdmcleaner.py set_configs --db_basedir PATH_TO_MDMCLEANER_DB_FOLDER 
+```
+### Usage
+The simple use case of MDMcleaner is the follows:
+```
+mdmcleaner clean -i $(ls BIN_REFINEMENT/metawrap_50_10_bins) -o BIN_REFINEMENT_MDMCLEANER
+```
 
 ## Step 6: Visualize the community and the extracted bins with the Blobology module
 Lets use the Blobology module to project the entire assembly onto a GC vs Abundance plane, and annote them with taxonomy and bin information. This will not only give us an idea of what these microbial communities are structured like, but will also show us our binning success in a more visual way. 
@@ -284,6 +310,12 @@ Now that we have our final, consilidated bin set in `BIN_REFINEMENT/metawrap_bin
 Let us run the Reassemble_bins module with all the reads we have:
 ```
 metawrap reassemble_bins -o BIN_REASSEMBLY -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -t 96 -m 800 -c 50 -x 10 -b BIN_REFINEMENT/metawrap_50_10_bins
+```
+
+If you have nanopore reads you can supply them with `--nanopore` flag. Also if bins are a result of MDMcleaner you should be able just point to the result folder of the program, adding `--mdmcleaner` flag as well.
+
+```
+metawrap reassemble_bins -o BIN_REASSEMBLY -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq --nanopore CLEAN_READS/NANOPORE_READS.fastq -t 96 -m 800 -c 50 -x 10 -b BIN_REFINEMENT_MDMCLEANER --mdmcleaner
 ```
 
 Looking at the output in `BIN_REASSEMBLY/reassembled_bins.stats`, we can see that 3 bins were improved though strict reassembly, 6 improved thorugh permissive reassembly, and 4 bins could not be improved (`.strict`, `.permissive`, and `.orig` bin extensions, respectively):
