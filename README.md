@@ -61,8 +61,8 @@ mamba install --only-deps -c ursky metawrap-mg
 # `conda install --only-deps -c ursky metawrap-mg` also works, but much slower
 
 # OR
-mamba install biopython blas=2.5 blast=2.6.0 bmtagger bowtie2 bwa checkm-genome fastqc kraken=1.1 kraken=2.0 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
-# Note: this last solution is more universal, but you may need to manually install concoct=1.0 and pplacer.
+mamba install biopython blas=2.5 blast=2.12 bmtagger bowtie2 bwa checkm-genome fastqc kraken=1.1 kraken=2.0 krona=2.7 matplotlib maxbin2 megahit metabat2 pandas prokka quast r-ggplot2 r-recommended salmon samtools=1.9 seaborn spades trim-galore
+# Note: this last solution is more universal, but you may need to manually install concoct=1.0 (mamba install -c bioconda/label/cf201901 concoct) and pplacer (mamba install pplacer).
 ```
 
 #### Express Conda/Mamba installation (the quickest but least configurable):
