@@ -35,6 +35,15 @@ Note: Compared to Kraken1, the Kraken2 database is considerably more compact, ma
 ``` bash
 kraken2-build --standard --threads 24 --db MY_KRAKEN2_DB
 ```
+Due to changes in the link to NCBI's databases, you may need to change 2 line of the KRAKEN2 scripts, as proposed in the KRAKEN2 issue section.
+
+Search for the file: download_genomic_library.sh,line 17 change FTP_SERVER="**ftp**://$NCBI_SERVER" to FTP_SERVER="**https**://$NCBI_SERVER"
+then search for the file: rsync_from_ncbi.pl, line 46 change if (! ($full_path =~ s#^ftp://${qm_server}${qm_server_path}/##)) { to  if (! ($full_path =~ s#^https://${qm_server}${qm_server_path}/##)) {
+
+source: https://github.com/DerrickWood/kraken2/commit/493568d3f44753f8f711634f86fbaab1b9dfb071
+https://github.com/DerrickWood/kraken2/commit/4f648f5a83498f666193be7b9b71a38e3b99ee24
+https://github.com/DerrickWood/kraken2/issues/518
+
 Do not forget to set the KRAKEN_DB variable in the config-metawrap file! Run `which config-metawrap` to find it.
 ``` bash
 KRAKEN2_DB=/path/to/my/database/MY_KRAKEN2_DATABASE
