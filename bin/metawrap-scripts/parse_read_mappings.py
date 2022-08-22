@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys, os
 
 
@@ -25,5 +26,5 @@ for line in sys.stdin:
 	if line.split("\t")[11]=="NM:i:0": mappings[read][0][contig_bins[contig]]=None
 	mappings[read][1][contig_bins[contig]]=None
 
-print mappings
+print(mappings)
 

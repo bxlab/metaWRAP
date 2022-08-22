@@ -3,9 +3,10 @@
 # Usage:
 # ./script clustering_gt1000.csv assembly_file.fa out_folder
 
+from __future__ import print_function
 import sys, os
 
-print "Loading in the bins that the contigs belong to..."
+print("Loading in the bins that the contigs belong to...")
 bins={}
 for line in open(sys.argv[1]):
 	if line.startswith("contig_id"):
@@ -13,7 +14,7 @@ for line in open(sys.argv[1]):
 	bins[line.strip().split(",")[0].split(".")[0]] = line.strip().split(",")[1]
 
 
-print "Going through the entire assembly and splitting contigs into their respective bin file..."
+print("Going through the entire assembly and splitting contigs into their respective bin file...")
 current_bin=""
 for line in open(sys.argv[2]):
 	if line.startswith(">"):
@@ -27,7 +28,7 @@ for line in open(sys.argv[2]):
  			current_bin="unbinned.fa"
 		f = open(sys.argv[3]+"/"+current_bin,'a')
 	f.write(line)
-print "Done!"
+print("Done!")
 	
 	
 

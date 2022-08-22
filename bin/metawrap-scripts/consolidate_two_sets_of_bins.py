@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys, os
 
 '''
@@ -18,7 +19,7 @@ c=float(sys.argv[6])
 x=float(sys.argv[7])
 
 # load a list of good bins (>70% complete, <10% contaminated) to save time (wont look at bad bins later on).
-print "Loading list of good bins (comp>" + str(c)+ "%, cont<" + str(x) + "%)"
+print("Loading list of good bins (comp>" + str(c)+ "%, cont<" + str(x) + "%)")
 good_bins_1={}
 good_bins_2={}
 for line in open(sys.argv[3]):
@@ -50,7 +51,7 @@ for bin_file in good_bins_2:
 '''
 
 
-print  "load in the info about the contigs in each bin..."
+print("load in the info about the contigs in each bin...")
 for bin_file in good_bins_1:
         bins_1[bin_file]={}
 	contig_len=0
@@ -82,7 +83,7 @@ for bin_file in good_bins_2:
 
 
 
-print "make all bossible comparisons between the two bin sets, and record total % idential length"
+print("make all bossible comparisons between the two bin sets, and record total % idential length")
 all_bin_pairs={}
 for bin_1 in good_bins_1:
 	all_bin_pairs[bin_1]={}
@@ -107,7 +108,7 @@ for bin_1 in good_bins_1:
 		all_bin_pairs[bin_1][bin_2]=max([ratio_1, ratio_2])
 
 
-print "load in completion and contamination scores of all the bins"
+print("load in completion and contamination scores of all the bins")
 bins_1_stats={}
 bins_2_stats={}
 bins_1_summary={}
@@ -131,7 +132,7 @@ for line in open(sys.argv[4]):
 
 
 # go through all good bins and chose best ones
-print "go through first group, pull out identical bins from second group, and choose best"
+print("go through first group, pull out identical bins from second group, and choose best")
 os.system("mkdir "+sys.argv[5])
 new_summary_file=bins_1_summary["header"]
 bins_2_matches={}
@@ -154,7 +155,7 @@ for bin_1 in all_bin_pairs:
 	os.system(cmd)
 	bin_ct+=1
 
-print "retrieve bins from second group that were not found in first group"
+print("retrieve bins from second group that were not found in first group")
 for bin_2 in bins_2_stats:
 	if bins_2_stats[bin_2][0]<c or bins_2_stats[bin_2][1]>x: continue
 	if bin_2 in bins_2_matches: continue
@@ -167,6 +168,6 @@ for bin_2 in bins_2_stats:
 f = open(sys.argv[5]+".stats", 'w') 
 f.write(new_summary_file) 
 
-print "There were " + str(bin_ct) + " bins cherry-picked from the original sets!"
+print("There were " + str(bin_ct) + " bins cherry-picked from the original sets!")
 
 

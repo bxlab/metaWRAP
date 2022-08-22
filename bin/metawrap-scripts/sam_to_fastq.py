@@ -1,9 +1,10 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys
 for line in open(sys.argv[1]):
 	cut=line.split('\t')
 	if len(cut)<11: continue
-	print ">"+cut[0]
-	print cut[9]
-	print "+"
-	print cut[10]
+	print(">"+cut[0])
+	print(cut[9])
+	print("+")
+	print(cut[10])

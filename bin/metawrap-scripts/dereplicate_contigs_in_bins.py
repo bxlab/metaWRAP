@@ -1,10 +1,11 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys, os
 
 # Usage: ./script.py bins.stats binsFolder outFolder
 
 # load in bin completion and contamination scores
-print "Loading in bin completion and contamination scores..."
+print("Loading in bin completion and contamination scores...")
 bin_scores={}
 for line in open(sys.argv[1]):
 	if "completeness" in line: continue
@@ -13,7 +14,7 @@ for line in open(sys.argv[1]):
 	bin_scores[cut[0]]=score
 
 # load in contigs in each bin
-print "Loading in contigs in each bin..."
+print("Loading in contigs in each bin...")
 contig_mapping={}
 for bin_file in os.listdir(sys.argv[2]):
 	bin_name=".".join(bin_file.split("/")[-1].split(".")[:-1])
@@ -29,7 +30,7 @@ for bin_file in os.listdir(sys.argv[2]):
 
 
 # go over the bin files again and make a new dereplicated version of each bin file	
-print "Making a new dereplicated version of each bin file"
+print("Making a new dereplicated version of each bin file")
 os.system("mkdir "+sys.argv[3])
 for bin_file in os.listdir(sys.argv[2]):
         bin_name=".".join(bin_file.split("/")[-1].split(".")[:-1])

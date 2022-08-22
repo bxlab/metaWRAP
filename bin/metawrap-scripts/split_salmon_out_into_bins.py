@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys, os
 import numpy as np
 
@@ -70,12 +71,12 @@ for bin in bin_abundances:
 		sys.stdout.write('Genomic bins')
 		for sample in bin_abundances[bin]["samples"]:
 			sys.stdout.write('\t'+sample)
-		print ""
+		print("")
 		first=False
 	sys.stdout.write('.'.join(bin.split('.')[:-1]))
 	for sample in bin_abundances[bin]["samples"]:
 		sys.stdout.write("\t" + str(bin_abundances[bin]["samples"][sample]))
-	print ""
+	print("")
 
 
 

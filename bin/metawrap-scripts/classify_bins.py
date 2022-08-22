@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys,os
 
 def add_to_tree( tree, tax_list, length ):
@@ -60,5 +61,5 @@ for filename in os.listdir(sys.argv[2]):
 
 	#print tax_tree
 	consensus=traverse(tax_tree, [], 0)
-	print filename + "\t" + ";".join(consensus)
+	print(filename + "\t" + ";".join(consensus))
 
