@@ -103,7 +103,7 @@ cat CLEAN_READS/ERR*_2.fastq > CLEAN_READS/ALL_READS_2.fastq
 
 Assemble the reads with the metaSPAdes option flag (usually prefered over MegaHIT unless you have a very large data set):
 ```
-metawrap assembly -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -m 200 -t 96 --use-metaspades -o ASSEMBLY
+metawrap assembly -1 CLEAN_READS/ALL_READS_1.fastq -2 CLEAN_READS/ALL_READS_2.fastq -m 200 -t 96 --metaspades -o ASSEMBLY
 ```
 
 You will find the assembly file in `ASSEMBLY/final_assembly.fasta`, and the QUAST assembly report html in `ASSEMBLY/assembly_report.html`!
