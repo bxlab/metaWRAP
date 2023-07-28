@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys
 
 # This script takes in the reassembled_bins.stats file of the binning module and choses the best possible
@@ -34,7 +35,7 @@ for line in open(sys.argv[1]):
 
 
 for i in best_bins:
-	print i+'.'+best_bins[i][0]
+	print(i+'.'+best_bins[i][0])
 	
 
 

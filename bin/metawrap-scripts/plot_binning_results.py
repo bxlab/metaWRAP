@@ -2,6 +2,7 @@
 # USAGE:
 # ./script file1.stats file2.stats file3.stats
 
+from __future__ import print_function
 import sys
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
@@ -12,12 +13,12 @@ min_completion=int(sys.argv[1])
 ####################################################################################################################################
 ############################################         MAKE THE COMPLETION PLOT           ############################################
 ####################################################################################################################################
-print "Loading completion info...."
+print("Loading completion info....")
 data={}
 max_x=0
 # loop over all bin .stats files
 for file_name in sys.argv[3:]:
-	print file_name
+	print(file_name)
 	bin_set=".".join(file_name.split("/")[-1].split(".")[:-1])
 	data[bin_set]=[]
 	for line in open(file_name):
@@ -36,7 +37,7 @@ for file_name in sys.argv[3:]:
 for bin_set in data:
 	data[bin_set].sort(reverse=True)
 
-print "Plotting completion data..."
+print("Plotting completion data...")
 # MAKING THE PLOT PRETTY!!!!
 # set some color schemes
 tableau20 = [(214, 39, 40), (31, 119, 180), (255, 127, 14),    
@@ -130,7 +131,7 @@ plt.ylabel("Estimated bin completion", fontsize=16)
 ####################################################################################################################################
 ############################################         MAKE THE CONTAMINATION PLOT        ############################################
 ####################################################################################################################################
-print "Loading contamination info..."
+print("Loading contamination info...")
 
 data={}
 # loop over all bin .stats files
@@ -152,7 +153,7 @@ for file_name in sys.argv[3:]:
 for bin_set in data:
 	data[bin_set].sort(reverse=False)
 
-print "Plotting the contamination data..."
+print("Plotting the contamination data...")
 # MAKING THE PLOT PRETTY!!!!
 # Remove the plot frame lines. They are unnecessary chartjunk.    
 ax = plt.subplot(122)
@@ -224,7 +225,7 @@ plt.ylabel("Estimated bin contamination (log scale)", fontsize=16)
 plt.gcf().subplots_adjust(right=0.9)
 
 # save figure
-print "Saving figures binning_results.eps and binning_results.png ..."
+print("Saving figures binning_results.eps and binning_results.png ...")
 plt.tight_layout(w_pad=10)
 plt.subplots_adjust(top=0.92, right=0.90, left=0.08)
 plt.savefig("binning_results.png",format='png', dpi=300)

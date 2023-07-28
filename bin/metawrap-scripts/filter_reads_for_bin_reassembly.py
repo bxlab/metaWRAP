@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 #usage: 
 # bwa mem -a assembly.fa reads_1.fastq reads_2.fastq | ./filter_reads_for_bin_reassembly.py original_bin_folder reads_1.fastq reads_2.fastq output_dir
+from __future__ import print_function
 import sys, os
 strict_snp_cutoff = int(sys.argv[3])
 permissive_snp_cutoff = int(sys.argv[4])
@@ -13,7 +14,7 @@ def rev_comp(seq):
 	return rev_comp[::-1]
 
 # load bin contigs
-print "loading contig to bin mappings..."
+print("loading contig to bin mappings...")
 contig_bins={}
 for bin_file in os.listdir(sys.argv[1]):
 	if bin_file.endswith(".fa") or bin_file.endswith(".fasta"): 
@@ -25,7 +26,7 @@ for bin_file in os.listdir(sys.argv[1]):
 # store the read names and what bins they belong in in these dictionaries
 # strict stores only perfectly aligning reads and permissive stores any aligned reads
 
-print "Parsing sam file and writing reads to appropriate files depending what bin they alligned to..."
+print("Parsing sam file and writing reads to appropriate files depending what bin they alligned to...")
 files={}
 opened_bins={}
 for line in sys.stdin:
@@ -106,11 +107,11 @@ for line in sys.stdin:
 		files[sys.argv[2]+"/"+bin_name+".permissive_2.fastq"].write('@' + R_cut[0] + "/2" + "\n" + R_cut[9] + "\n+\n" + R_cut[10] + "\n")
 
 
-print "closing files"
+print("closing files")
 for f in files:
 	files[f].close()
 
 
-print "Finished splitting reads!"
+print("Finished splitting reads!")
 
 

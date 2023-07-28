@@ -2,6 +2,7 @@
 # USAGE:
 # ./script file1.stats file2.stats file3.stats
 
+from __future__ import print_function
 import sys
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
@@ -13,7 +14,7 @@ min_completion=int(sys.argv[2])
 ####################################################################################################################################
 ############################################         MAKE THE N50 PLOT                 ############################################
 ####################################################################################################################################
-print "Loading completion info...."
+print("Loading completion info....")
 data={}
 max_n50=0
 # loop over all bin .stats files
@@ -35,7 +36,7 @@ for file_name in sys.argv[4:]:
 for bin_set in data:
         data[bin_set].sort(reverse=True)
 
-print "Plotting completion data..."
+print("Plotting completion data...")
 # MAKING THE PLOT PRETTY!!!!
 # set some color schemes
 tableau20 = [(214, 39, 40), (31, 119, 180), (255, 127, 14),    
@@ -120,7 +121,7 @@ plt.ylabel("Bin N50", fontsize=20)
 ####################################################################################################################################
 ############################################         MAKE THE COMPLETION PLOT           ############################################
 ####################################################################################################################################
-print "Loading completion info...."
+print("Loading completion info....")
 data={}
 max_x=0
 # loop over all bin .stats files
@@ -144,7 +145,7 @@ for file_name in sys.argv[4:]:
 for bin_set in data:
 	data[bin_set].sort(reverse=True)
 
-print "Plotting completion data..."
+print("Plotting completion data...")
 # set figure size
 plt.style.use('ggplot')
 
@@ -224,7 +225,7 @@ plt.ylabel("Estimated bin completion", fontsize=20)
 ####################################################################################################################################
 ############################################         MAKE THE CONTAMINATION PLOT        ############################################
 ####################################################################################################################################
-print "Loading contamination info..."
+print("Loading contamination info...")
 
 data={}
 # loop over all bin .stats files
@@ -246,7 +247,7 @@ for file_name in sys.argv[4:]:
 for bin_set in data:
 	data[bin_set].sort(reverse=False)
 
-print "Plotting the contamination data..."
+print("Plotting the contamination data...")
 # MAKING THE PLOT PRETTY!!!!
 # Remove the plot frame lines. They are unnecessary chartjunk.    
 ax = plt.subplot(133)
@@ -313,7 +314,7 @@ plt.gcf().subplots_adjust(right=0.9)
 
 
 # save figure
-print "Saving figures reassembly_results.eps and reassembly_results.png to folder "+sys.argv[1]
+print("Saving figures reassembly_results.eps and reassembly_results.png to folder "+sys.argv[1])
 plt.tight_layout(w_pad=5)
 #plt.subplots_adjust(top=0.92, right=0.90, left=0.08)
 plt.savefig(sys.argv[1]+'/'+"reassembly_results.eps",format='eps', dpi=600)

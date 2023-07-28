@@ -11,6 +11,7 @@ See https://github.com/ngs-docs/2015-nov-adv-rna/ for background info.
 
 C. Titus Brown, 11/2015
 """
+from __future__ import print_function
 import os, os.path
 import sys
 import csv
@@ -19,9 +20,9 @@ def process_quant_file(root, filename, outname):
     """
     Convert individual quant.sf files into .counts files (transcripts\tcount).
     """
-    print >>sys.stderr, 'Loading counts from:', root, filename
+    print('Loading counts from:', root, filename, file=sys.stderr)
     outfp = open(outname, 'w')
-    print >>outfp, "transcript\tcount"
+    print("transcript\tcount", file=outfp)
 
     d = {}
     full_file = os.path.join(root, filename)
@@ -30,7 +31,7 @@ def process_quant_file(root, filename, outname):
             continue
         name, length, eff_length, tpm, count = line.strip().split('\t')
 
-        print >>outfp, "%s\t%s" % (name, float(tpm))
+        print("%s\t%s" % (name, float(tpm)), file=outfp)
 
 
 def main():
@@ -43,7 +44,7 @@ def main():
     quantlist = []
 
     start_dir = '.'
-    print >>sys.stderr, 'Starting in:', os.path.abspath(start_dir)
+    print('Starting in:', os.path.abspath(start_dir), file=sys.stderr)
     for root, dirs, files in os.walk('.'):
         for filename in files:
             if filename.endswith('quant.sf'):
@@ -54,7 +55,7 @@ def main():
                 
                 break
 
-    print ",\n".join([ "\"%s\"" % i for i in sorted(quantlist)])
+    print(",\n".join([ "\"%s\"" % i for i in sorted(quantlist)]))
 
 if __name__ == '__main__':
     main()

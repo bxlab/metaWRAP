@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys
 # This script takes in a translated kraken file of either contigs (from SPAdes) or reads, and parses it into a format for ktImportText to produce a kronachart.
 data={}
@@ -24,5 +25,5 @@ for line in open(sys.argv[1]):
 
 
 for tax in data:
-	print str(data[tax]) + "\t" + tax
+	print(str(data[tax]) + "\t" + tax)
 

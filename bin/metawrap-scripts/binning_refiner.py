@@ -28,6 +28,7 @@
 # And the publication: https://www.ncbi.nlm.nih.gov/pubmed/28186226
 
 
+from __future__ import print_function
 import os
 import glob
 import shutil

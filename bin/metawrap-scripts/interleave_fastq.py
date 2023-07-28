@@ -5,6 +5,7 @@
 Usage:
     interleave-fasta fasta_file1 fasta_file2
 """
+from __future__ import print_function
 
 import sys
 
@@ -15,20 +16,20 @@ def interleave(f1, f2):
         line = f1.readline()
         if line.strip() == "":
             break
-        print line.strip()
+        print(line.strip())
         
         for i in xrange(3):
-            print f1.readline().strip()
+            print(f1.readline().strip())
         
         for i in xrange(4):
-            print f2.readline().strip()
+            print(f2.readline().strip())
 
 if __name__ == '__main__':
     try:
         file1 = sys.argv[1]
         file2 = sys.argv[2]
     except:
-        print __doc__
+        print(__doc__)
         sys.exit(1)
 
     if file1[-2:] == "gz":

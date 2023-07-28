@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.7
+from __future__ import print_function
 import sys
 import textwrap
 
@@ -15,5 +16,5 @@ dic[name]=tmp_contig
 
 
 for k in sorted(dic, key=lambda k: len(dic[k]), reverse=True):
-        print k
-	print textwrap.fill(dic[k], 100, break_on_hyphens = False)
+        print(k)
+	print(textwrap.fill(dic[k], 100, break_on_hyphens = False))
