@@ -134,9 +134,12 @@ if [[ $? -ne 0 ]]; then error "Failed to remove extra column. Exiting..."; fi
 
 
 comm "making mapping file"
-cat ${out}/megablast_out.pruned.tab | cut -f5,6 > ${out}/mapping.tax
+cat ${out}/megablast_out.pruned.tab | cut -f5,6 > ${out}/raw.mapping.tax
 if [[ $? -ne 0 ]]; then error "Failed to make mapping file. Exiting..."; fi
 
+comm "format mapping.tax file"
+taxknife -f 2 --mode traverse -r species genus family order class phylum superkingdom < ${out}/raw.mapping.tax > ${out}/mapping.tax
+if [[ $? -ne 0 ]]; then error "Failed to format mapping file. Exiting..."; fi
 
 
 ########################################################################################################
