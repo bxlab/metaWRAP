@@ -31,7 +31,7 @@ metaWRAP v=1.3 (August 2020)
 
 metaWRAP v=1.2 (April 2019)
 	General
-		config-metawrap sets database locations to $HOME by defualt during installation
+		config-metawrap sets database locations to $HOME by default during installation
 		numpy, openblas, and scipy versions updated for concoct 1.0
 		enforce CheckM v1.0.12 (newer versions are reported to fail)
 		fixed depricated matplotlib functions in plotting scripts
@@ -292,7 +292,7 @@ metaWRAP v=0.3 (November 2017)
 		Fixed issue with program thinking READQC did not finish correctly
 	Assembly module:
 		Removed joint assembly feature. Now you can only assemble with metaSPAdes OR Megahit.
-		(megahit is defualt due to its speed)
+		(megahit is default due to its speed)
 		Changed minimum contig length from 500bp to 1000bp
 	Binning module:
 		This module is now split into four parts for modularity:

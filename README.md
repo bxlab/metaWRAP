@@ -155,7 +155,7 @@ Options:
 	-2 STR          reverse fastq reads
 	-o STR          output directory
 	-m INT          memory in GB (default=10)
-	-t INT          number of threads (defualt=1)
+	-t INT          number of threads (default=1)
 
 	--use-megahit		assemble with megahit (default)
 	--use-metaspades	assemble with metaspades instead of megahit
