@@ -35,23 +35,23 @@
 
 
 ##  SYSTEM REQUIREMENTS
- The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I recommend at 8+ cores and 64GB+ RAM. MetaWRAP officially supports only Linux x64 systems, but may be installed on OSX manually or with docker (see below).
+ The resource requirements for this pipeline will vary greatly based on the amount of data being processed, but due to large memory requirements of many software used (KRAKEN and metaSPAdes to name a few), I recommend at least 8+ cores and 64GB+ RAM. MetaWRAP officially supports only Linux x64 systems, but may be installed on OSX manually or with docker (see below).
 
 ## INSTALLATION
 
 #### Manual installation (this is best, if you are comfortable):
- The best way to install and manage metaWRAP is to install it directly from github, and then install all of its dependancies through conda. This is how I usually use metaWRAP, as it allows to easily update the versions of metawrap and other packages. This also works on MacOS as well as Unix.  
+ The best way to install and manage metaWRAP is to install it directly from github, and then install all of its dependencies through conda. This is how I usually use metaWRAP, as it allows me to easily update the versions of metawrap and other packages. This also works on MacOS as well as Unix.  
  
  0. Install mamba: `conda install -y mamba`. Mamba will effectively replace conda and do exactly the same thing, but _much_ faster.
  1. Download or clone this ripository: `git clone https://github.com/bxlab/metaWRAP.git`
- 2. Carefully configure the `yourpath/metaWRAP/bin/config-metawrap` file to it points to your desired database locations (you can modify this later). Follow the [database configuration guide](https://github.com/bxlab/metaWRAP/blob/master/installation/database_installation.md) for details.
+ 2. Carefully configure the `yourpath/metaWRAP/bin/config-metawrap` file to point to your desired database locations (you can modify this later). Follow the [database configuration guide](https://github.com/bxlab/metaWRAP/blob/master/installation/database_installation.md) for details.
  3. Make metaWRAP executable by adding `yourpath/metaWRAP/bin/` directory to to your `$PATH`. Either add the line `PATH=yourpath/metaWRAP/bin/:$PATH` to your `~/.bash_profile` script, or copy over the contents of `yourpath/metaWRAP/bin/` into a location already in your `$PATH` (such as `/usr/bin/` or `/miniconda2/bin/`). 
- 4. (Optional but recommended) Make a new conda environment to install and manage all dependancies:
+ 4. (Optional but recommended) Make a new conda environment to install and manage all dependencies:
 ```
 mamba create -y -n metawrap-env python=2.7
 conda activate metawrap-env
 ```
-5. Install all [metaWRAP dependancies](https://github.com/bxlab/metaWRAP/blob/master/conda_pkg/meta.yaml) with conda:
+5. Install all [metaWRAP dependencies](https://github.com/bxlab/metaWRAP/blob/master/conda_pkg/meta.yaml) with conda:
  ```
 conda config --add channels defaults
 conda config --add channels conda-forge
@@ -122,7 +122,7 @@ This is very important if you want to use any functions requiring databases, but
 ## DETAILED PIPELINE WALKTHROUGH
 
   ![Detailed pipeline walkthrough](https://i.imgur.com/HDUPeXC.png)
-  Note: some features of this walkthrough are depricated since v0.7. To understand specific steps of each module, you can glance at the bash code in each script.
+  Note: some features of this walkthrough are deprecated since v0.7. To understand specific steps of each module, you can glance at the bash code in each script.
 
 
 ## USAGE
@@ -164,7 +164,7 @@ Options:
 ```
 
 ### Citing metaWRAP
-If you found metaWRAP usefull in your research, please cite the publication: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1). If certain software wrapped into metaWRAP were integral to your investigation (e.g. Salmon, MaxBin2, SPAdes, Kraken, etc.) please give them credit as well.
+If you found metaWRAP useful in your research, please cite the publication: [MetaWRAP - a flexible pipeline for genome-resolved metagenomic data analysis](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-018-0541-1). If certain software wrapped into metaWRAP were integral to your investigation (e.g. Salmon, MaxBin2, SPAdes, Kraken, etc.) please give them credit as well.
 
 ### Error reporting
 The massive scale of the metaWRAP project unfortunately means that there are lots of opportunities for different components to fail depending on the exact environments it is installed on. Note that metaWRAP is simply a bash wrapper around other popular bioinformatics programs. If one of these other programs fails, the first thing to do is to troubleshoot the installation of that software, and not worry about metaWRAP itself until that component is fixed. If one of the components refuses to work on you environment, there may not be much I can do. Also remember that if you know a bit of bash/shell you can always see how metaWRAP calls these programs by investigating and possibly changing/tweaking the script files in `bin/metawrap-modules/`.
